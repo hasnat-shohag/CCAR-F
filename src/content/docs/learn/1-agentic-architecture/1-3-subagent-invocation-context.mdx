@@ -158,7 +158,7 @@ flowchart TD
 
 ### বর্তমান অবস্থা
 
-পরীক্ষার গাইড v1.0 `--resume` আর `fork_session`-কে দুটি session control হিসেবে দেখায়, পরীক্ষায়ও সেই কাঠামোই। Agent SDK-তে (sessions guide, সেপ্টেম্বর ২০২৬ মিলিয়ে দেখা) fork হল resume-এর উপর বসানো modifier, বিকল্প নয়। দুটোই একসাথে দিতে হয়: `ClaudeAgentOptions(resume=session_id, fork_session=True)`। `resume` বলে কোন সেশন থেকে শুরু, আর `fork_session` বলে সেটির উপর append না করে শাখা বানাও। `fork_session` না দিলে একই call আসল সেশনে যোগ হয়। CLI-তেও জোড়া একই: `--fork-session` কেবল `--resume` বা `--continue`-এর همراهে কাজ করে। তাই পরীক্ষা যাচাই করে append বনাম branch — দুটো আলাদা কমান্ড নয়। পরীক্ষায় গাইডের ভাষাতেই উত্তর দিন: continue করতে resume, branch করতে fork।
+পরীক্ষার গাইড v1.0 `--resume` আর `fork_session`-কে দুটি session control হিসেবে দেখায়, পরীক্ষায়ও সেই কাঠামোই। Agent SDK-তে (sessions guide, সেপ্টেম্বর ২০২৬ মিলিয়ে দেখা) fork হল resume-এর উপর বসানো modifier, বিকল্প নয়। দুটোই একসাথে দিতে হয়: `ClaudeAgentOptions(resume=session_id, fork_session=True)`। `resume` বলে কোন সেশন থেকে শুরু, আর `fork_session` বলে সেটির উপর append না করে শাখা বানাও। `fork_session` না দিলে একই call আসল সেশনে যোগ হয়। CLI-তেও জোড়া একই: `--fork-session` কেবল `--resume` বা `--continue`-এর সাথে কাজ করে। তাই পরীক্ষা যাচাই করে append বনাম branch — দুটো আলাদা কমান্ড নয়। পরীক্ষায় গাইডের ভাষাতেই উত্তর দিন: continue করতে resume, branch করতে fork।
 
 <ExamTrap>
 	<p>

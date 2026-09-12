@@ -340,5 +340,515 @@
 		"bn": "Coordinator নিজে থেকে ঠিক করে কোন subagent কোন কনটেক্সট পাবে, আর তা explicitly prompt-এ পাঠায়।",
 		"tip": "নিচের এজেন্টের খারাপ ফলের আসল কারণ প্রায়ই অপর্যাপ্ত context passing।",
 		"domain": 1
+	},
+	{
+		"term": "tool description",
+		"bn": "মডেলের টুল বাছাইয়ের প্রাথমিক প্রক্রিয়া — বর্ণনাই ঠিক করে মডেল কোন টুল ডাকবে।",
+		"tip": "পাঁচ উপাদান: উদ্দেশ্য, ইনপুট ফরম্যাট, উদাহরণ, edge case, আর কাছাকাছি টুলের বিপরীতে সীমানা।",
+		"domain": 2
+	},
+	{
+		"term": "misrouting",
+		"bn": "ওভারল্যাপিং বা এক-লাইনের বর্ণনার কারণে মডেল ভুল টুলে চলে যাওয়া।",
+		"tip": "Minimal বর্ণনার কারণে misrouting হলে প্রথম fix = বর্ণনা বিস্তারিত করা, few-shot বা classifier নয়।",
+		"domain": 2
+	},
+	{
+		"term": "overlapping descriptions",
+		"bn": "দুই টুলের বর্ণনা প্রায় একই হলে সিলেকশনে দ্ব্যর্থতা তৈরি হয়।",
+		"tip": "প্রতিটি বর্ণনায় লিখুন কোন কাজের জন্য এই টুল নয় — \"Do NOT use for … — use … for those\"।",
+		"domain": 2
+	},
+	{
+		"term": "tool splitting",
+		"bn": "বিশাল জেনেরিক টুল ভেঙে এক-কাজের purpose-specific টুল বানানো।",
+		"tip": "analyze_document-এর বদলে extract_data_points, summarize_content, verify_claim_against_source।",
+		"domain": 2
+	},
+	{
+		"term": "tool renaming",
+		"bn": "ইন্টারফেস স্তরে নাম বদলে কাছাকাছি টুলের বিভ্রান্তি দূর করা।",
+		"tip": "Implementation ছোঁয়া লাগে না — কেবল নাম ও বর্ণনা বদলালেই হয়।",
+		"domain": 2
+	},
+	{
+		"term": "routing classifier",
+		"bn": "টার্নের আগে ইনপুট parse করে আলাদা স্তরে টুল বেছে দেওয়া।",
+		"tip": "প্রথম ধাপ হিসেবে over-engineered — পরীক্ষা এটিকে ডিস্ট্র্যাক্টর করে।",
+		"domain": 2
+	},
+	{
+		"term": "tool consolidation",
+		"bn": "কাছাকাছি দুই টুল জোড়া লাগিয়ে একটি টুল বানানো।",
+		"tip": "দীর্ঘমেয়াদে বৈধ architectural সিদ্ধান্ত, কিন্তু বর্ণনা ঠিক করার চেয়ে খরচ বেশি।",
+		"domain": 2
+	},
+	{
+		"term": "keyword-sensitive system prompt",
+		"bn": "System prompt-এর সংবেদনশীল শব্দ, যা ভালো টুল বর্ণনাকেও override করে ভুল টুলে পাঠায়।",
+		"tip": "\"always check customer details\" জাতীয় বাক্য বর্ণনা আপডেট করার পরেও দ্বন্দ্ব তৈরি করে।",
+		"domain": 2
+	},
+	{
+		"term": "isError",
+		"bn": "MCP-এর CallToolResult ফিল্ড, যা মডেলকে জানায় টুল execution ব্যর্থ হয়েছে।",
+		"tip": "না সেট করলে মডেল এররের লেখাকে সফল ফলের মতো পড়ে — recovery ভুল হয়।",
+		"domain": 2
+	},
+	{
+		"term": "errorCategory",
+		"bn": "অ্যাপ্লিকেশন-স্তরের লেবেল — transient, validation, business, permission।",
+		"tip": "MCP envelope-এর অংশ নয়; structuredContent-এ রাখা convention।",
+		"domain": 2
+	},
+	{
+		"term": "isRetryable",
+		"bn": "ঠিক এই কলটি আবার পাঠালে কাজ হবে কি না, কেবল সেই প্রশ্নের উত্তর।",
+		"tip": "শুধু transient = true; বাকি সব false, কারণ আগে ইনপুট/অনুরোধ/কলার বদলাতে হবে।",
+		"domain": 2
+	},
+	{
+		"term": "transient error",
+		"bn": "Timeout, সার্ভিস ডাউন বা rate limit — অনুরোধ বৈধ, সিস্টেম সাময়িক অক্ষম।",
+		"tip": "Retryable; সামান্য বিলম্বের পর একই কল আবার পাঠান।",
+		"domain": 2
+	},
+	{
+		"term": "validation error",
+		"bn": "ভুল ইনপুট ফরম্যাট, বাধ্যতামূলক ফিল্ড নেই, বা মান সীমার বাইরে।",
+		"tip": "isRetryable false, তবু এজেন্ট একাই সারাতে পারে — ইনপুট ঠিক করে নতুন কল।",
+		"domain": 2
+	},
+	{
+		"term": "business error",
+		"bn": "নীতি বা ব্যবসার নিয়ম লঙ্ঘন — অনুরোধ বৈধ, কিন্তু শর্ত ভাঙে।",
+		"tip": "কোনোদিন retry-তে সারবে না; বিকল্প পথ বা human escalation লাগে।",
+		"domain": 2
+	},
+	{
+		"term": "permission error",
+		"bn": "Access denied — কলারের প্রয়োজনীয় অনুমতি নেই।",
+		"tip": "আলাদা principal বা elevated credential দরকার; ভালো কল শুধরালে হবে না।",
+		"domain": 2
+	},
+	{
+		"term": "valid empty result",
+		"bn": "টুল সফলভাবে query চালিয়েছে, মিল পায়নি — ফল শূন্য, ব্যর্থ নয়।",
+		"tip": "isError false আর resultCount 0; এখানে retry করা নিষ্ফল।",
+		"domain": 2
+	},
+	{
+		"term": "access failure",
+		"bn": "টুল ডেটাসোর্স পর্যন্ত পৌঁছাতেই পারেনি — ডেটা থাকতে পারে, দেখা যায়নি।",
+		"tip": "valid empty result-এর সাথে গুলিয়ে ফেললে অকারণ retry ও ভুল escalation হয়।",
+		"domain": 2
+	},
+	{
+		"term": "tool overload",
+		"bn": "এক এজেন্টকে অনেক টুল দিলে সিলেকশন-নির্ভরযোগ্যতা পড়ে যায়।",
+		"tip": "সর্বোত্তম পরিসর প্রতি এজেন্টে ৪-৫টি টুল, ভূমিকা অনুযায়ী সীমিত।",
+		"domain": 2
+	},
+	{
+		"term": "role-based tool scoping",
+		"bn": "প্রতিটি এজেন্ট কেবল তার নির্দিষ্ট ভূমিকার টুল পায়, অন্য ভূমিকার নয়।",
+		"tip": "Synthesis এজেন্টে web search থাকলে সে নিজেই খুঁজতে শুরু করে — কাজ ও কনটেক্সট নষ্ট।",
+		"domain": 2
+	},
+	{
+		"term": "\"auto\"",
+		"bn": "tool_choice-এর ডিফল্ট মোড — মডেল নিজেই ঠিক করে টুল ডাকবে কি না।",
+		"tip": "সাধারণ কাজে ঠিক; structured output বাধ্যতামূলক হলে অপর্যাপ্ত।",
+		"domain": 2
+	},
+	{
+		"term": "\"any\"",
+		"bn": "মডেল অবশ্যই একটি টুল ডাকবে, কিন্তু কোনটি তা নিজে বাছবে।",
+		"tip": "একাধিক extraction schema থাকলে নিশ্চিত structured outputের জন্য।",
+		"domain": 2
+	},
+	{
+		"term": "forced selection",
+		"bn": "মডেলকে একটি নির্দিষ্ট নাম-ধরা টুল ডাকতে বাধ্য করা।",
+		"tip": "বাধ্যতামূলক প্রথম ধাপ এনফোর্স করে — skip বা পুনর্বিন্যাস করা যায় না।",
+		"domain": 2
+	},
+	{
+		"term": "scoped cross-role tool",
+		"bn": "অন্য ভূমিকার সামর্থ্যের সীমিত সংস্করণ, দরকারি এজেন্টকে সরাসরি দেওয়া।",
+		"tip": "সাধারণ কেস locally সারায়; coordinator-এর ২-৩ hop ও ৪০% latency বাঁচে।",
+		"domain": 2
+	},
+	{
+		"term": "constrained tool",
+		"bn": "জেনেরিক টুলের বদলে সীমিত, নির্দিষ্ট কাজের টুল।",
+		"tip": "fetch_url-এর বদলে load_document — টুল ডিজাইনে least privilege।",
+		"domain": 2
+	},
+	{
+		"term": ".mcp.json",
+		"bn": "Project root-এর project-level MCP কনফিগ — version-controlled, পুরো টিমের সাথে শেয়ার হয়।",
+		"tip": "Jira, GitHub, internal API-র মতো team-wide server এখানেই বসে।",
+		"domain": 2
+	},
+	{
+		"term": "~/.claude.json",
+		"bn": "Home directory-র user-level MCP কনফিগ — ব্যক্তিগত, version control-এ নেই, শেয়ার হয় না।",
+		"tip": "Experimental বা personal server এখানে; টিমের server কখনো নয়।",
+		"domain": 2
+	},
+	{
+		"term": "environment variable expansion",
+		"bn": ".mcp.json-এ ${VARIABLE_NAME} লিখে credential বাদ রেখে কনফিগ শেয়ার করা।",
+		"tip": "${VAR:-default} রূপও আছে; default ছাড়া unset variable লোড থামায় না, শুধু warning দেয়।",
+		"domain": 2
+	},
+	{
+		"term": "MCP resource",
+		"bn": "টুল কল ছাড়াই এজেন্টের সামনে আনা কনটেন্ট ক্যাটালগ — schema, TOC, issue তালিকা।",
+		"tip": "Resource applications-controlled: host সামনে আনলেই এজেন্ট দেখে (Claude Code-এ @server:resource)।",
+		"domain": 2
+	},
+	{
+		"term": "community MCP server",
+		"bn": "স্ট্যান্ডার্ড ইন্টিগ্রেশনের জন্য রক্ষণাবেক্ষণকৃত, কমিউনিটি-টেস্টেড MCP server।",
+		"tip": "Jira/GitHub/Slack-এ প্রথম ধাপ এটিই; custom build নয়।",
+		"domain": 2
+	},
+	{
+		"term": "custom MCP server",
+		"bn": "নিজেদের বানানো MCP server — কেবল নিজস্ব workflow বা proprietary সিস্টেমের জন্য।",
+		"tip": "পরিস্থিতিতে team-specific চাহিদা স্পষ্ট না থাকলে custom build ভুল উত্তর।",
+		"domain": 2
+	},
+	{
+		"term": "remote vs local server",
+		"bn": "Remote MCP server-এ type http ও url; local server-এ command ও args (stdio)।",
+		"tip": "url আছে কিন্তু type নেই — configuration error; Claude Code server skip করে।",
+		"domain": 2
+	},
+	{
+		"term": "sparse MCP description",
+		"bn": "সংক্ষিপ্ত MCP টুল বর্ণনা, যা সমৃদ্ধ built-in টুলের কাছে সিলেকশনে হেরে যায়।",
+		"tip": "Grep-এর বদলে MCP টুল বাছাতে চাইলে capability ও output বিস্তারিত লিখুন।",
+		"domain": 2
+	},
+	{
+		"term": "Grep",
+		"bn": "ফাইলের ভেতরের কনটেন্টে প্যাটার্ন খোঁজার built-in টুল।",
+		"tip": "Function caller, error message, import — ফাইলে কী আছে খুঁজতে Grep।",
+		"domain": 2
+	},
+	{
+		"term": "Glob",
+		"bn": "নাম, extension বা directory pattern দিয়ে ফাইলের path মেলানোর built-in টুল।",
+		"tip": "Test ফাইল, config, **/*.test.tsx — ফাইলের নাম খুঁজতে Glob।",
+		"domain": 2
+	},
+	{
+		"term": "Edit",
+		"bn": "unique text matching দিয়ে লক্ষ্যযুক্ত পরিবর্তনের ডিফল্ট built-in টুল।",
+		"tip": "Text একাধিক জায়গায় থাকলে Edit fail করে — নিরাপত্তা-ব্যবস্থা, bug নয়।",
+		"domain": 2
+	},
+	{
+		"term": "unique anchor",
+		"bn": "Edit-এর old_string, যা ফাইলে ঠিক এক জায়গায় মেলে।",
+		"tip": "Non-unique হলে পরীক্ষার উত্তর Read + Write; বাস্তবে old_string প্রশস্ত করা।",
+		"domain": 2
+	},
+	{
+		"term": "replace_all",
+		"bn": "Edit-এর পতাকা — ইচ্ছাকৃতভাবে সব occurrence বদলাতে ব্যবহৃত।",
+		"tip": "Non-unique match-এ anchor প্রশস্ত করা না গেলে এটিই সস্তা পথ।",
+		"domain": 2
+	},
+	{
+		"term": "incremental discovery",
+		"bn": "কোডবেস ধাপে ধাপে জানা — Grep দিয়ে entry point, তারপর Read দিয়ে flow।",
+		"tip": "সব ফাইল আগেই পড়া context-budget-এর সবচেয়ে বড় অপচয়।",
+		"domain": 2
+	},
+	{
+		"term": "barrel file",
+		"bn": "একাধিক module re-export করা index.ts জাতীয় ফাইল।",
+		"tip": "Barrel-এর নতুন নামে Grep করলেই indirect consumer ধরা পড়ে।",
+		"domain": 2
+	},
+	{
+		"term": "Read + Write fallback",
+		"bn": "Edit-এর unique anchor না পেলে পূর্ণ ফাইল পড়ে নতুন করে লেখা।",
+		"tip": "প্রতি পরিবর্তনে ডিফল্ট নয় — context token পুড়িয়ে দেয়।",
+		"domain": 2
+	},
+	{
+		"term": "CLAUDE.md hierarchy",
+		"bn": "Claude Code-এর তিন স্তরের কনফিগ — user, project আর directory।",
+		"tip": "কোন স্তর কোথায় খাটে, আর ভুল স্তর চেনা পরীক্ষায় বারবার আসে।",
+		"domain": 3
+	},
+	{
+		"term": "user-level CLAUDE.md",
+		"bn": "~/.claude/CLAUDE.md — কেবল আপনার জন্য, repo-র বাইরে, git-এ যায় না।",
+		"tip": "ব্যক্তিগত পছন্দ এখানে; টিমের নিয়ম এখানে রাখলেই নতুন সদস্য পায় না।",
+		"domain": 3
+	},
+	{
+		"term": "project-level CLAUDE.md",
+		"bn": ".claude/CLAUDE.md বা root CLAUDE.md — repo-তে থাকে, version-controlled, পুরো টিম পায়।",
+		"tip": "Naming convention, error handling, testing requirement এখানেই।",
+		"domain": 3
+	},
+	{
+		"term": "directory-level CLAUDE.md",
+		"bn": "Subdirectory-র CLAUDE.md — কেবল সেই directory-তে কাজ করার সময় খাটে।",
+		"tip": "এক directory-র জন্য ভালো; বহু directory জুড়ে হলে .claude/rules/ ব্যবহার করুন।",
+		"domain": 3
+	},
+	{
+		"term": "CLAUDE.local.md",
+		"bn": "CLAUDE.md-এর পাশে বসা ব্যক্তিগত override, সাধারণত gitignored।",
+		"tip": "একই স্তরে CLAUDE.md-এর পরে জুড়ে যায় — load order মাত্র, precedence নয়।",
+		"domain": 3
+	},
+	{
+		"term": "@ path import",
+		"bn": "CLAUDE.md-এ @ দিয়ে অন্য ফাইল inline করার সিনট্যাক্স।",
+		"tip": "@import keyword বলে কিছু নেই; eager load — context আকার ছোট হয় না।",
+		"domain": 3
+	},
+	{
+		"term": ".claude/rules/",
+		"bn": "বিষয়ভিত্তিক rule ফাইলের directory, ঐচ্ছিক YAML frontmatter দিয়ে path-scoped।",
+		"tip": "Frontmatter ছাড়া সব সেশনে load হয়; path-scoped হলে context বাঁচে।",
+		"domain": 3
+	},
+	{
+		"term": "/memory",
+		"bn": "কোন memory ফাইল load হয়েছে তা জানার ডায়াগনস্টিক কমান্ড।",
+		"tip": "পরীক্ষায় keyed উত্তর /memory; বর্তমান Claude Code-এ আসলে /context দেখায়।",
+		"domain": 3
+	},
+	{
+		"term": "concatenation (no precedence)",
+		"bn": "সব CLAUDE.md একসাথে context-এ জুড়ে যায়; কোনোটি অন্যটিকে override করে না।",
+		"tip": "দুই নিয়ম সংঘর্ষে Claude যেকোনোটি বেছে নিতে পারে — কঠিন নিয়ম settings.json-এ।",
+		"domain": 3
+	},
+	{
+		"term": "Skills system",
+		"bn": "কাস্টম command আর skill মিলে যাওয়া একীভূত সিস্টেম, যা /command তৈরি করে।",
+		"tip": "দুই path একই ফল দেয়, কিন্তু ফাইল-গঠন আলাদা — পরীক্ষার ফাঁদ।",
+		"domain": 3
+	},
+	{
+		"term": ".claude/skills/",
+		"bn": "Canonical skill location — প্রতি skill একটি directory, ভেতরে SKILL.md।",
+		"tip": "এই directory-তে সরাসরি রাখা loose .md ফাইল command হয় না।",
+		"domain": 3
+	},
+	{
+		"term": ".claude/commands/",
+		"bn": "Backward-compatible alias — flat Markdown ফাইল, ফাইলের নামই command নাম।",
+		"tip": ".claude/commands/deploy.md → /deploy; পুরনো কনফিগ অপরিবর্তিত চলে।",
+		"domain": 3
+	},
+	{
+		"term": "context: fork",
+		"bn": "Skill-কে আলাদা sub-agent context-এ চালায়, verbose output মূল কথোপকথন থেকে দূরে রাখে।",
+		"tip": "Codebase analysis বা brainstorming-এর মতো noisy কাজে অপরিহার্য।",
+		"domain": 3
+	},
+	{
+		"term": "allowed-tools",
+		"bn": "Skill চলার সময় তালিকাভুক্ত টুল pre-approve করা; গাইডে এটি টুল access সীমিত করে।",
+		"tip": "পরীক্ষায় উত্তর \"restricts\"; বর্তমান Claude Code-এ আসল সীমানা disallowed-tools।",
+		"domain": 3
+	},
+	{
+		"term": "argument-hint",
+		"bn": "Autocomplete-এ দেখানো সংকেত, যা skill কী argument চায় তা জানায়।",
+		"tip": "Label, interactive prompt নয় — argument ছাড়া ডাকলে থেমে জিজ্ঞেস করে না।",
+		"domain": 3
+	},
+	{
+		"term": "description (skill)",
+		"bn": "Skill-এর frontmatter ফিল্ড, যা পড়ে Claude ঠিক করে skill প্রযোজ্য কি না।",
+		"tip": "না থাকলে skill কেবল হাতে /name টাইপ করলেই চলে।",
+		"domain": 3
+	},
+	{
+		"term": "auto-invocation",
+		"bn": "ব্যবহারকারীর উদ্দেশ্যের সাথে description মিললে Claude নিজেই skill ডেকে নেওয়া।",
+		"tip": "disable-model-invocation: true থাকলে কেবল explicit invocation কাজ করে।",
+		"domain": 3
+	},
+	{
+		"term": "Skills vs CLAUDE.md",
+		"bn": "Skill = on-demand টাস্ক-ওয়ার্কফ্লো; CLAUDE.md = প্রতি সেশনে always-loaded standard।",
+		"tip": "Task-specific পদ্ধতি CLAUDE.md-এ নয়, always-on নিয়ম skill-এ নয়।",
+		"domain": 3
+	},
+	{
+		"term": "path-specific rules",
+		"bn": "ফাইল-ধরন অনুযায়ী শর্তসাপেক্ষে load হওয়া convention, যেকোনো directory-তে।",
+		"tip": "বহু directory-তে ছড়ানো এক ফাইল-ধরনের নিয়মে এটিই সঠিক উত্তর।",
+		"domain": 3
+	},
+	{
+		"term": "paths frontmatter",
+		"bn": "Rule ফাইলের YAML frontmatter-এ glob pattern-এর তালিকা।",
+		"tip": "paths-এ মেলে এমন ফাইল এডিট করলেই rule load হয়, নইলে অদৃশ্য থাকে।",
+		"domain": 3
+	},
+	{
+		"term": "glob pattern",
+		"bn": "**/*.test.tsx জাতীয় প্যাটার্ন, যা গোটা কোডবেসে ফাইল মেলায়।",
+		"tip": "Test, API বা Terraform convention একটি ফাইলেই সব ক্ষেত্রে খাটে।",
+		"domain": 3
+	},
+	{
+		"term": "rules vs skills",
+		"bn": "Rule background guidance হিসেবে load হয়; skill on-demand টাস্ক-ওয়ার্কফ্লো।",
+		"tip": "Always-on convention চাইলে উত্তর rules, skill নয়।",
+		"domain": 3
+	},
+	{
+		"term": "token efficiency (path-scoped)",
+		"bn": "মেলে এমন ফাইলে কাজ করার সময়ই rule load হয়ে অপ্রাসঙ্গিক কনটেক্সট কমায়।",
+		"tip": "Root CLAUDE.md-এর সব নিয়ম প্রতি সেশনে token খায়, প্রাসঙ্গিক হোক বা না হোক।",
+		"domain": 3
+	},
+	{
+		"term": "plan mode",
+		"bn": "জটিল কাজে আগে কোডবেস ঘেঁটে, বিকল্প মূল্যায়ন করে, কৌশল ঠিক করে নেওয়ার মোড।",
+		"tip": "কোনো ফাইল বদলায় না; বড় বদল, একাধিক বৈধ পথ বা architectural সিদ্ধান্তে এটিই।",
+		"domain": 3
+	},
+	{
+		"term": "direct execution",
+		"bn": "ভালো-বোঝা, সীমিত scope-এর কাজে পরিকল্পনা ছাড়া সরাসরি পরিবর্তন।",
+		"tip": "Single-file bug fix, validation যোগ, config মান বদল — plan বাড়তি খরচ।",
+		"domain": 3
+	},
+	{
+		"term": "ambiguity vs difficulty",
+		"bn": "মোড ঠিক করে অস্পষ্টতা, কঠিনতা নয়।",
+		"tip": "কঠিন কিন্তু স্পষ্ট fix = direct; সহজ-শোনা কিন্তু তিনভাবে করার মতো feature = plan।",
+		"domain": 3
+	},
+	{
+		"term": "Explore subagent",
+		"bn": "Verbose discovery output মূল কথোপকথন থেকে আলাদা রাখা subagent।",
+		"tip": "File listing, dependency graph, code excerpt আলাদায় রেখে summary ফেরায়।",
+		"domain": 3
+	},
+	{
+		"term": "plan-then-execute hybrid",
+		"bn": "Investigate করতে plan mode, তারপর implement করতে direct execution।",
+		"tip": "Plan THEN direct, plan OR direct নয় — library migration-এ আদর্শ প্যাটার্ন।",
+		"domain": 3
+	},
+	{
+		"term": "multi-file modification",
+		"bn": "একাধিক ফাইল জুড়ে একই রকম পরিবর্তন, যেখানে সামঞ্জস্যপূর্ণ কৌশল দরকার।",
+		"tip": "৪৫+ ফাইলের migration-এ পরিকল্পনা ছাড়া অসম inconsistency-র ঝুঁকি।",
+		"domain": 3
+	},
+	{
+		"term": "codebase exploration",
+		"bn": "বদলানোর আগে dependency, data flow ও গঠন বুঝে নেওয়ার ধাপ।",
+		"tip": "Plan mode-এ নিরাপদে হয় — ফাইল অপরিবর্তিত থাকে।",
+		"domain": 3
+	},
+	{
+		"term": "technique hierarchy",
+		"bn": "রিফাইনমেন্ট কৌশলের স্পষ্ট ক্রম — সব কৌশল সমান নয়।",
+		"tip": "অসঙ্গত ব্যাখ্যায় examples, জটিল রূপান্তরে test, অপরিচিত ডোমেইনে interview।",
+		"domain": 3
+	},
+	{
+		"term": "concrete input/output examples",
+		"bn": "২-৩টি স্পষ্ট before/after জোড়া, যা দিয়ে মডেল প্যাটার্ন সাধারণীকরণ করে।",
+		"tip": "অসঙ্গত ব্যাখ্যার প্রথম কৌশল; আরও prose নয়, উদাহরণই।",
+		"domain": 3
+	},
+	{
+		"term": "test-driven iteration",
+		"bn": "আগে test লেখা, পরে test failure শেয়ার করে লক্ষ্যযুক্ত সংশোধন।",
+		"tip": "\"Expected X, got Y\" ব্যাখ্যার অবকাশ রাখে না — জটিল রূপান্তরে সেরা।",
+		"domain": 3
+	},
+	{
+		"term": "interview pattern",
+		"bn": "অপরিচিত ডোমেইনে implement করার আগে Claude-কে প্রশ্ন করতে দেওয়া।",
+		"tip": "আপনার মিস হওয়া requirement, edge case ও সীমা সামনে আনে।",
+		"domain": 3
+	},
+	{
+		"term": "batch feedback",
+		"bn": "পরস্পর-সম্পর্কিত সমস্যাগুলো এক মেসেজে দেওয়া।",
+		"tip": "একটি ঠিক করলে অন্যটি প্রভাবিত হলে একসাথে দিন, নইলে fix সংঘর্ষে যায়।",
+		"domain": 3
+	},
+	{
+		"term": "sequential feedback",
+		"bn": "স্বাধীন সমস্যাগুলো এক一つ ধরে ধরে ঠিক করা।",
+		"tip": "Naming আর indentation স্বাধীন হলে একসাথে নয়, ক্রমে ঠিক করুন।",
+		"domain": 3
+	},
+	{
+		"term": "pattern generalisation",
+		"bn": "২-৩টি ভালো উদাহরণ থেকে মডেল নতুন কেসে প্যাটার্ন খাটানো।",
+		"tip": "সব কেস দিতে হয় না — standard কেস আর একটি edge case যথেষ্ট।",
+		"domain": 3
+	},
+	{
+		"term": "-p (--print) flag",
+		"bn": "Claude Code-কে নন-ইন্টারঅ্যাকটিভ print mode-এ চালায়; prompt প্রসেস করে stdout-এ লেখে, তারপর বেরিয়ে যায়।",
+		"tip": "CI job ঝুলে থাকলে উত্তর সবসময় -p; CLAUDE_HEADLESS বা --batch বলে কিছু নেই।",
+		"domain": 3
+	},
+	{
+		"term": "--output-format json",
+		"bn": "Claude Code-এর রানকে JSON envelope-এ মুড়ায় — result text, session ID, cost ও usage metadata।",
+		"tip": "মানুষ নয়, মেশিন পড়বে এমন CI আউটপুটে এটিই দরকার।",
+		"domain": 3
+	},
+	{
+		"term": "--json-schema",
+		"bn": "এজেন্টের চূড়ান্ত output JSON Schema-র সাথে যাচাই করে (শুধু print mode)।",
+		"tip": "যাচাই করা ডেটা envelope-এর structured_output ফিল্ডে আসে।",
+		"domain": 3
+	},
+	{
+		"term": "structured_output",
+		"bn": "JSON envelope-এর ফিল্ড, যেখানে schema-মেনে চলা ডেটা নামে।",
+		"tip": "jq '.structured_output' দিয়ে আনুন — top level থেকে নয়।",
+		"domain": 3
+	},
+	{
+		"term": "independent review instance",
+		"bn": "আলাদা Claude Code invocation, যার কাছে generation session-এর reasoning context নেই।",
+		"tip": "একই সেশনে নিজের কোড review করা দুর্বল — আগের যুক্তির প্রতি পক্ষপাত থাকে।",
+		"domain": 3
+	},
+	{
+		"term": "incremental review context",
+		"bn": "আগের review-এর finding পরের রানে কনটেক্সটে দেওয়া, যাতে কেবল নতুন বা অমীমাংসিত সমস্যা ওঠে।",
+		"tip": "না দিলে প্রতি push-এ একই comment ফেরে, আর ডেভেলপাররা comment পড়া বন্ধ করে দেয়।",
+		"domain": 3
+	},
+	{
+		"term": "append vs replace system prompt",
+		"bn": "--append-system-prompt ডিফল্ট prompt-এর সাথে যোগ করে; --system-prompt পুরোটাই বদলায়।",
+		"tip": "Coding assistant রেখে বাড়তি নিয়ম চাইলে append; ভিন্ন identity বা permission model চাইলে replace।",
+		"domain": 3
+	},
+	{
+		"term": "Batch API vs real-time",
+		"bn": "Batch API-তে ৫০% সাশ্রয়, কিন্তু ২৪ ঘণ্টা পর্যন্ত সময় ও latency SLA নেই।",
+		"tip": "Pre-merge blocking check-এ real-time; overnight বা weekly analysis-এ Batch।",
+		"domain": 3
 	}
 ]
