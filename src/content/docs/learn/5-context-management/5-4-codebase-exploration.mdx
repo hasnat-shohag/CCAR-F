@@ -1,0 +1,280 @@
+---
+title: কোডবেস এক্সপ্লোরেশন ও কনটেক্সট ডিগ্রেডেশন
+titleEn: Codebase Exploration & Context Degradation
+description: Context degradation কেন token limit নয়, scratchpad file দিয়ে নির্দিষ্ট finding ধরে রাখা, subagent delegation-এর context isolation, summary injection, /compact আর state manifest দিয়ে crash recovery — CCAR-F Domain 5.4 বাংলা লেসন।
+domain: 5
+task: "5.4"
+order: 4
+sourceUrl: https://claudecertificationguide.com/learn/5-context-management/5-4-codebase-exploration
+updated: 2026-09-12
+keywords:
+  - term: context degradation
+    bn: দীর্ঘ exploration-এ verbose output জমতে থাকলে মডেল নির্দিষ্ট class, method ও dependency chain-এর বদলে "typical pattern" বলে উল্লেখ করতে শুরু করে।
+    tip: এটি token limit নয় — মডেল নির্দিষ্ট তথ্য হারায়, কারণ সাম্প্রতিক verbose output তা চাপা দেয়।
+  - term: scratchpad file
+    bn: মূল finding লিখে রাখার ফাইল, যা পরের প্রশ্নে conversation context-এর বদলে পড়া হয়।
+    tip: Context degradation-এর প্রধান প্রতিকার; শুরু থেকেই ইচ্ছাকৃত কৌশল হিসেবে ব্যবহার করুন, শেষ মুহূর্তের উদ্ধার নয়।
+  - term: subagent delegation
+    bn: নির্দিষ্ট investigation subagent-কে দেওয়া, যার নিজস্ব আলাদা context থাকে।
+    tip: মূল উপকার parallelisation নয়, context isolation — মূল agent-এর context পরিষ্কার থাকে।
+  - term: context isolation
+    bn: Subagent verbose exploration নিজের context-এ চালায়, coordinator-এর context দূষিত করে না।
+    tip: Coordinator কেবল structured summary পায়; কাঁচা ফাইল-কনটেন্ট আর search result তার কাছে আসে না।
+  - term: summary injection
+    bn: ধাপের মাঝে আগের ধাপের মূল finding সারসংক্ষেপ করে পরের ধাপের subagent-এর প্রাথমিক context-এ ঢুকিয়ে দেওয়া।
+    tip: Cold start সমস্যা ঠেকায় — না দিলে পরের subagent আগের কাজ দুবার করে।
+  - term: "/compact"
+    bn: Claude Code-এর কমান্ড, যা দীর্ঘ সেশনে conversation সংক্ষেপ করে মূল তথ্য রেখে জায়গা খালি করে।
+    tip: Context limit-এ পৌঁছানোর অপেক্ষা না করে আগেই ব্যবহার করুন; এটি গুণও বাঁচায়, কেবল পরিমাণ নয়।
+  - term: state manifest
+    bn: প্রতিটি agent-এর বর্তমান অবস্থা লিখে রাখা structured ফাইল — কী ঘেঁটেছে, মূল finding, চলতি phase, পরের ধাপ।
+    tip: Crash, network interruption বা context exhaustion-এর পর এখান থেকেই কাজ চালু হয়।
+sources:
+  - label: Claude Certified Architect Foundations Exam Guide — Domain 5, Task Statement 5.4
+    href: https://claudecertificationguide.com/learn/5-context-management/5-4-codebase-exploration
+    note: Anthropic
+  - label: Claude Code Documentation — Context Management
+    href: https://platform.claude.com/docs/en/docs/claude-code/costs
+    note: Anthropic
+  - label: Claude Code Documentation — Commands
+    href: https://platform.claude.com/docs/en/docs/claude-code/slash-commands
+    note: Anthropic
+---
+
+import ReadingProgress from '../../../../components/progress/ReadingProgress.astro';
+import MarkComplete from '../../../../components/progress/MarkComplete.astro';
+import KeywordTable from '../../../../components/content/KeywordTable.astro';
+import ExamTrap from '../../../../components/content/ExamTrap.astro';
+import BuildExercise from '../../../../components/content/BuildExercise.astro';
+import Attribution from '../../../../components/content/Attribution.astro';
+
+<ReadingProgress />
+
+<div class="lesson-meta">
+	<span class="lesson-badge">Domain 5</span>
+	<span class="lesson-task">Task 5.4 · ওয়েট ১৫%</span>
+	<span class="lesson-source">মূল ইংরেজি: Codebase Exploration & Context Degradation</span>
+</div>
+
+## এই লেসনে যা জানতে হবে
+
+বড় কোডবেস explore করা Claude-ভিত্তিক agent-এর সবচেয়ে context-ভারী কাজগুলোর একটি। অপরিচিত repository ঘাঁটা, dependency chain ট্রেস করা বা legacy সিস্টেম বোঝা — দীর্ঘ সেশনে একটি নির্দিষ্ট failure mode তৈরি হয়: **context degradation**। এটি টোকেন শেষ হয়ে যাওয়ার সমস্যা নয়। কনটেক্সট verbose discovery output-এ ভরে উঠলে মডেল আগের finding-গুলোর উপর দখল হারায়।
+
+## Context Degradation
+
+Context degradation-এর নির্দিষ্ট, লক্ষণীয় রূপ: সেশনের শুরুতে খুঁজে পাওয়া নির্দিষ্ট class, method ও dependency chain-এর বদলে মডেল "typical pattern" বলে উল্লেখ করতে শুরু করে। কয়েকটি module ঘেঁটে ফেলার পর agent বলতে পারে "this follows the typical repository pattern" — এর বদলে "the `OrderRepository` class at `src/repos/order.ts` implements the base `Repository<T>` interface with custom caching in the `findById` method."
+
+কারণ:
+
+- প্রতিটি exploration ধাপ প্রচুর output বানায় — ফাইলের কনটেন্ট, search result, directory listing।
+- সেই output কথোপকথন context-এ জমতে থাকে।
+- আগের নির্দিষ্ট discovery context-এ ধীরে ধীরে ভেতরে চলে যায়, আর সাম্প্রতিক verbose output প্রাধান্য পায়।
+- মডেলের মনোযোগ সাম্প্রতিক output-এ সরে যায়, আগের finding-এর নির্দিষ্ট উল্লেখ হারিয়ে যায়।
+
+মূল উপলব্ধি: **context degradation token limit-এর সমস্যা নয়।** Context window বাড়িয়ে এটি সারানো যায় না। মডেলের জায়গা শেষ হয়নি; নির্দিষ্ট খুঁটিনাটি নতুন, বেশি verbose output-এর নিচে চাপা পড়ে সে সেগুলোর হিসাব হারাচ্ছে।
+
+## Scratchpad File
+
+Context degradation-এর প্রধান প্রতিকার **scratchpad file**। Agent মূল finding একটি ফাইলে লেখে আর পরের প্রশ্নে সেই ফাইল দেখে। এতে জ্ঞান কথোপকথন context-এর বাইরে টেকে, আর context degradation থেকে নিরাপদ থাকে।
+
+```markdown
+# Exploration Scratchpad — Order Service
+
+## Key Classes
+- `OrderRepository` (src/repos/order.ts) — implements Repository<T>, custom findById caching
+- `OrderService` (src/services/order.ts) — orchestrates OrderRepository + PaymentGateway
+- `RefundProcessor` (src/services/refund.ts) — depends on OrderService.getOrderWithItems()
+
+## Dependency Chain
+RefundProcessor → OrderService → OrderRepository → PostgreSQL
+RefundProcessor → PaymentGateway → Stripe API
+
+## Critical Findings
+- RefundProcessor has no retry logic for Stripe API failures
+- OrderRepository caches by orderId but cache invalidation on status change is missing
+- Test coverage: OrderService has 87% coverage, RefundProcessor has 12%
+```
+
+আগের discovery দেখতে হলে agent কথোপকথন context-এর বদলে scratchpad ফাইল পড়ে। এটিকে শুরু থেকেই ইচ্ছাকৃত কৌশল ধরুন, অবস্থা খারাপ হলে উদ্ধারের পদক্ষেপ নয় — কোনো দীর্ঘ exploration সেশনের গোড়া থেকেই agent-কে scratchpad ফাইল রাখতে নির্দেশ দিন।
+
+## Subagent Delegation
+
+নির্দিষ্ট investigation কাজে subagent তৈরি করা দ্বিতীয় প্রধান কৌশল। মূল agent নিজে সব exploration না করে (প্রতিটি ফাইল পড়া আর search-এর verbose output-এ নিজের context ভরে) নির্দিষ্ট প্রশ্ন subagent-কে দিন:
+
+- "Find all test files for the order service and report their coverage status"
+- "Trace the refund flow from API endpoint to database and list all intermediate services"
+- "Identify all external API integrations and their error handling patterns"
+
+প্রতিটি subagent নিজস্ব আলাদা context নিয়ে চলে। সে নির্ভয়ে verbose exploration করতে পারে, মূল agent-এর context নষ্ট না করে। সে coordinator-কে একটি structured summary ফেরায়, আর coordinator কেবল মূল finding-গুলো রাখে।
+
+সমান্তরাল চালানোর সুবিধা চোখে পড়ে, কিন্তু আসল মূল্য **context isolation**। Subagent verbose exploration সামলালে মূল agent-এর context উচ্চ-স্তরের coordination-এর জন্য পরিষ্কার থাকে।
+
+## ধাপের মাঝে Summary Injection
+
+Exploration ধাপে ধাপে হলে (Phase 1: architecture বোঝা, Phase 2: নির্দিষ্ট component যাচাই), Phase 2-এর subagent তৈরি করার আগে Phase 1-এর মূল finding সারসংক্ষেপ করুন। সেই সারসংক্ষেপ Phase 2 subagent-এর প্রাথমিক context-এ ঢুকিয়ে দিন।
+
+এতে "cold start" সমস্যা ঠেকায় — Phase 2 subagent আগের finding না পেয়ে Phase 1-এর exploration দুবার করে না। তাছাড়া Phase 2 agent-দের সঠিক প্রশ্ন করার মতো architectural বোঝাপড়াটুকুও মেলে।
+
+```text
+Phase 1 Summary (injected into Phase 2 subagent prompts):
+- The system follows a layered architecture: Controllers → Services → Repositories → Database
+- The refund flow passes through: RefundController → RefundProcessor → OrderService → PaymentGateway
+- Key concern: RefundProcessor has no retry logic for external API failures
+- Phase 2 objective: Investigate error handling in RefundProcessor and PaymentGateway
+```
+
+## /compact কমান্ড
+
+Claude Code-এ দীর্ঘ সেশনে context ব্যবহার কমাতে `/compact` কমান্ড আছে। Verbose discovery output — ফাইলের কনটেন্ট, search result, directory listing — context ভরালে `/compact` কথোপকথন সংক্ষেপ করে জায়গা খালি করে, মূল তথ্য রেখে দেয়।
+
+দীর্ঘ exploration সেশনে `/compact` সক্রিয়ভাবে ব্যবহার করুন, কেবল context limit-এ ঠেকলে নয়। এটি context-এর গুণ রক্ষার জন্য, কেবল পরিমাণের জন্য নয়।
+
+## State Manifest দিয়ে Crash Recovery
+
+দীর্ঘ exploration session crash, network interruption বা context exhaustion-এ ব্যর্থ হতে পারে। পুনরুদ্ধারের উপায় না থাকলে সব exploration অগ্রগতি হারিয়ে যায়।
+
+সমাধান — structured state persistence। প্রতিটি agent নিজের বর্তমান অবস্থা একটি পরিচিত ফাইল অবস্থানে export করে (manifest)। এই manifest-এ থাকে:
+
+- কী কী explore করা হয়েছে (পড়া ফাইল, চালানো search)
+- এ পর্যন্ত পাওয়া মূল finding
+- চলতি phase ও পরের ধাপ
+- ঝুলে থাকা প্রশ্ন বা অমীমাংসিত বিষয়
+
+```json
+{
+  "sessionId": "explore-order-service-001",
+  "phase": 2,
+  "exploredPaths": [
+    "src/repos/order.ts",
+    "src/services/order.ts",
+    "src/services/refund.ts"
+  ],
+  "keyFindings": {
+    "architecture": "Layered: Controllers → Services → Repositories → DB",
+    "criticalIssue": "RefundProcessor has no retry logic for Stripe API failures",
+    "testCoverage": { "OrderService": "87%", "RefundProcessor": "12%" }
+  },
+  "nextSteps": [
+    "Investigate PaymentGateway error handling",
+    "Review RefundProcessor test files",
+    "Check cache invalidation logic in OrderRepository"
+  ]
+}
+```
+
+আবার শুরু হলে coordinator এই manifest লোড করে agent-এর prompt-এ ঢুকিয়ে দেয়। আগের exploration আবার না করে agent যেখানে ছিল সেখান থেকেই চালিয়ে যায়।
+
+```mermaid
+flowchart TD
+  A["দীর্ঘ exploration"] --> B["Verbose output context ভরায়"]
+  B --> C["Context degradation: নির্দিষ্ট finding হারায়"]
+  C --> D["Scratchpad ফাইলে মূল finding লেখা"]
+  C --> E["Subagent-এ verbose exploration সরানো"]
+  C --> F["`/compact` দিয়ে context সংক্ষেপ"]
+  A --> G["State manifest হালনাগাদ"]
+  G --> H{"Crash / session শেষ?"}
+  H -->|"হ্যাঁ"| I["Manifest লোড করে সেখান থেকেই resume"]
+  H -->|"না"| A
+```
+
+## পরীক্ষার ফাঁদ
+
+<ExamTrap>
+	<p>
+		<strong>Context degradation মেটাতে context window বড় করা</strong> — সমস্যা টোকেন শেষ হওয়া নয়; verbose output জমে মডেল নির্দিষ্ট খুঁটিনাটি হারায়। বড় window-ও verbose output-এ ভরে উঠবে।
+	</p>
+</ExamTrap>
+
+<ExamTrap>
+	<p>
+		<strong>Subagent delegation কেবল parallelisation ভাবা</strong> — কোডবেস exploration-এ subagent-এর মূল উপকার context isolation: subagent verbose exploration সামলালে মূল agent-এর context পরিষ্কার থাকে।
+	</p>
+</ExamTrap>
+
+<ExamTrap>
+	<p>
+		<strong>State সংরক্ষণ না করে সেশন আবার শুরু করা</strong> — Restart-এ জমানো সব জ্ঞান হারায়। আবার শুরু করার আগে scratchpad ফাইল ও state manifest-এ finding সংরক্ষণ করুন, তারপর নতুন সেশনে ঢুকিয়ে দিন।
+	</p>
+</ExamTrap>
+
+<ExamTrap>
+	<p>
+		<strong>`/compact` কেবল context limit-এ পৌঁছালে ব্যবহার</strong> — দীর্ঘ সেশনে context-এর গুণ ধরে রাখতে `/compact` আগেই সক্রিয়ভাবে ব্যবহার করা উচিত, শেষ উপায় হিসেবে নয়।
+	</p>
+</ExamTrap>
+
+<KeywordTable keywords={frontmatter.keywords} />
+
+## প্র্যাকটিস সিনারিও (নিজে উত্তর ভাবুন, তারপর খুলুন)
+
+> একটি developer productivity agent অপরিচিত কোডবেস explore করছে। কয়েকটি module ঘাঁটার পর সে আগের পাওয়া নির্দিষ্ট class name ও dependency chain-এর বদলে "typical repository patterns" বলে উল্লেখ করতে শুরু করল। সবচেয়ে কার্যকর প্রতিকার কোনটি?
+
+<details>
+	<summary>উত্তর দেখুন</summary>
+
+	**সঠিক উত্তর:** Agent-কে মূল finding লিখে scratchpad ফাইল রাখতে দিন আর পরের প্রশ্নে সেটি দেখতে দিন।
+
+	**কেন বাকিগুলো ভুল:**
+
+	- *Model context window বড় করা* — Context degradation token limit নয়; বড় window-ও verbose output-এ ভরে আগের নির্দিষ্ট finding চাপা পড়বে।
+	- *নতুন context-এ সেশন আবার শুরু করে আরও efficient exploration* — জমানো জ্ঞান হারায়, আর efficient exploration-এর নির্দেশ সমস্যার মূল (verbose accumulation) স্পর্শও করে না।
+	- *পুরো কোডবেসের structure শুরুতেই context-এ pre-load* — প্রাথমিক context আরও ভরে যায়, degradation ত্বরান্বিত হয়।
+
+</details>
+
+<BuildExercise
+	title="Context-সহনশীল কোডবেস Explorer বানান"
+	difficulty="Advanced"
+	time="৬০ মিনিট"
+	objectives={[
+		'Context degradation-কে attention quality-র সমস্যা হিসেবে চেনা, token limit নয়',
+		'মূল finding conversation context-এর বাইরে রাখতে scratchpad ফাইল প্রয়োগ',
+		'Context isolation-এর জন্য subagent delegation, কেবল parallelisation নয়',
+		'Structured state manifest দিয়ে crash recovery ডিজাইন',
+		'Cold start duplication ঠেকাতে exploration ধাপের মাঝে summary injection',
+	]}
+	steps={[
+		{
+			title: 'একটি coordinator agent বানান, যা নির্দিষ্ট codebase exploration কাজ subagent-কে দেয় (test file খোঁজা, dependency chain ট্রেস করা, external integration চিহ্নিত করা)।',
+			why: 'Subagent delegation-এর মূল উদ্দেশ্য context isolation; subagent verbose exploration সামলালে coordinator-এর context উচ্চ-স্তরের coordination-এর জন্য পরিষ্কার থাকে।',
+			expect: 'একটি coordinator ফাংশন, যা নির্দিষ্ট, focused investigation prompt দিয়ে subagent তৈরি করে; প্রতিটি subagent কাঁচা verbose output নয়, structured summary (মূল finding, file path, class name) ফেরায়; coordinator context পরিষ্কার থাকে।',
+		},
+		{
+			title: 'Scratchpad ফাইল ব্যবস্থাপনা যোগ করুন: agent মূল finding (class name, file path, dependency chain) পরিচিত ফাইলে লেখে আর পরের ধাপের আগে পড়ে।',
+			why: 'Scratchpad file context degradation-এর প্রধান প্রতিকার; জ্ঞান conversation context-এর বাইরে টেকে, তাই attention সরে গেলেও নির্দিষ্ট class name ও path হারায় না।',
+			expect: 'প্রতিটি exploration ধাপের পর agent structured finding scratchpad ফাইলে লেখে, আর পরের ধাপের শুরুতে পড়ে; scratchpad-এ নির্দিষ্ট class name, file path ও dependency chain থাকে — সারসংক্ষেপ নয়।',
+		},
+		{
+			title: 'Summary injection লজিক বানান: Phase 1 exploration শেষে finding সারসংক্ষেপ করে Phase 2 subagent-এর prompt-এ ঢুকিয়ে দিন।',
+			why: 'Summary injection cold start সমস্যা ঠেকায় — Phase 2 subagent আগের finding না পেলে Phase 1-এর exploration দুবার করে; সারসংক্ষেপ পেলে সিস্টেম পুনরাবিষ্কার না করেই সঠিক প্রশ্ন করতে পারে।',
+			expect: 'Phase 1-এর সারসংক্ষেপ নথি, যেখানে উচ্চ-স্তরের architecture, মূল উদ্বেগ আর Phase 2-এর নির্দিষ্ট লক্ষ্য লেখা; এই সারসংক্ষেপ প্রতিটি Phase 2 subagent-এর প্রাথমিক prompt-এ যায়।',
+		},
+		{
+			title: 'Crash recovery যোগ করুন: প্রতিটি agent structured state (explored path, মূল finding, পরের ধাপ) manifest ফাইলে export করে, যা coordinator resume-এ লোড করে।',
+			why: 'দীর্ঘ exploration session crash, network interruption বা context exhaustion-এ ব্যর্থ হতে পারে; structured state manifest শেষ checkpoint থেকে চালু হতে দেয়, শূন্য থেকে নয়।',
+			expect: 'JSON manifest ফাইলে session ID, চলতি phase, explored path, মূল finding ও পরের ধাপ; resume-এ coordinator manifest লোড করে agent prompt-এ দেয়, আর exploration যেখানে ছিল সেখান থেকেই চলে।',
+		},
+		{
+			title: 'কয়েকটি module জুড়ে দীর্ঘ exploration চালিয়ে পরীক্ষা করুন scratchpad ফাইল নির্দিষ্ট class name ও file path ধরে রাখে কি না, যা নইলে generic বর্ণনায় ক্ষয়ে যায়।',
+			why: 'এটি যাচাই করে scratchpad প্রতিকার সত্যিই context degradation-এর বিরুদ্ধে কাজ করে; লক্ষণ হলো মডেল নির্দিষ্ট class ও path-এর বদলে "typical pattern" বলতে শুরু করা।',
+			expect: 'দুটি তুলনামূলক run: scratchpad ছাড়া ৪–৫ module পরে agent generic উল্লেখে ক্ষয়ে যায়; scratchpad সহ পুরো সেশন জুড়ে নির্দিষ্ট class name ও file path ধরে রাখে।',
+		},
+	]}
+/>
+
+## সূত্র
+
+<ul>
+	{frontmatter.sources.map((source) => (
+		<li>
+			<a href={source.href} target="_blank" rel="noopener noreferrer">
+				{source.label}
+			</a>
+			{source.note ? ` — ${source.note}` : ''}
+		</li>
+	))}
+</ul>
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />
+
+<MarkComplete lessonId="5-4" />

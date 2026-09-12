@@ -850,5 +850,467 @@
 		"bn": "Batch API-তে ৫০% সাশ্রয়, কিন্তু ২৪ ঘণ্টা পর্যন্ত সময় ও latency SLA নেই।",
 		"tip": "Pre-merge blocking check-এ real-time; overnight বা weekly analysis-এ Batch।",
 		"domain": 3
+	},
+	{
+		"term": "explicit categorical criteria",
+		"bn": "মডেল কী জানাবে আর কী এড়িয়ে যাবে, তা স্পষ্ট শ্রেণিতে ভাগ করে বলা।",
+		"tip": "be conservative-র বদলে: bug ও security vulnerability জানাও, style preference বাদ দাও।",
+		"domain": 4
+	},
+	{
+		"term": "vague instruction",
+		"bn": "Be conservative বা only report high-confidence findings টাইপ নির্দেশ, যার কার্যকর decision boundary নেই।",
+		"tip": "শুনতে যুক্তিসঙ্গত লাগে বলেই পরীক্ষায় ডিস্ট্র্যাক্টর।",
+		"domain": 4
+	},
+	{
+		"term": "false positive trust problem",
+		"bn": "এক ক্যাটাগরির উচ্চ false positive হার সব ক্যাটাগরির প্রতি ডেভেলপারের আস্থা নষ্ট করে।",
+		"tip": "Trust ক্যাটাগরি-নির্দিষ্ট নয় — পুরো আউটপুট জুড়ে ছড়ায়।",
+		"domain": 4
+	},
+	{
+		"term": "severity calibration",
+		"bn": "Critical, major, minor স্তর বাস্তব code example দিয়ে ঠিক করা, গদ্য বর্ণনায় নয়।",
+		"tip": "could cause system failures যথেষ্ট নয়; আসল code pattern দেখাতে হবে।",
+		"domain": 4
+	},
+	{
+		"term": "confidence-based filtering",
+		"bn": "মডেল নিজের জানানো confidence দেখে finding ছেঁকে ফেলা।",
+		"tip": "LLM self-reported confidence দুর্বলভাবে calibrated; routing-এ কাজে লাগে, criteria-র বিকল্প নয়।",
+		"domain": 4
+	},
+	{
+		"term": "few-shot examples",
+		"bn": "কাঙ্ক্ষিত input-output দৃষ্টান্ত কয়েকটি প্রম্পটে দেখানো, যাতে মডেল ফরম্যাট ও judgement অনুকরণ করে।",
+		"tip": "অসামঞ্জস্যপূর্ণ আউটপুটের প্রথম প্রতিকার — আরও নির্দেশ নয়, উদাহরণ।",
+		"domain": 4
+	},
+	{
+		"term": "reasoning in examples",
+		"bn": "শুধু input-output নয়, কেন সেই সিদ্ধান্ত, তার ব্যাখ্যাও উদাহরণে রাখা।",
+		"tip": "Reasoning থাকলে মডেল নীতি শেখে, কেবল হুবহু মিলিয়ে দেখা নয়।",
+		"domain": 4
+	},
+	{
+		"term": "ambiguous judgement call",
+		"bn": "একই ধরনের কেসে মডেল কখনো কঠোর, কখনো নরম শ্রেণিবিন্যাস করে — যেমন variable shadowing।",
+		"tip": "এমন কেসে সঠিক judgement-এর উদাহরণ দিন, reasoning-সহ।",
+		"domain": 4
+	},
+	{
+		"term": "empty/null field extraction",
+		"bn": "ডকুমেন্টে তথ্য থাকা সত্ত্বেও field খালি ফেরা, কারণ তথ্যটি অপ্রত্যাশিত গঠনে আছে।",
+		"tip": "টেবিলে চলে কিন্তু narrative paragraph-এ ফাঁকা এলে few-shot উদাহরণ দিন।",
+		"domain": 4
+	},
+	{
+		"term": "2-4 targeted examples",
+		"bn": "দুইয়ের কম উদাহরণে প্যাটার্ন দাঁড়ায় না, চারটির বেশি হলে টোকেন নষ্ট হয় বিনা সুফলে।",
+		"tip": "উদাহরণ হুবহু যে পরিস্থিতিতে সমস্যা হয়, সেদিকেই তাক করুন।",
+		"domain": 4
+	},
+	{
+		"term": "hallucination reduction",
+		"bn": "বিভিন্ন গঠনের extraction উদাহরণ দেখালে মডেল তথ্য বানানো কমায়।",
+		"tip": "এক পাতায় টেবিল, পরের পাতায় গদ্য — দুটোই উদাহরণে দেখান।",
+		"domain": 4
+	},
+	{
+		"term": "tool_use with JSON schemas",
+		"bn": "টুলের JSON schema দিয়ে Claude-এর ফেরত ডেটার গঠন বেঁধে দেওয়া।",
+		"tip": "JSON syntax error দূর করে; কিন্তু ভুল মান আটকায় না।",
+		"domain": 4
+	},
+	{
+		"term": "prompt-based JSON",
+		"bn": "টেক্সট উত্তরের ভেতরে JSON লিখতে বলা, কোনো schema-বাধা ছাড়া।",
+		"tip": "Production-এ মাঝেমধ্যে unparseable আউটপুট দেয়; নির্ভরতার দিক থেকে নিচু স্তর।",
+		"domain": 4
+	},
+	{
+		"term": "semantic error",
+		"bn": "গঠন ঠিক কিন্তু মান ভুল — যোগফলের গরমিল, ভুল field-এ মান, অনুপস্থিত তথ্যের বদলে বানানো মান।",
+		"tip": "Schema কেবল গঠনের জামিন; correctness আলাদা ভ্যালিডেশন দাবি করে।",
+		"domain": 4
+	},
+	{
+		"term": "nullable/optional field",
+		"bn": "উৎস ডকুমেন্টে তথ্য না থাকলে field-টি null ফেরাতে দেওয়ার সুযোগ।",
+		"tip": "Fabrication ঠেকানোর প্রধান উপায় — required field মডেলকে মান বানাতে চাপ দেয়।",
+		"domain": 4
+	},
+	{
+		"term": "unclear enum value",
+		"bn": "উৎস সত্যিই অস্পষ্ট হলে শ্রেণিবিন্যাস না করে unclear ফেরানোর অনুমতি।",
+		"tip": "জোর করে শ্রেণিবিন্যাস ঠেকায়; other + detail string নতুন ক্যাটাগরি ধরে।",
+		"domain": 4
+	},
+	{
+		"term": "retry-with-error-feedback",
+		"bn": "ব্যর্থ extraction আবার করতে মডেলকে তিনটি জিনিস দেওয়া — মূল ডকুমেন্ট, ব্যর্থ extraction, নির্দিষ্ট ভ্যালিডেশন error।",
+		"tip": "নির্দিষ্ট error ছাড়া রিট্রাই একই ভুল ফেরায়।",
+		"domain": 4
+	},
+	{
+		"term": "retry effectiveness boundary",
+		"bn": "রিট্রাই কোন ভুল সারায় আর কোনটি সারায় না, সেই সীমারেখা।",
+		"tip": "Format, গঠন, ভুল field-এ মান, যোগফলের ভুল সারায়; উৎসে না-থাকা তথ্য আনে না।",
+		"domain": 4
+	},
+	{
+		"term": "calculated_total vs stated_total",
+		"bn": "Line item থেকে মডেলের হিসাব করা মোট আর ডকুমেন্টে লেখা মোট — দুটোই extract করে মিলিয়ে দেখা।",
+		"tip": "অমিল থাকলে বাইরের লজিক ছাড়াই total_discrepancy ধরা পড়ে।",
+		"domain": 4
+	},
+	{
+		"term": "conflict_detected",
+		"bn": "উৎস ডকুমেন্টে পরস্পরবিরোধী তথ্য থাকলে boolean field-এ চিহ্নিত করা।",
+		"tip": "এক জায়গায় payment due: 30 days, আরেক জায়গায় net 60 — দুটোই extract করে flag তুলুন।",
+		"domain": 4
+	},
+	{
+		"term": "detected_pattern",
+		"bn": "Structured finding-এ কোন code construct ট্রিগার করল, সেই pattern লিখে রাখা।",
+		"tip": "কোন pattern-এর finding নিয়মিত খারিজ হয়, তা বিশ্লেষণ করে prompt ঠিক করুন।",
+		"domain": 4
+	},
+	{
+		"term": "Pydantic",
+		"bn": "Python-এ structure আর cross-field semantic নিয়ম এক ValidationError-এ ধরে machine-readable error দেয়।",
+		"tip": "Tool_use schema মিটলেও cross-field নিয়ম Pydantic validator-এ লেখেন।",
+		"domain": 4
+	},
+	{
+		"term": "Message Batches API",
+		"bn": "একগুচ্ছ request একসঙ্গে জমা দেওয়ার API — ৫০% কম খরচ, কিন্তু ২৪ ঘণ্টা পর্যন্ত প্রসেসিং window।",
+		"tip": "Latency-tolerant কাজের জন্য; blocking কাজের জন্য নয়।",
+		"domain": 4
+	},
+	{
+		"term": "50% cost savings",
+		"bn": "Synchronous API কলের তুলনায় Message Batches API-তে খরচ অর্ধেক।",
+		"tip": "এই সাশ্রয়ই সব কাজ batch-এ নেওয়ার ডিস্ট্র্যাক্টরটি লোভনীয় করে তোলে।",
+		"domain": 4
+	},
+	{
+		"term": "24-hour processing window",
+		"bn": "Batch জমা দেওয়ার পর সর্বোচ্চ ২৪ ঘণ্টার মধ্যে ফল আসে।",
+		"tip": "সর্বোচ্চ window, delivery guarantee নয়; SLA হিসাব এই worst case ধরে করুন।",
+		"domain": 4
+	},
+	{
+		"term": "no latency SLA",
+		"bn": "Batch API কোনো নির্দিষ্ট সময়ের নিশ্চয়তা দেয় না।",
+		"tip": "ফল সাধারণত দ্রুত আসে, কিন্তু blocking workflow সেই best-case ধরে ডিজাইন করা যায় না।",
+		"domain": 4
+	},
+	{
+		"term": "custom_id",
+		"bn": "Batch-এর প্রতিটি request-এর অনন্য identifier, response-এর সঙ্গে মেলানোর কাজে লাগে।",
+		"tip": "এই id দিয়েই কোন ডকুমেন্ট ব্যর্থ হয়েছে ধরা পড়ে; ছাড়া failure handling অসম্ভব।",
+		"domain": 4
+	},
+	{
+		"term": "blocking vs latency-tolerant",
+		"bn": "Blocking workflow-এ কেউ ফলের জন্য অপেক্ষা করে (pre-merge check); latency-tolerant-এ ফল পরে খাওয়া হয় (overnight report)।",
+		"tip": "Pre-merge check synchronous; overnight report batch-eligible।",
+		"domain": 4
+	},
+	{
+		"term": "expired batch",
+		"bn": "২৪ ঘণ্টার মধ্যে শেষ না হওয়া batch, যা expired হয়ে ফেরে।",
+		"tip": "Errored-এর মতোই ব্যর্থতা ধরুন আর আবার জমা দিন।",
+		"domain": 4
+	},
+	{
+		"term": "sample set refinement",
+		"bn": "পুরো batch জমা দেওয়ার আগে ৫–১০টি প্রতিনিধিত্বমূলক ডকুমেন্টে প্রম্পট ঘষে নেওয়া।",
+		"tip": "First-pass success বাড়ে, resubmission খরচ কমে।",
+		"domain": 4
+	},
+	{
+		"term": "self-review limitation",
+		"bn": "একই সেশনে নিজের আউটপুট review করলে মডেল আগের reasoning ধরে রাখে, তাই নিজের সিদ্ধান্ত প্রশ্ন করা কমে।",
+		"tip": "Independent instance দিয়ে এর চারপাশ ঘিরুন।",
+		"domain": 4
+	},
+	{
+		"term": "per-file local analysis",
+		"bn": "প্রতিটি ফাইল আলাদা focused পাসে review করা, যাতে সবখানে সমান গভীরতা আসে।",
+		"tip": "Pass 1 — প্রতিটি invocation কেবল একটি ফাইল দেখে।",
+		"domain": 4
+	},
+	{
+		"term": "confidence-based routing",
+		"bn": "প্রতিটি finding-এর confidence দেখে সিদ্ধান্ত — বেশি হলে সরাসরি, কম হলে মানব review-তে।",
+		"tip": "Routing-এর threshold নির্ভরযোগ্য হতে labelled set-এ calibrate করুন।",
+		"domain": 4
+	},
+	{
+		"term": "calibrated confidence threshold",
+		"bn": "লেবেলযুক্ত validation set-এ মিলিয়ে ঠিক করা threshold, যেখানে confidence আসল নির্ভুলতার সঙ্গে মেলে।",
+		"tip": "কাঁচা confidence automated সিদ্ধান্তে অ্যান্টি-প্যাটার্ন; calibrated threshold বৈধ।",
+		"domain": 4
+	},
+	{
+		"term": "progressive summarisation trap",
+		"bn": "দীর্ঘ কথোপকথনে পুরনো turn সারসংক্ষেপ করলে সংখ্যা, তারিখ, order number নষ্ট হয়।",
+		"tip": "Customer-facing ও data-processing সিস্টেমে ঠিক এই তথ্যই মুছে যায়।",
+		"domain": 5
+	},
+	{
+		"term": "persistent case facts block",
+		"bn": "লেনদেন-তথ্য বের করে আলাদা structured block-এ রাখা, যা প্রতিটি prompt-এ থাকে ও কখনো summarise হয় না।",
+		"tip": "Context management-এর সবচেয়ে জরুরি প্যাটার্ন।",
+		"domain": 5
+	},
+	{
+		"term": "lost in the middle",
+		"bn": "দীর্ঘ ইনপুটের শুরু ও শেষ মডেল ভালো পড়ে; মাঝখানে চাপা তথ্য বাদ পড়তে পারে।",
+		"tip": "প্রতিকার গঠনগত — মূল finding ইনপুটের শুরুতে রাখুন, section header দিন।",
+		"domain": 5
+	},
+	{
+		"term": "tool result trimming",
+		"bn": "Verbose tool output ছেঁকে কেবল দরকারি field রাখা।",
+		"tip": "৪০+ field-এর order lookup থেকে ৫টি দরকার; history-তে ঢোকার আগেই ছাঁটাই।",
+		"domain": 5
+	},
+	{
+		"term": "stateless API",
+		"bn": "Claude API server-এ session state রাখে না; প্রতিটি request-এ পূর্ণ history পাঠাতে হয়।",
+		"tip": "Selective truncation coherence ভাঙে; case facts block আর summarisation ব্যবহার করুন।",
+		"domain": 5
+	},
+	{
+		"term": "prompt caching",
+		"bn": "স্থির prefix cache_control দিয়ে চিহ্নিত করে API-তে সংরক্ষণ করা, যাতে পরের request-এ কম খরচে পুনর্ব্যবহার হয়।",
+		"tip": "Static block আগে, breakpoint তার শেষে; volatile content পরে।",
+		"domain": 5
+	},
+	{
+		"term": "explicit human request",
+		"bn": "গ্রাহক স্পষ্টভাবে মানুষ বা এজেন্টের কাছে যেতে চাওয়া।",
+		"tip": "সঙ্গে সঙ্গে escalate — আগে সমাধানের চেষ্টা নয়; ব্যতিক্রমহীন নিয়ম।",
+		"domain": 5
+	},
+	{
+		"term": "policy exception or gap",
+		"bn": "অনুরোধ লিখিত নীতির বাইরে, বা নীতি ওই পরিস্থিতি নিয়ে নীরব।",
+		"tip": "Gap আর violation আলাদা — gap-এ মানুষের বিচার দরকার।",
+		"domain": 5
+	},
+	{
+		"term": "inability to make meaningful progress",
+		"bn": "যত্নসহ চেষ্টার পরও agent এগোতে পারছে না — টুল ব্যর্থ, অ্যাক্সেস নেই, বা engineering হস্তক্ষেপ দরকার।",
+		"tip": "Catch-all, তবে কেবল সত্যিকারের চেষ্টার পরে।",
+		"domain": 5
+	},
+	{
+		"term": "sentiment-based escalation",
+		"bn": "গ্রাহকের ক্ষোভ বা negative sentiment দেখে escalate করা।",
+		"tip": "অনির্ভরযোগ্য — ক্ষোভ কেসের জটিলতার সঙ্গে সম্পর্কহীন।",
+		"domain": 5
+	},
+	{
+		"term": "self-reported confidence escalation",
+		"bn": "মডেলের জানানো ১–১০ confidence threshold-এর নিচে নামলে escalate করা।",
+		"tip": "অনির্ভরযোগ্য — কঠিন কেসে আত্মবিশ্বাসী, সহজ কেসে দ্বিধায়।",
+		"domain": 5
+	},
+	{
+		"term": "ambiguous customer matching",
+		"bn": "একটি search query-তে একাধিক customer record মিলে যাওয়া, যেমন তিনটি John Smith।",
+		"tip": "Heuristic-এ একটি বাছবেন না; email, phone বা order number চেয়ে স্পষ্ট করুন।",
+		"domain": 5
+	},
+	{
+		"term": "explicit escalation criteria",
+		"bn": "System prompt-এ কখন escalate আর কখন নিজে সমাধান, তা few-shot উদাহরণসহ লেখা।",
+		"tip": "Classifier বা sentiment analysis-এর আগে proportionate প্রথম পদক্ষেপ।",
+		"domain": 5
+	},
+	{
+		"term": "structured error context",
+		"bn": "Subagent ব্যর্থ হলে coordinator-কে চারটি তথ্য ফেরানো — failure type, কী করতে চেয়েছিল, আংশিক ফল, বিকল্প পথ।",
+		"tip": "Coordinator retry, বিকল্প, partial result নিয়ে এগোনো বা escalate — সব সিদ্ধান্ত নিতে পারে।",
+		"domain": 5
+	},
+	{
+		"term": "failure type",
+		"bn": "ব্যর্থতার শ্রেণি — transient, validation, business, বা permission।",
+		"tip": "শ্রেণি ভেদে প্রতিকারের পথ আলাদা; permission ব্যর্থতা authorization ছাড়া retry-যোগ্য নয়।",
+		"domain": 5
+	},
+	{
+		"term": "silent suppression",
+		"bn": "Timeout ঘটেও result খালি রেখে status successful ফেরানো — সবচেয়ে খারাপ anti-pattern।",
+		"tip": "Coordinator retry করে না, বিকল্পও খোঁজে না, পুরো ক্ষেত্র চুপচাপ বাদ পড়ে।",
+		"domain": 5
+	},
+	{
+		"term": "workflow termination",
+		"bn": "একটি subagent ব্যর্থ হলেই পুরো pipeline বন্ধ করে দেওয়া।",
+		"tip": "সফল subagent-দের কাজ নষ্ট হয়; proportionate নয়, সুস্থ হওয়ার পথও থাকে না।",
+		"domain": 5
+	},
+	{
+		"term": "coverage annotation",
+		"bn": "Synthesis আউটপুটে কোন অংশ ভালোভাবে সমর্থিত আর কোথায় শূন্যতা, তা স্পষ্ট লেখা।",
+		"tip": "চুপচাপ বাদ দেওয়ার বদলে এই অংশে journal access ছিল না লেখা ভালো।",
+		"domain": 5
+	},
+	{
+		"term": "local recovery",
+		"bn": "Transient ব্যর্থতা subagent নিজেই সামলানো — retry, fallback source, degraded response — তারপর coordinator-কে পাঠানো।",
+		"tip": "Coordinator-এর জটিলতা কমে; কেবল স্থায়ী ব্যর্থতাই উপরে ওঠে।",
+		"domain": 5
+	},
+	{
+		"term": "context degradation",
+		"bn": "দীর্ঘ exploration-এ verbose output জমতে থাকলে মডেল নির্দিষ্ট class, method ও dependency chain-এর বদলে typical pattern বলে।",
+		"tip": "Token limit নয় — সাম্প্রতিক verbose output আগের নির্দিষ্ট তথ্য চাপা দেয়।",
+		"domain": 5
+	},
+	{
+		"term": "scratchpad file",
+		"bn": "মূল finding লিখে রাখার ফাইল, যা পরের প্রশ্নে conversation context-এর বদলে পড়া হয়।",
+		"tip": "Context degradation-এর প্রধান প্রতিকার; শুরু থেকেই কৌশল হিসেবে ব্যবহার করুন।",
+		"domain": 5
+	},
+	{
+		"term": "subagent delegation",
+		"bn": "নির্দিষ্ট investigation কাজ subagent-কে দেওয়া, যার নিজস্ব আলাদা context থাকে।",
+		"tip": "মূল উপকার parallelisation নয়, context isolation।",
+		"domain": 5
+	},
+	{
+		"term": "context isolation",
+		"bn": "Subagent verbose exploration নিজের context-এ চালায়, coordinator-এর context দূষিত করে না।",
+		"tip": "Coordinator কেবল structured summary পায়।",
+		"domain": 5
+	},
+	{
+		"term": "summary injection",
+		"bn": "আগের ধাপের মূল finding সারসংক্ষেপ করে পরের ধাপের subagent-এর প্রাথমিক context-এ ঢুকিয়ে দেওয়া।",
+		"tip": "Cold start সমস্যা ঠেকায় — না দিলে পরের subagent আগের কাজ দুবার করে।",
+		"domain": 5
+	},
+	{
+		"term": "/compact",
+		"bn": "Claude Code-এর কমান্ড, যা দীর্ঘ সেশনে conversation সংক্ষেপ করে মূল তথ্য রেখে জায়গা খালি করে।",
+		"tip": "Context limit-এ পৌঁছানোর অপেক্ষা না করে আগেই ব্যবহার করুন।",
+		"domain": 5
+	},
+	{
+		"term": "state manifest",
+		"bn": "প্রতিটি agent-এর বর্তমান অবস্থা লিখে রাখা structured ফাইল — কী ঘেঁটেছে, মূল finding, চলতি phase, পরের ধাপ।",
+		"tip": "Crash বা context exhaustion-এর পর এখান থেকেই কাজ চালু হয়।",
+		"domain": 5
+	},
+	{
+		"term": "aggregate metrics trap",
+		"bn": "সামগ্রিক ৯৭% accuracy ডকুমেন্ট-ধরনভেদে ৪০% ব্যর্থতা লুকিয়ে রাখতে পারে।",
+		"tip": "Volume-এ standard invoice প্রাধান্য পেলে দুর্বল segment ঢাকা পড়ে।",
+		"domain": 5
+	},
+	{
+		"term": "document type and field segment validation",
+		"bn": "Automation-এর আগে accuracy ডকুমেন্ট-ধরন ও field-ভিত্তিক আলাদা করে যাচাই করা।",
+		"tip": "কেবল aggregate মেট্রিক দেখে automation সিদ্ধান্ত নেবেন না।",
+		"domain": 5
+	},
+	{
+		"term": "stratified random sampling",
+		"bn": "প্রতিটি stratum থেকে প্রতিনিধিত্বমূলক sample নিয়ে মানুষ দিয়ে যাচাই করানো।",
+		"tip": "উচ্চ-confidence extraction-ও sample করুন; কেবল নিম্ন-confidence দেখলে নতুন systematic error চোখে পড়ে না।",
+		"domain": 5
+	},
+	{
+		"term": "field-level confidence",
+		"bn": "প্রতিটি field-এর জন্য মডেলের জানানো confidence score।",
+		"tip": "কাঁচা score absolute নয় — ০.৯৫ date field-এ ৮৮%, amount field-এ ৯৯% হতে পারে।",
+		"domain": 5
+	},
+	{
+		"term": "calibration curve",
+		"bn": "Labelled validation set দিয়ে জানানো confidence আর আসল accuracy মিলিয়ে বানানো সম্পর্ক।",
+		"tip": "এই curve থেকেই calibrated threshold বেরোয়।",
+		"domain": 5
+	},
+	{
+		"term": "calibrated threshold",
+		"bn": "Labelled set-এ যাচাই করা threshold, যা ঠিক করে কোন field স্বয়ংক্রিয় যাবে আর কোনটি মানব review-তে।",
+		"tip": "Ambiguous zone-এর field অগ্রাধিকারভিত্তিক মানব review-তে যায়।",
+		"domain": 5
+	},
+	{
+		"term": "reviewer capacity prioritisation",
+		"bn": "সীমিত মানব review-র ক্ষমতা সবচেয়ে অনিশ্চিত item-এ আগে খরচ করা।",
+		"tip": "Queue dynamic — পরের item সবচেয়ে বেশি অনিশ্চিতটি।",
+		"domain": 5
+	},
+	{
+		"term": "information provenance",
+		"bn": "প্রতিটি দাবি কোথা থেকে এসেছে আর তাতে কতটা আস্থা রাখা উচিত, তা জানা।",
+		"tip": "বিশ্বাসযোগ্য research আউটপুট আর বিশ্বাসযোগ্য শোনা কল্পকাহিনির পার্থক্য।",
+		"domain": 5
+	},
+	{
+		"term": "structured claim-source mapping",
+		"bn": "প্রতিটি finding-এর সঙ্গে claim, source URL, document name, excerpt ও publication date রাখা।",
+		"tip": "চূড়ান্ত আউটপুট নির্দিষ্ট সোর্স পর্যন্ত টেনে নেওয়ার গঠনগত জামিন।",
+		"domain": 5
+	},
+	{
+		"term": "attribution loss during summarisation",
+		"bn": "Synthesis সংক্ষেপ করলে claim-source mapping মুছে যায়; অঙ্ক-সোর্স-তারিখহীন সাধারণ কথা থাকে।",
+		"tip": "Synthesis prompt-এ mapping ধরে রাখার নির্দেশ না দিলে attribution হারায়।",
+		"domain": 5
+	},
+	{
+		"term": "conflict handling",
+		"bn": "দুই বিশ্বাসযোগ্য সোর্স ভিন্ন মান দিলে একটি বাছার বদলে দুটোই attribution-সহ annotate করা।",
+		"tip": "এক মান বাছলে তথ্য ধ্বংস হয় ও মিথ্যা নিশ্চয়তা তৈরি হয়।",
+		"domain": 5
+	},
+	{
+		"term": "temporal awareness",
+		"bn": "ভিন্ন publication বা data collection তারিখ থেকেই ভিন্ন সংখ্যার ব্যাখ্যা মেলে — বিরোধ নয়, প্রবণতা।",
+		"tip": "তারিখ structured output-এ রাখলে বৈধ trend-কে ভুল flag করা এড়ানো যায়।",
+		"domain": 5
+	},
+	{
+		"term": "content-appropriate rendering",
+		"bn": "আর্থিক ডেটা টেবিলে, সংবাদ গদ্যে, প্রযুক্তিগত finding structured list-এ দেখানো।",
+		"tip": "সব কনটেন্ট এক ফরম্যাটে চাপ দিলে পড়ার সহজতা নষ্ট হয়।",
+		"domain": 5
+	},
+	{
+		"term": "disabling problematic categories",
+		"bn": "False positive হার বেশি এমন ক্যাটাগরি সাময়িকভাবে বন্ধ রেখে prompt ঠিক করা।",
+		"tip": "পুরো সিস্টেমের আস্থা ফেরাতে প্রথম ধাপ।",
+		"domain": 4
+	},
+	{
+		"term": "semantic validation errors",
+		"bn": "JSON গঠন ঠিক কিন্তু মান ভুল — যোগফলের গরমিল, ভুল তারিখের ক্রম, ভুল field-এ মান।",
+		"tip": "Schema এগুলো ধরে না; আলাদা ভ্যালিডেশন লজিক ও রিট্রাই লুপ লাগে।",
+		"domain": 4
+	},
+	{
+		"term": "cross-file integration pass",
+		"bn": "Per-file finding সব নিয়ে আলাদা পাসে module-জুড়ে data flow, API contract ও পরস্পরবিরোধী finding যাচাই।",
+		"tip": "Pass 2 — কোনো single-file review যা ধরতে পারত না, সেটিই এখানে ধরা পড়ে।",
+		"domain": 4
+	},
+	{
+		"term": "contradicts intact analysis",
+		"bn": "বিরোধপূর্ণ মান পেলে analysis agent বিরোধ অমীমাংসিত রেখেই explicit annotation-সহ কাজ শেষ করে।",
+		"tip": "বিরোধ মেটানোর সিদ্ধান্ত coordinator বা পড়ুয়ার, analysis agent-এর নয়।",
+		"domain": 5
 	}
 ]
