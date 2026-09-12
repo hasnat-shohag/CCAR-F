@@ -32,5 +32,6 @@ Consult these guides before working on related tasks:
 - The same applies to `.mdx` content: Astro adds no `base` to links written in Markdown or MDX, so `/learn/` 404s in production. Write `<a href={siteUrl('learn/')}>…</a>` instead. Starlight hero-action links in frontmatter cannot call `siteUrl()` and must spell out the base (`/CCAR-F/learn/`). `pnpm check:links` fails on any root-relative link missing the base.
 - Diagrams are Mermaid fenced blocks; they render client-side, so no build-time browser is needed.
 - Progress state stays in localStorage under `ccarf:v1` (`src/lib/progress.ts`); no backend.
-- Before committing: `pnpm check`, `pnpm build`, `pnpm check:links`.
+- Accent text on a neutral surface must clear WCAG AA (4.5:1); use `--sl-color-accent-high` (dark shade in light theme, light shade in dark) rather than `--sl-color-text-accent`, which resolves to the raw domain accent in light theme. `pnpm check:contrast` measures computed colours in headless Chrome over `dist/`, so run it after `pnpm build`; it needs a Chrome binary (`CHROME_PATH` overrides discovery, `--allow-missing-browser` skips). `KNOWN_GAPS` in `tools/check-contrast.mjs` records accepted debt — shrink it, never grow it.
+- Before committing: `pnpm check`, `pnpm build`, `pnpm check:links`, `pnpm check:contrast`.
 - A domain whose lessons are not translated yet keeps its index page (with "অনুবাদ বাকি" tags) so sidebar links never 404.

@@ -9,6 +9,8 @@ pnpm install
 pnpm dev        # http://localhost:4321/CCAR-F/
 pnpm check      # টাইপ + কনটেন্ট স্কিমা
 pnpm build      # প্রোডাকশন বিল্ড
+pnpm check:links    # ভেতরের লিংক যাচাই
+pnpm check:contrast # রঙের কনট্রাস্ট যাচাই (হেডলেস Chrome দরকার)
 ```
 
 Node 22+, pnpm 11+ দরকার। `main` থেকে নতুন ব্রাঞ্চ কেটে কাজ করুন।
@@ -34,7 +36,9 @@ Node 22+, pnpm 11+ দরকার। `main` থেকে নতুন ব্র
 
 - [ ] `pnpm check` পাস করে
 - [ ] `pnpm build` পাস করে
+- [ ] `pnpm check:links` আর `pnpm check:contrast` পাস করে
 - [ ] ভেতরের লিংক ভাঙেনি (prev/next, সাইডবার, গ্লোসারি রেফারেন্স)
+- [ ] রঙ/থিম বদলালে টেক্সটের কনট্রাস্ট ৪.৫:১-এর উপরে আছে (নিছক গ্রাফিক চিহ্নের জন্য ৩:১)
 - [ ] নতুন শব্দ থাকলে `glossary-terms.json`-এ যোগ করা হয়েছে
 - [ ] কমিট মেসেজ পরিষ্কার (`feat: 1.2 অনুবাদ যোগ`, `fix: 1.1 কীওয়ার্ড টেবিল সংশোধন`)
 

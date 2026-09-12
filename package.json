@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "check:links": "node tools/check-links.mjs",
+    "check:contrast": "node tools/check-contrast.mjs",
     "astro": "astro",
     "fetch-source": "node tools/fetch-source.mjs"
   },

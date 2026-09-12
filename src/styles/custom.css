@@ -166,8 +166,24 @@ a[data-lesson-id].is-complete::after {
 	font-weight: 700;
 }
 
+/*
+ * The current sidebar entry is a filled pill: Starlight puts the inverse foreground on
+ * the raw accent fill. Two problems came out of that. Overriding just the text colour
+ * left the accent on the accent (1:1 — the label was invisible), and at the raw accent
+ * the inverse text still only reached 3.19:1 on the amber domain. Fill it with the same
+ * high-contrast shade the term columns use, which is the dark one in light and the light
+ * one in dark, and pair it with the inverse foreground Starlight already ships.
+ */
+.sidebar-content a[aria-current='page'],
 a[data-lesson-id][aria-current='page'] {
-	color: var(--sl-color-text-accent);
+	background-color: var(--sl-color-accent-high);
+	color: var(--sl-color-text-invert);
+}
+
+/* The completion tick sits inside that pill; take the pill's foreground rather than the
+ * raw accent, which reads at ~2.2:1 against the high-contrast fill. */
+a[data-lesson-id][aria-current='page'].is-complete::after {
+	color: inherit;
 }
 
 /* ---------- content blocks ---------- */
@@ -195,11 +211,17 @@ a[data-lesson-id][aria-current='page'] {
 	color: var(--sl-color-gray-2);
 }
 
+/*
+ * Term columns use the high-contrast accent variant, not `--sl-color-text-accent`:
+ * Starlight resolves that one to the raw accent in the light theme, where the amber
+ * and teal domain accents only reach ~3.2:1 on white. `--sl-color-accent-high` is the
+ * dark shade in light and the light shade in dark, so both themes clear 4.5:1.
+ */
 .keyword-table .keyword-term {
 	white-space: nowrap;
 	font-family: var(--sl-font-mono);
 	font-size: var(--sl-text-xs);
-	color: var(--sl-color-text-accent);
+	color: var(--sl-color-accent-high);
 }
 
 .keyword-table caption {
@@ -354,6 +376,11 @@ a[data-lesson-id][aria-current='page'] {
 .progress-hint {
 	color: var(--sl-color-gray-3);
 	font-size: var(--sl-text-sm);
+}
+
+/* Dimmed hint text still carries bright enough inline code for its own background. */
+.progress-hint code {
+	color: var(--sl-color-text);
 }
 
 /* ---------- mermaid ---------- */
@@ -571,7 +598,7 @@ pre.mermaid-source {
 }
 
 .ref-table tbody th[scope='row'].keyword-term {
-	color: var(--sl-color-text-accent);
+	color: var(--sl-color-accent-high);
 	font-family: var(--sl-font-mono);
 	font-size: var(--sl-text-xs);
 }
@@ -581,7 +608,7 @@ pre.mermaid-source {
 	border: 1px solid var(--sl-color-hairline);
 	border-radius: 0.25rem;
 	background: var(--sl-color-bg-sidebar);
-	color: var(--sl-color-text-accent);
+	color: var(--sl-color-accent-high);
 	font-size: 0.9em;
 	overflow-wrap: anywhere;
 }

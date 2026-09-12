@@ -46,6 +46,10 @@ jobs:
       - name: Check internal links
         run: pnpm check:links
 
+      # Reads computed colours from dist/ in headless Chrome, which the runner image ships.
+      - name: Check contrast
+        run: pnpm check:contrast
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
