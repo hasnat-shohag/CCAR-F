@@ -10,7 +10,7 @@ const { domain, showLabel = true } = Astro.props;
 const meta = DOMAINS.find((item) => item.id === domain)!;
 ---
 
-<div class="progress-row" data-domain-progress={domain} data-domain-lessons={meta.lessons} style={`--progress-accent: ${meta.accent}`}>
+<div class="progress-row" data-domain-progress={domain} data-domain-lessons={meta.lessons}>
 	{
 		showLabel && (
 			<div class="progress-head">
@@ -23,7 +23,15 @@ const meta = DOMAINS.find((item) => item.id === domain)!;
 			</div>
 		)
 	}
-	<div class="progress-track">
+	<div
+		class="progress-track"
+		role="progressbar"
+		aria-label={`D${domain} · ${meta.labelBn} অগ্রগতি`}
+		aria-valuemin="0"
+		aria-valuemax={meta.lessons}
+		aria-valuenow="0"
+		data-domain-track
+	>
 		<div class="progress-fill" data-domain-fill></div>
 	</div>
 </div>
@@ -42,8 +50,10 @@ const meta = DOMAINS.find((item) => item.id === domain)!;
 			const percent = Math.round((completed / meta.lessons) * 100);
 			const fill = row.querySelector<HTMLElement>('[data-domain-fill]');
 			const count = row.querySelector<HTMLElement>('[data-domain-count]');
-			if (fill) fill.style.width = `${percent}%`;
+			const track = row.querySelector<HTMLElement>('[data-domain-track]');
+			if (fill) fill.style.transform = `scaleX(${(percent / 100).toFixed(4)})`;
 			if (count) count.textContent = `${completed}/${meta.lessons}`;
+			if (track) track.setAttribute('aria-valuenow', String(completed));
 		});
 	}
 

@@ -13,24 +13,26 @@ interface Props {
 const { keywords, caption = 'দ্রুত রিভিশনের জন্য মূল শব্দগুলো' } = Astro.props;
 ---
 
-<table class="keyword-table">
-	<caption>{caption}</caption>
-	<thead>
-		<tr>
-			<th scope="col">শব্দ (English)</th>
-			<th scope="col">বাংলা অর্থ</th>
-			<th scope="col">পরীক্ষার টিপ</th>
-		</tr>
-	</thead>
-	<tbody>
-		{
-			keywords.map((keyword) => (
-				<tr>
-					<td class="keyword-term">{keyword.term}</td>
-					<td>{keyword.bn}</td>
-					<td>{keyword.tip ?? '—'}</td>
-				</tr>
-			))
-		}
-	</tbody>
-</table>
+<div class="table-scroll">
+	<table class="keyword-table">
+		<caption>{caption}</caption>
+		<thead>
+			<tr>
+				<th scope="col">শব্দ (English)</th>
+				<th scope="col">বাংলা অর্থ</th>
+				<th scope="col">পরীক্ষার টিপ</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				keywords.map((keyword) => (
+					<tr>
+						<td class="keyword-term">{keyword.term}</td>
+						<td>{keyword.bn}</td>
+						<td>{keyword.tip ?? '—'}</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>

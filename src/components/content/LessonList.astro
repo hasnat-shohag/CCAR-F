@@ -19,9 +19,7 @@ const isAvailable = (slug: string) => lessonFiles.has(`/src/content/docs/learn/$
 	{
 		lessons.map((lesson) => (
 			<li data-lesson-check={lesson.id}>
-				<span class="lesson-check-mark" aria-hidden="true">
-					○
-				</span>
+				<span class="lesson-state" aria-hidden="true"></span>
 				{isAvailable(lesson.slug) ? (
 					<a href={siteUrl(`learn/${domainSlug}/${lesson.slug}/`)}>
 						{lesson.id} — {lesson.titleBn}
@@ -34,6 +32,7 @@ const isAvailable = (slug: string) => lessonFiles.has(`/src/content/docs/learn/$
 						<span class="lesson-pending-tag">অনুবাদ বাকি</span>
 					</>
 				)}
+				<span class="sr-only" data-lesson-state-label>অসম্পন্ন</span>
 				<span class="lesson-check-en">{lesson.titleEn}</span>
 			</li>
 		))
@@ -50,8 +49,8 @@ const isAvailable = (slug: string) => lessonFiles.has(`/src/content/docs/learn/$
 			if (!id) return;
 			const done = isComplete(state, id);
 			item.dataset.done = String(done);
-			const mark = item.querySelector<HTMLElement>('.lesson-check-mark');
-			if (mark) mark.textContent = done ? '✓' : '○';
+			const stateLabel = item.querySelector<HTMLElement>('[data-lesson-state-label]');
+			if (stateLabel) stateLabel.textContent = done ? 'সম্পন্ন' : 'অসম্পন্ন';
 		});
 	}
 

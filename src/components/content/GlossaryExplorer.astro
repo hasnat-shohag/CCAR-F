@@ -5,53 +5,62 @@ import terms from '../../content/glossary-terms.json';
 const sorted = [...terms].sort((a, b) => a.term.localeCompare(b.term));
 ---
 
-<div class="glossary-filters" data-glossary-filters>
-	<button type="button" data-glossary-domain="all" aria-pressed="true">সব</button>
-	{
-		DOMAINS.map((domain) => (
-			<button type="button" data-glossary-domain={domain.id} aria-pressed="false">
-				D{domain.id} · {domain.labelBn}
-			</button>
-		))
-	}
-</div>
+<div class="glossary-toolbar">
+	<div class="glossary-filters" data-glossary-filters>
+		<button type="button" data-glossary-domain="all" aria-pressed="true">সব</button>
+		{
+			DOMAINS.map((domain) => (
+				<button type="button" data-glossary-domain={domain.id} aria-pressed="false">
+					D{domain.id} · {domain.labelBn}
+				</button>
+			))
+		}
+	</div>
 
-<label class="glossary-search">
-	<span>শব্দ খুঁজুন</span>
-	<input type="search" data-glossary-search placeholder="যেমন: stop_reason, hook, MCP" autocomplete="off" />
-</label>
+	<label class="glossary-search">
+		<span>শব্দ খুঁজুন</span>
+		<input type="search" data-glossary-search placeholder="যেমন: stop_reason, hook, MCP" autocomplete="off" />
+	</label>
+</div>
 
 <p class="progress-hint" data-glossary-count>
 	{sorted.length}টি শব্দ দেখানো হচ্ছে
 </p>
 
-<table class="keyword-table">
-	<thead>
-		<tr>
-			<th scope="col">শব্দ (English)</th>
-			<th scope="col">বাংলা অর্থ</th>
-			<th scope="col">পরীক্ষার টিপ</th>
-			<th scope="col">ডোমেইন</th>
-		</tr>
-	</thead>
-	<tbody>
-		{
-			sorted.map((entry) => (
-				<tr data-glossary-row data-domain={entry.domain} data-search={`${entry.term} ${entry.bn} ${entry.tip}`.toLowerCase()}>
-					<td class="keyword-term">{entry.term}</td>
-					<td>{entry.bn}</td>
-					<td>{entry.tip}</td>
-					<td>D{entry.domain}</td>
-				</tr>
-			))
-		}
-	</tbody>
-</table>
+<div class="table-scroll">
+	<table class="keyword-table">
+		<thead>
+			<tr>
+				<th scope="col">শব্দ (English)</th>
+				<th scope="col">বাংলা অর্থ</th>
+				<th scope="col">পরীক্ষার টিপ</th>
+				<th scope="col">ডোমেইন</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				sorted.map((entry) => (
+					<tr data-glossary-row data-domain={entry.domain} data-search={`${entry.term} ${entry.bn} ${entry.tip}`.toLowerCase()}>
+						<td class="keyword-term">{entry.term}</td>
+						<td>{entry.bn}</td>
+						<td>{entry.tip}</td>
+						<td>D{entry.domain}</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>
+
+<p class="glossary-empty" data-glossary-empty hidden>
+	কোনো শব্দ মেলেনি — বানান দেখে নিন বা অন্য ডোমেইন বাছুন।
+</p>
 
 <script>
 	const filters = document.querySelector<HTMLElement>('[data-glossary-filters]');
 	const search = document.querySelector<HTMLInputElement>('[data-glossary-search]');
 	const count = document.querySelector<HTMLElement>('[data-glossary-count]');
+	const empty = document.querySelector<HTMLElement>('[data-glossary-empty]');
 	const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-glossary-row]'));
 	let activeDomain = 'all';
 
@@ -66,6 +75,7 @@ const sorted = [...terms].sort((a, b) => a.term.localeCompare(b.term));
 			if (show) visible += 1;
 		});
 		if (count) count.textContent = `${visible}টি শব্দ দেখানো হচ্ছে`;
+		if (empty) empty.hidden = visible !== 0;
 	}
 
 	filters?.addEventListener('click', (event) => {

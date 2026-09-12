@@ -6,28 +6,13 @@ updated: 2026-09-12
 sourceUrl: https://claudecertificationguide.com/learn/quick-reference
 ---
 
-import { DOMAINS } from '../../../lib/domains';
 import { siteUrl } from '../../../lib/urls';
 import Attribution from '../../../components/content/Attribution.astro';
+import DomainCards from '../../../components/content/DomainCards.astro';
 
 প্রতিটি ডোমেইনের মূল ধারণা, decision rule, পরীক্ষার ফাঁদ আর কীওয়ার্ড — সব এক পাতায়। পুরো লেসন নয়, শেষ রিভিশনের জন্য বানানো ঘন শিট।
 
-<div class="landing-grid">
-	{
-		DOMAINS.map((domain) => (
-			<div class="landing-card" style={`--landing-accent: ${domain.accent}`}>
-				<h3>
-					<a href={siteUrl(`quick-reference/domain-${domain.id}/`)}>
-						D{domain.id} · {domain.labelBn}
-					</a>
-				</h3>
-				<p>
-					ওয়েট <strong>{domain.weight}%</strong> · {domain.labelEn}
-				</p>
-			</div>
-		))
-	}
-</div>
+<DomainCards showLessons={false} />
 
 ## এই শিটগুলো কীভাবে ব্যবহার করবেন
 

@@ -15,27 +15,32 @@ const hasLesson = (slug: string, lesson: string) =>
 	docFiles.has(`/src/content/docs/learn/${slug}/${lesson}.mdx`);
 ---
 
-<div class="landing-grid">
+<div class="domain-index">
 	{
 		DOMAINS.map((domain) => (
-			<div class="landing-card" style={`--landing-accent: ${domain.accent}`}>
-				<h3>
-					{hasDomainIndex(domain.slug) ? (
-						<a href={siteUrl(`learn/${domain.slug}/`)}>
-							D{domain.id} · {domain.labelBn}
-						</a>
-					) : (
-						<>
-							D{domain.id} · {domain.labelBn}
-						</>
-					)}
-				</h3>
-				<p>
-					পরীক্ষার ওয়েট: <strong>{domain.weight}%</strong> · {domain.lessons}টি লেসন ·{' '}
-					{domain.labelEn}
-				</p>
+			<section
+				class:list={['domain-row', !showLessons && 'domain-row--compact']}
+				aria-labelledby={`domain-${domain.id}-title`}
+			>
+				<div class="domain-row-head">
+					<h3 id={`domain-${domain.id}-title`}>
+						{hasDomainIndex(domain.slug) ? (
+							<a href={siteUrl(`learn/${domain.slug}/`)}>
+								D{domain.id} · {domain.labelBn}
+							</a>
+						) : (
+							<>
+								D{domain.id} · {domain.labelBn}
+							</>
+						)}
+					</h3>
+					<p>
+						পরীক্ষার ওজন: <strong>{domain.weight}%</strong> · {domain.lessons}টি লেসন ·{' '}
+						{domain.labelEn}
+					</p>
+				</div>
 				{showLessons && (
-					<ul>
+					<ol class="domain-lesson-list">
 						{domainLessons(domain.id).map((lesson) => (
 							<li>
 								{hasLesson(domain.slug, lesson.slug) ? (
@@ -43,16 +48,17 @@ const hasLesson = (slug: string, lesson: string) =>
 										{lesson.id} — {lesson.titleBn}
 									</a>
 								) : (
-									<>
+									<span class="domain-lesson-pending">
 										{lesson.id} — {lesson.titleBn}{' '}
 										<span class="lesson-pending-tag">অনুবাদ বাকি</span>
-									</>
+									</span>
 								)}
+								<span class="domain-lesson-en">{lesson.titleEn}</span>
 							</li>
 						))}
-					</ul>
+					</ol>
 				)}
-			</div>
+			</section>
 		))
 	}
 </div>

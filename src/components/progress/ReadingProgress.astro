@@ -7,7 +7,7 @@
 		const update = () => {
 			const scrollable = document.documentElement.scrollHeight - window.innerHeight;
 			const progress = scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0;
-			bar.style.width = `${(progress * 100).toFixed(2)}%`;
+			bar.style.transform = `scaleX(${progress.toFixed(4)})`;
 		};
 
 		update();

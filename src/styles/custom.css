@@ -11,7 +11,10 @@
 	--sl-font:
 		'Inter Variable', 'Noto Sans Bengali', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 	--sl-font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+	--ccarf-control-height: 2.5rem;
+	--ccarf-control-radius: 0.375rem;
 	--ccarf-reading-bar: 3px;
+	--sl-menu-button-size: 2.5rem;
 }
 
 .sl-markdown-content p,
@@ -23,6 +26,47 @@
 .sl-markdown-content h2,
 .sl-markdown-content h3 {
 	line-height: 1.5;
+}
+
+/* ---------- pagination ---------- */
+
+.pagination-links {
+	gap: 0.75rem;
+}
+
+.pagination-links a {
+	padding: 0.75rem;
+	font-size: var(--sl-text-sm);
+	line-height: 1.5;
+}
+
+.pagination-links .link-title {
+	font-size: var(--sl-text-base);
+	line-height: 1.5;
+}
+
+html[data-has-hero]:not([data-has-sidebar]) {
+	--sl-content-width: 48rem;
+}
+
+@media (max-width: 50rem) {
+	.hero .actions {
+		display: grid;
+		gap: 0.75rem;
+		width: 100%;
+	}
+
+	.hero .actions .sl-link-button {
+		justify-content: center;
+	}
+}
+
+@media (max-width: 50rem) {
+	button[data-open-modal] {
+		min-width: var(--ccarf-control-height);
+		padding-inline: 0.25rem;
+		justify-content: center;
+	}
 }
 
 /* ---------- domain accents ---------- */
@@ -135,10 +179,12 @@ html[data-theme='light'] {
 	inset-block-start: 0;
 	inset-inline-start: 0;
 	height: var(--ccarf-reading-bar);
-	width: 0;
+	width: 100%;
 	background: var(--sl-color-accent);
 	z-index: calc(var(--sl-z-index-navbar) + 1);
-	transition: width 120ms linear;
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 120ms linear;
 	pointer-events: none;
 }
 
@@ -154,11 +200,12 @@ html[data-theme='light'] {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
+	justify-content: space-between;
 	gap: 0.75rem;
-	margin: 1.5rem 0;
-	padding: 0.9rem 1rem;
+	margin: 1.75rem 0 1.25rem;
+	padding: 0.75rem 1rem;
 	border: 1px solid var(--sl-color-hairline);
-	border-radius: 0.5rem;
+	border-radius: var(--ccarf-control-radius);
 	background: var(--sl-color-bg-sidebar);
 }
 
@@ -166,27 +213,40 @@ html[data-theme='light'] {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
+	min-height: var(--ccarf-control-height);
 	padding: 0.5rem 1rem;
-	border: 1px solid var(--sl-color-accent);
-	border-radius: 0.375rem;
+	border: 1px solid var(--sl-color-accent-high);
+	border-radius: var(--ccarf-control-radius);
 	background: transparent;
-	color: var(--sl-color-accent);
+	color: var(--sl-color-accent-high);
 	font-weight: 600;
 	font-size: var(--sl-text-sm);
 	cursor: pointer;
 	transition:
 		background-color 120ms ease,
+		border-color 120ms ease,
 		color 120ms ease;
 }
 
-.mark-complete button:hover {
-	background: var(--sl-color-accent);
-	color: var(--sl-color-white);
+.mark-complete button:hover,
+.mark-complete[data-complete='true'] button {
+	background: var(--sl-color-accent-high);
+	border-color: var(--sl-color-accent-high);
+	color: var(--sl-color-black);
 }
 
-.mark-complete[data-complete='true'] button {
-	background: var(--sl-color-accent);
-	color: var(--sl-color-white);
+.mark-state {
+	width: 1rem;
+	height: 1rem;
+	border: 1.5px solid currentColor;
+	border-radius: 50%;
+	flex-shrink: 0;
+	transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.mark-complete[data-complete='true'] .mark-state {
+	background: currentColor;
+	box-shadow: inset 0 0 0 0.25rem var(--sl-color-accent-high);
 }
 
 .mark-complete .mark-complete-status {
@@ -200,14 +260,18 @@ a[data-lesson-id].is-complete {
 	color: var(--sl-color-gray-3);
 }
 
-/* The tick takes the same high-contrast accent as the term columns: the raw accent reads
+/* The completion mark takes the same high-contrast accent as the term columns: the raw accent reads
  * at 3.19:1 on the light sidebar, and this keeps every accent-coloured glyph on the page
  * on one token. */
 a[data-lesson-id].is-complete::after {
-	content: '✓';
-	float: inline-end;
-	color: var(--sl-color-accent-high);
-	font-weight: 700;
+	content: '';
+	display: inline-block;
+	width: 0.45rem;
+	height: 0.45rem;
+	margin-inline-start: 0.4rem;
+	border-radius: 50%;
+	background: var(--sl-color-accent-high);
+	vertical-align: 0.12em;
 }
 
 /*
@@ -234,14 +298,25 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 
 .keyword-table {
 	width: 100%;
-	margin: 1rem 0;
+	margin: 0;
 	border-collapse: collapse;
 	font-size: var(--sl-text-sm);
 }
 
+.table-scroll {
+	margin-block: 1rem;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scrollbar-width: thin;
+}
+
+.table-scroll .keyword-table {
+	min-width: 36rem;
+}
+
 .keyword-table th,
 .keyword-table td {
-	padding: 0.55rem 0.7rem;
+	padding: 0.65rem 0.75rem;
 	border-bottom: 1px solid var(--sl-color-hairline);
 	text-align: start;
 	vertical-align: top;
@@ -273,16 +348,15 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 	color: var(--sl-color-gray-3);
 	font-size: var(--sl-text-sm);
 	text-align: start;
+	caption-side: top;
 }
 
 .exam-trap,
-.build-exercise,
-.attribution {
+.build-exercise {
 	margin: 1.5rem 0;
-	padding: 0.9rem 1rem;
+	padding: 1rem 1.1rem;
 	border: 1px solid var(--sl-color-hairline);
-	border-inline-start: 3px solid var(--sl-color-accent);
-	border-radius: 0.375rem;
+	border-radius: 0.5rem;
 	background: var(--sl-color-bg-sidebar);
 }
 
@@ -290,12 +364,12 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 .build-exercise > .callout-label {
 	display: block;
 	margin-block-end: 0.5rem;
-	color: var(--sl-color-accent);
-	font-family: var(--sl-font-mono);
+	color: var(--sl-color-accent-high);
+	font-family: var(--sl-font);
 	font-size: var(--sl-text-xs);
 	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.08em;
+	letter-spacing: 0.04em;
 }
 
 .exam-trap p,
@@ -333,6 +407,9 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 }
 
 .attribution {
+	margin-block: 2rem 0;
+	padding-block-start: 1rem;
+	border-block-start: 1px solid var(--sl-color-hairline);
 	font-size: var(--sl-text-sm);
 	color: var(--sl-color-gray-3);
 }
@@ -341,7 +418,7 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 
 .progress-list {
 	display: grid;
-	gap: 0.85rem;
+	gap: 0.9rem;
 	margin: 1.25rem 0;
 }
 
@@ -365,9 +442,9 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 
 .progress-track {
 	position: relative;
-	height: 8px;
+	height: 6px;
 	border-radius: 999px;
-	background: var(--sl-color-hairline);
+	background: var(--sl-color-gray-5);
 	overflow: hidden;
 }
 
@@ -375,10 +452,12 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 	position: absolute;
 	inset-block: 0;
 	inset-inline-start: 0;
-	width: 0;
+	width: 100%;
 	border-radius: inherit;
-	background: var(--progress-accent, var(--sl-color-accent));
-	transition: width 200ms ease;
+	background: var(--sl-color-accent-high);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 200ms ease;
 }
 
 .progress-summary {
@@ -391,8 +470,8 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 
 .progress-summary strong {
 	font-family: var(--sl-font-mono);
-	font-size: var(--sl-text-3xl);
-	color: var(--sl-color-accent);
+	font-size: var(--sl-text-2xl);
+	color: var(--sl-color-accent-high);
 	line-height: 1;
 }
 
@@ -403,18 +482,20 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 }
 
 .progress-actions button {
-	padding: 0.45rem 0.9rem;
+	min-height: var(--ccarf-control-height);
+	padding: 0.5rem 0.9rem;
 	border: 1px solid var(--sl-color-hairline);
-	border-radius: 0.375rem;
-	background: transparent;
-	color: var(--sl-color-gray-2);
+	border-radius: var(--ccarf-control-radius);
+	background: var(--sl-color-bg-sidebar);
+	color: var(--sl-color-text);
 	font-size: var(--sl-text-sm);
 	cursor: pointer;
+	transition: border-color 120ms ease, color 120ms ease;
 }
 
 .progress-actions button:hover {
-	border-color: var(--sl-color-accent);
-	color: var(--sl-color-accent);
+	border-color: var(--sl-color-accent-high);
+	color: var(--sl-color-accent-high);
 }
 
 .progress-hint {
@@ -458,25 +539,33 @@ pre.mermaid-source {
 
 /* ---------- glossary ---------- */
 
+.glossary-toolbar {
+	display: grid;
+	gap: 0.75rem;
+	margin-block: 1.25rem 0;
+}
+
 .glossary-filters {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
-	margin-block: 1rem;
+	margin: 0;
 }
 
 .glossary-filters button {
-	padding: 0.35rem 0.7rem;
+	min-height: 2.25rem;
+	padding: 0.35rem 0.75rem;
 	border: 1px solid var(--sl-color-hairline);
-	border-radius: 999px;
+	border-radius: var(--ccarf-control-radius);
 	background: transparent;
 	color: var(--sl-color-gray-2);
 	font-size: var(--sl-text-xs);
 	cursor: pointer;
+	transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 
 .glossary-filters button[aria-pressed='true'] {
-	border-color: var(--sl-color-accent);
+	border-color: var(--sl-color-accent-high);
 	background: var(--sl-color-accent-low);
 	color: var(--sl-color-accent-high);
 	font-weight: 600;
@@ -485,18 +574,42 @@ pre.mermaid-source {
 .glossary-search {
 	display: grid;
 	gap: 0.3rem;
-	margin-block: 0.5rem 0.75rem;
+	margin: 0;
 	font-size: var(--sl-text-sm);
 	color: var(--sl-color-gray-3);
 }
 
 .glossary-search input {
+	min-height: var(--ccarf-control-height);
 	padding: 0.5rem 0.7rem;
 	border: 1px solid var(--sl-color-hairline);
-	border-radius: 0.375rem;
+	border-radius: var(--ccarf-control-radius);
 	background: var(--sl-color-bg);
 	color: var(--sl-color-text);
 	font-size: var(--sl-text-sm);
+}
+
+.glossary-empty {
+	margin-block: 1rem;
+	padding: 0.75rem 1rem;
+	border: 1px dashed var(--sl-color-hairline);
+	border-radius: var(--ccarf-control-radius);
+	color: var(--sl-color-gray-3);
+}
+
+.mark-complete button:focus-visible,
+.progress-actions button:focus-visible,
+.glossary-filters button:focus-visible,
+.glossary-search input:focus-visible {
+	outline: 2px solid var(--sl-color-accent-high);
+	outline-offset: 2px;
+}
+
+@media (min-width: 50rem) {
+	.glossary-toolbar {
+		grid-template-columns: minmax(0, 1fr) 18rem;
+		align-items: end;
+	}
 }
 
 /* ---------- lesson header ---------- */
@@ -516,8 +629,8 @@ pre.mermaid-source {
 .lesson-meta .lesson-badge {
 	padding: 0.2rem 0.5rem;
 	border-radius: 0.2rem;
-	background: var(--sl-color-accent);
-	color: var(--sl-color-white);
+	background: var(--sl-color-accent-high);
+	color: var(--sl-color-black);
 }
 
 .lesson-meta .lesson-task,
@@ -537,60 +650,107 @@ pre.mermaid-source {
 	font-weight: 500;
 }
 
-/* ---------- landing ---------- */
+/* ---------- domain index ---------- */
 
-.landing-grid {
+.domain-index {
+	margin-block: 1.25rem;
+	border-block-start: 1px solid var(--sl-color-hairline);
+}
+
+.domain-row {
 	display: grid;
-	gap: 1rem;
-	grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-	margin-block: 1.5rem;
+	grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+	gap: 1.5rem;
+	padding-block: 1.25rem;
+	border-block-end: 1px solid var(--sl-color-hairline);
 }
 
-.landing-card {
-	padding: 1rem;
-	border: 1px solid var(--sl-color-hairline);
-	border-inline-start: 3px solid var(--landing-accent, var(--sl-color-accent));
-	border-radius: 0.5rem;
-	background: var(--sl-color-bg-sidebar);
+.domain-row--compact {
+	grid-template-columns: minmax(0, 1fr);
 }
 
-.landing-card h3 {
-	margin-block: 0 0.35rem;
+.domain-row-head {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.domain-row-head h3 {
+	margin: 0;
 	font-size: var(--sl-text-lg);
+	line-height: 1.45;
 }
 
-.landing-card p {
+.domain-row-head p {
 	margin: 0;
 	color: var(--sl-color-gray-3);
 	font-size: var(--sl-text-sm);
 }
 
-.landing-card a {
+.domain-lesson-list {
+	display: grid;
+	gap: 0.55rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.domain-lesson-list > li {
+	display: grid;
+	gap: 0.15rem;
+}
+
+.domain-lesson-list a {
 	font-weight: 600;
+}
+
+.domain-lesson-pending {
+	font-weight: 600;
+}
+
+.domain-lesson-en {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-sm);
+}
+
+@media (max-width: 50rem) {
+	.domain-row {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0.9rem;
+	}
 }
 
 /* ---------- lesson checklist ---------- */
 
 .lesson-checklist {
-	margin: 1rem 0;
-	padding-inline-start: 1.25rem;
+	display: grid;
+	gap: 0.15rem;
+	margin: 1.25rem 0;
+	padding: 0;
+	list-style: none;
 }
 
 .lesson-checklist > li {
-	margin-block-end: 0.5rem;
-	line-height: 1.6;
+	display: grid;
+	grid-template-columns: 1.15rem minmax(0, 1fr);
+	gap: 0.65rem;
+	padding-block: 0.55rem;
+	border-block-end: 1px solid var(--sl-color-hairline);
+	line-height: 1.65;
 }
 
-.lesson-checklist .lesson-check-mark {
-	display: inline-block;
-	width: 1.1rem;
-	margin-inline-end: 0.35rem;
-	color: var(--sl-color-gray-3);
-	font-weight: 700;
+.lesson-state {
+	width: 1.15rem;
+	height: 1.15rem;
+	margin-block-start: 0.3rem;
+	border: 1.5px solid var(--sl-color-gray-3);
+	border-radius: 50%;
 }
 
-.lesson-checklist > li[data-done='true'] .lesson-check-mark {
-	color: var(--sl-color-accent);
+.lesson-checklist > li[data-done='true'] .lesson-state {
+	border-color: var(--sl-color-accent-high);
+	background: var(--sl-color-accent-high);
+	box-shadow: inset 0 0 0 0.25rem var(--sl-color-bg);
 }
 
 .lesson-checklist > li[data-done='true'] > a {
@@ -599,7 +759,7 @@ pre.mermaid-source {
 
 .lesson-checklist .lesson-check-en {
 	display: block;
-	margin-inline-start: 1.45rem;
+	margin-block-start: 0.1rem;
 	color: var(--sl-color-gray-3);
 	font-size: var(--sl-text-sm);
 }
@@ -620,11 +780,6 @@ pre.mermaid-source {
 }
 
 /* ---------- quick reference sheets ---------- */
-
-.ref-table-wrap {
-	margin-block: 1rem;
-	overflow-x: auto;
-}
 
 .ref-table {
 	margin: 0;
@@ -683,7 +838,11 @@ pre.mermaid-source {
 		print-color-adjust: exact;
 	}
 
-	.ref-table-wrap {
+	.table-scroll {
 		overflow: visible;
+	}
+
+	.table-scroll .keyword-table {
+		min-width: 0;
 	}
 }
