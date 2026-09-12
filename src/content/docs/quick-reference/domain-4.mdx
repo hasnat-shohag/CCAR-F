@@ -1,0 +1,196 @@
+---
+title: ডোমেইন ৪ রিভিশন শিট — প্রম্পট ইঞ্জিনিয়ারিং
+titleEn: "Quick Reference: Domain 4 — Prompt Engineering & Structured Output"
+description: Domain 4-এর এক-পাতার রিভিশন শিট — system prompt, tool_use structured output, few-shot, retry-with-error-feedback, Batch API ও পরীক্ষার ফাঁদ।
+domain: 4
+updated: 2026-09-12
+sourceUrl: https://claudecertificationguide.com/learn/quick-reference/domain-4
+---
+
+import ReadingProgress from '../../../components/progress/ReadingProgress.astro';
+import ReferenceTable from '../../../components/content/ReferenceTable.astro';
+import ExamTrap from '../../../components/content/ExamTrap.astro';
+import LessonList from '../../../components/content/LessonList.astro';
+import Attribution from '../../../components/content/Attribution.astro';
+
+<ReadingProgress />
+
+<div class="lesson-meta">
+	<span class="lesson-badge">Domain 4</span>
+	<span class="lesson-task">ওয়েট ২০% · রিভিশন শিট</span>
+	<span class="lesson-source">পূর্ণ ব্যাখ্যা: লেসন ৪.১–৪.৬</span>
+</div>
+
+<p class="progress-hint">এক পাতার সারসংক্ষেপ। পরীক্ষার আগে শুধু এই পাতাটি স্ক্যান করুন — প্রিন্ট করতে `Ctrl+P` / `Cmd+P`।</p>
+
+## System prompt
+
+- গদ্য বর্ণনার চেয়ে **বাস্তব কোড উদাহরণ** জোরে। "পরিষ্কার variable নাম দিন" লেখার বদলে আগে/পরে কোড snippet দেখান।
+- **Severity calibration:** কোনটি critical আর কোনটি minor, তার ২–৩টি উদাহরণ নির্দিষ্ট কোড snippet দিয়ে দিন। Calibration ছাড়া মডেল সব সমস্যাকে সমান গুরুত্ব দেয়।
+
+System prompt সাজানোর ক্রম:
+
+1. ভূমিকা ও প্রসঙ্গ (মডেল কে, কী করছে)
+2. নিয়ম ও সীমাবদ্ধতা (কী করবে / কী করবে না)
+3. Output format-এর স্পেসিফিকেশন
+4. Calibration উদাহরণ (severity, tone, বিস্তারের মাত্রা)
+
+মূল নিয়ম: আচরণ নিয়ন্ত্রণের সবচেয়ে সাশ্রয়ী উপায় system prompt — একটি প্রম্পট প্রতি রিকোয়েস্টে দোহরানোর বদলে সব কলে ছায়া ফেলে।
+
+## Structured output — `tool_use` বনাম টেক্সট
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['পদ্ধতি', 'নিশ্চয়তা', 'কখন']}
+	rows={[
+		['Forced `tool_choice` (`{type: "tool", name: ...}`)', 'টুল কল নিশ্চিত; টুলের JSON schema কাঠামো বেঁধে দেয়।', 'প্রতিবার একই নির্দিষ্ট কাঠামো দরকার।'],
+		['`tool_choice: "any"`', 'টুল কল নিশ্চিত, কোনটি তা মডেল বাছে।', 'একাধিক extraction schema, ডকুমেন্টের ধরন অজানা।'],
+		['`tool_choice: "auto"`', 'টুল লাগতে পারে, নাও লাগতে পারে।', 'Agentic loop, যেখানে টেক্সট উত্তরণও বৈধ।'],
+		['Prompt-ভিত্তিক JSON', 'কোনো schema enforcement নেই।', 'সহজ ক্ষেত্র, কেবল prototype।'],
+	]}
+/>
+
+পরীক্ষার প্রিয় প্যাটার্ন: কেবল output কাঠামোর জন্য একটি টুল বানান (যেমন `extract_entities`), তারপর `tool_choice: {type: "tool", name: "extract_entities"}` দিয়ে force করুন। এতে রেসপন্স আপনার schema মেনেই আসে।
+
+Prompt-ভিত্তিক JSON-এর বদলে `tool_use` কেন:
+
+- schema যাচাই করে API, পরে প্রসেসিং করে নয়
+- syntax error নেই — ভাঙা JSON, অনুপস্থিত ফিল্ড, বাড়তি ফিল্ড
+- streaming-এর সাথে চলে (structured chunk)
+
+<ExamTrap label="পরীক্ষায় সবচেয়ে বেশি ধরা caveat">
+
+কঠোর JSON schema syntax error তোলে, কিন্তু **semantic error** ঠেকায় না — line item-এর যোগফল total-এর সাথে না মেলা, ভুল ফিল্ডে ঢুকে পড়া মান, ডকুমেন্টে না থাকা বিশ্বাসযোগ্য তারিখ।
+
+"`tool_use` সব extraction error আটকায়" — এমন অপশন ভুল।
+
+</ExamTrap>
+
+## Structured output-এর schema ডিজাইন
+
+- ডেটা না থাকতে পারে এমন ফিল্ড optional করুন বা `null`-সহ union ধরন দিন। required ফিল্ডে ডেটা না থাকলে মডেল schema মেটাতে **মান বানিয়ে ফেলে**।
+- সীমিত পছন্দে `enum` দিন, freeform মান ঠেকাতে।
+- Schema যতটা সম্ভব সমতল রাখুন — গভীর nesting extraction error বাড়ায়।
+- প্রতি property-তে `description` দিন; এগুলোই মডেলকে দেখায় কী তুলে আনতে হবে।
+
+**Fabrication ঠেকানোর নিয়ম:** ফিল্ডের সত্যিকারের মান না থাকতে পারে, তাহলে তাকে union ধরন দিন আর parent object-এর `required` array থেকে বাদ রাখুন। তাতে `null` ফেরত দেওয়ার অনুমতি মডেল পায়, তথ্য বানানোর নয়।
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "postcode": { "type": ["string", "null"] }
+  },
+  "required": ["order_id"]
+}
+```
+
+ব্যাকরণে সাবধান: `nullable: true` হলো OpenAPI-র নিয়ম, JSON Schema-র নয়; আর `required` parent object-এ একটি array, প্রতি property-তে boolean নয়। এই দুই রূপের যেকোনোটিতে লেখা `input_schema` প্রত্যাখ্যাত হয়।
+
+## Few-shot উদাহরণ
+
+কখন: নির্দেশ একা অসামঞ্জস্যপূর্ণ output দিলে। Few-shot ঠিক যে ফরম্যাট ও যুক্তি প্রত্যাশা করছেন, তা দেখিয়ে দেয়।
+
+- **২–৪টি উদাহরণই মিষ্টি জায়গা।** বেশি হলে কনটেক্সট খরচ বাড়ে; কম হলে edge case বাদ পড়ে।
+- উদাহরণে শুধু input → output নয়, **যুক্তিও** রাখুন। উত্তরটি কেন ঠিক, তা দেখান।
+- Edge case রাখুন — অন্তত একটি উদাহরণে সীমানার আচরণ থাকুক।
+- উদাহরণ system prompt-এ রাখলে caching-এর সুবিধা; user message-এ রাখলে প্রতি-রিকোয়েস্টে বদলানো যায়।
+
+**Diminishing returns:** ০ থেকে ২ উদাহরণে সবচেয়ে বড় লাভ। ৪ থেকে ৮-এ গিয়ে মান প্রায় বাড়েই না, কনটেক্সট খরচ বাড়ে।
+
+## Prompt chaining
+
+**স্কোপ নোট:** গাইড prompt chaining-কে Domain 1-এর Task Statement 1.6-এ রাখে (fixed sequential pipeline বনাম dynamic adaptive decomposition), Domain 4-এ নয়। এখানে দোহরানো হলো কারণ ধাপের মাঝে validation, TS 4.4-এর retry loop-এর স্বাভাবিক সঙ্গী — তবে পরীক্ষায় এটি Domain 1-এর ধারণা হিসেবে ধরা হবে।
+
+প্যাটার্ন: ধাপ ১ (extract) → ধাপ ২ (validate) → ধাপ ৩ (format) → ধাপ ৪ (synthesise)।
+
+- প্রতি ধাপের প্রম্পট ছোট ও এক-দায়িত্ব — প্রতি ধাপে নির্ভুলতা বাড়ে
+- এগিয়ে যাওয়ার আগে মধ্যবর্তী ফল যাচাই করা যায়
+- একটি ধাপ আবার চালাতে গেলে পুরো chain চালাতে হয় না
+- ভিন্ন ধাপে ভিন্ন মডেল (খরচ কমানোর সুবিধা)
+
+কখন chain আর কখন একটি প্রম্পট: কাজের আলাদা আলাদা ধাপ ও আলাদা দরকার থাকলে chain; কাজটি সংহত আর output format সোজা হলে একটিই প্রম্পট।
+
+## Retry pattern — `retry-with-error-feedback`
+
+Output যাচাইয়ে ফেল করলে ফেরত পাঠান: **মূল প্রম্পট + ব্যর্থ output + নির্দিষ্ট validation error**।
+
+```
+Original: "Extract all dates from this contract"
+Failed output: { dates: ["2024-01-15", "next Tuesday"] }
+Error: "dates[1] is relative ('next Tuesday'), not absolute.
+        All dates must be ISO 8601 format."
+```
+
+মডেল দেখে কী দিয়েছিল, কী ভুল ছিল — আর নির্দিষ্টভাবে সংশোধন করতে পারে। কখনো শুধু "try again" বলবেন না; নির্দিষ্ট error সবসময় দিন।
+
+<ReferenceTable
+	columns={['কখন', 'কী করবেন']}
+	rows={[
+		['Retry', 'Validation error, format mismatch, অনুপস্থিত ফিল্ড — মডেল ঠিক করতে পারে।'],
+		['Escalate', 'বারবার ব্যর্থ (২টির বেশি retry), threshold-এর নিচে confidence, মৌলিকভাবে ভুল ব্যাখ্যা।'],
+	]}
+/>
+
+**Pydantic-এর ভূমিকা (Python):** parsing schema মেনে চলে; custom validator JSON schema-তে লেখা যায় না এমন semantic নিয়ম চালায় (যোগফল মেলানো, তারিখের ক্রম)। এর `ValidationError` প্রতি ফিল্ডের আলাদা বার্তা দেয় — যা সোজা retry প্রম্পটে ঢুকিয়ে দেওয়া যায়।
+
+## Batch API
+
+<ReferenceTable
+	columns={['বিষয়', 'মান']}
+	rows={[
+		['খরচ সাশ্রয়', 'synchronous-এর চেয়ে ৫০% কম।'],
+		['Latency', '২৪ ঘণ্টা পর্যন্ত (দ্রুততর হওয়ার নিশ্চয়তা নেই)।'],
+		['ব্যবহার', 'Latency সহনীয় bulk workload।'],
+		['কখন নয়', 'Real-time, interactive বা user-facing রিকোয়েস্ট।'],
+	]}
+/>
+
+পরীক্ষার মূল পয়েন্ট: Batch API throughput আর খরচের জন্য, গতির জন্য নয়। প্রশ্নে "real-time" বা "user-facing" থাকলে Batch API ভুল উত্তর।
+
+## নিজের output নিজে review করার সীমা
+
+একই session-এ একটি মডেল নিজের output ভালোভাবে review করতে পারে না। যে reasoning output বানিয়েছিল, তা থেকে যায় — তাই নিজের সিদ্ধান্তে সায় দেওয়ার দিকে ঝোঁক।
+
+সমাধান: review-এর জন্য **আলাদা model instance** (নতুন কথোপকথন, শেয়ার করা history নেই)। Review করা instance কেবল output দেখে, যে reasoning তাকে বানিয়েছে তা নয়।
+
+বড় input-এ: **প্রতি-ফাইল pass** (প্রতিটি ফাইল আলাদা বিশ্লেষণ) আর **cross-file integration pass** (ফলগুলো এক জায়গায় মেলানো)। এটাই attention dilution-এর প্রতিকার — সব এক pass-এ চালালে মডেল খুঁটিনাটি মিস করে।
+
+## পরীক্ষার decision rule
+
+<ReferenceTable
+	columns={['প্রশ্নে যা থাকে', 'উত্তর সম্ভবত']}
+	rows={[
+		['"guaranteed schema compliance"', 'নির্দিষ্ট টুল দিয়ে forced `tool_choice`; ডকুমেন্টের ধরন অজানা হলে `tool_choice: "any"`।'],
+		['"output sometimes has wrong format"', 'few-shot উদাহরণ যোগ করুন (২–৪টি)।'],
+		['"model fabricates missing data"', 'schema-র ফিল্ড optional/nullable করুন।'],
+		['"validation failed, need to fix"', '`retry-with-error-feedback` (মূল + ব্যর্থ output + error)।'],
+		['"50% cost reduction", "bulk processing"', 'Batch API।'],
+		['"real-time", "user-facing"', 'Batch API নয় — synchronous ব্যবহার করুন।'],
+		['"inconsistent output quality"', 'few-shot উদাহরণ বা prompt chaining।'],
+		['"review its own output"', 'আলাদা instance (একই session নয়)।'],
+		['"large document, missing details"', 'per-file pass + cross-file integration।'],
+		['"instructions alone aren\'t working"', 'few-shot উদাহরণ যোগ করুন।'],
+	]}
+/>
+
+## পরীক্ষার ফাঁদ
+
+<ReferenceTable
+	columns={['ফাঁদ', 'সঠিক উত্তর']}
+	rows={[
+		['"প্রোডাকশনে prompt-ভিত্তিক JSON ব্যবহার করুন"', 'ভুল — নিশ্চিত schema-র জন্য forced `tool_choice`।'],
+		['"validation ব্যর্থ হলে শুধু \'try again\' বলুন"', 'ভুল — মূল প্রম্পট + ব্যর্থ output + নির্দিষ্ট error দিন।'],
+		['"দ্রুত উত্তরের জন্য Batch API"', 'ভুল — Batch API latency ছেড়ে খরচ বাঁচায়।'],
+		['"একই কথোপকথনে output review করুন"', 'ভুল — একই session-এর review biased; আলাদা instance নিন।'],
+		['"সেরা ফলের জন্য ১০+ few-shot উদাহরণ"', 'ভুল — ২–৪টিই মিষ্টি জায়গা; এর পরে লাভ কমে।'],
+		['"required ফিল্ড তথ্য বানানো ঠেকায়"', 'ভুল — ডেটা না থাকলে required ফিল্ডই বানানোর কারণ।'],
+		['"একটি বড় প্রম্পটে সব সামলান"', 'ভুল — কাজের আলাদা ধাপ থাকলে প্রম্পট chain করুন।'],
+	]}
+/>
+
+## বিস্তারিত লেসন
+
+<LessonList domain={4} />
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />

@@ -195,7 +195,7 @@ a[data-lesson-id][aria-current='page'] {
 	color: var(--sl-color-gray-2);
 }
 
-.keyword-table td.keyword-term {
+.keyword-table .keyword-term {
 	white-space: nowrap;
 	font-family: var(--sl-font-mono);
 	font-size: var(--sl-text-xs);
@@ -538,4 +538,73 @@ pre.mermaid-source {
 
 .lesson-pending-title {
 	color: var(--sl-color-gray-3);
+}
+
+/* ---------- quick reference sheets ---------- */
+
+.ref-table-wrap {
+	margin-block: 1rem;
+	overflow-x: auto;
+}
+
+.ref-table {
+	margin: 0;
+}
+
+.ref-table td,
+.ref-table tbody th[scope='row'] {
+	line-height: 1.7;
+}
+
+.ref-table tbody th[scope='row'] {
+	background: transparent;
+	color: var(--sl-color-text);
+	font-size: var(--sl-text-sm);
+	font-weight: 600;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
+.ref-table .keyword-term {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.ref-table tbody th[scope='row'].keyword-term {
+	color: var(--sl-color-text-accent);
+	font-family: var(--sl-font-mono);
+	font-size: var(--sl-text-xs);
+}
+
+.ref-table code {
+	padding: 0.05rem 0.3rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.25rem;
+	background: var(--sl-color-bg-sidebar);
+	color: var(--sl-color-text-accent);
+	font-size: 0.9em;
+	overflow-wrap: anywhere;
+}
+
+@media print {
+	.ref-table {
+		font-size: 10pt;
+	}
+
+	.ref-table thead {
+		display: table-header-group;
+	}
+
+	.ref-table tr {
+		break-inside: avoid;
+	}
+
+	.ref-table th {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	.ref-table-wrap {
+		overflow: visible;
+	}
 }

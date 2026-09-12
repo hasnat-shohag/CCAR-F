@@ -1,0 +1,40 @@
+---
+title: দ্রুত রিভিশন শিট
+titleEn: Quick Reference Sheets
+description: CCAR-F-এর ৫টি ডোমেইনের এক-পাতার রিভিশন শিট — মূল ধারণা, decision rule, পরীক্ষার ফাঁদ ও কীওয়ার্ড, ঘন টেবিলে।
+updated: 2026-09-12
+sourceUrl: https://claudecertificationguide.com/learn/quick-reference
+---
+
+import { DOMAINS } from '../../../lib/domains';
+import { siteUrl } from '../../../lib/urls';
+import Attribution from '../../../components/content/Attribution.astro';
+
+প্রতিটি ডোমেইনের মূল ধারণা, decision rule, পরীক্ষার ফাঁদ আর কীওয়ার্ড — সব এক পাতায়। পুরো লেসন নয়, শেষ রিভিশনের জন্য বানানো ঘন শিট।
+
+<div class="landing-grid">
+	{
+		DOMAINS.map((domain) => (
+			<div class="landing-card" style={`--landing-accent: ${domain.accent}`}>
+				<h3>
+					<a href={siteUrl(`quick-reference/domain-${domain.id}/`)}>
+						D{domain.id} · {domain.labelBn}
+					</a>
+				</h3>
+				<p>
+					ওয়েট <strong>{domain.weight}%</strong> · {domain.labelEn}
+				</p>
+			</div>
+		))
+	}
+</div>
+
+## এই শিটগুলো কীভাবে ব্যবহার করবেন
+
+1. **ডোমেইনের লেসন আগে শেষ করুন** — এগুলো সারসংক্ষেপ, লেসনের বিকল্প নয়। লেসন না পড়ে শিট পড়লে টেবিলের শব্দগুলো খাপছাড়া লাগবে।
+2. **decision rule আর পরীক্ষার ফাঁদ টেবিল দুটো আগে পড়ুন** — পরীক্ষার প্রস্তুতিতে এ দুটোই সবচেয়ে দামি অংশ।
+3. **প্রিন্ট করে রাখুন** — `Ctrl+P` / `Cmd+P`। লেআউট এক পাতার জন্য বানানো; টেবিলের সারি মাঝখানে ভাঙে না।
+
+পরীক্ষার ফরম্যাট, ৬টি সিনারিও, ওয়েট আর পাসের নিয়ম নিয়ে বিস্তারিত <a href={siteUrl('exam-guide/')}>পরীক্ষা গাইড</a> পাতায়।
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />

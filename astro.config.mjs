@@ -17,6 +17,15 @@ const docsRoot = join(dirname(fileURLToPath(import.meta.url)), 'src/content/docs
  */
 const hasLesson = (slug) => existsSync(join(docsRoot, `${slug}.mdx`));
 
+/** Short domain names for the revision-sheet labels, so the sidebar stays scannable. */
+const sheetLabels = [
+	'এজেন্টিক আর্কিটেকচার',
+	'টুল ডিজাইন ও MCP',
+	'Claude Code কনফিগারেশন',
+	'প্রম্পট ইঞ্জিনিয়ারিং',
+	'কনটেক্সট ও রিলায়েবিলিটি',
+];
+
 export default defineConfig({
 	site: 'https://hasnat-shohag.github.io',
 	base: '/CCAR-F',
@@ -63,6 +72,17 @@ export default defineConfig({
 						})).filter((item) => hasLesson(item.slug)),
 					],
 				})),
+				{
+					label: 'রিভিশন ও রেফারেন্স',
+					items: [
+						{ label: 'পরীক্ষা গাইড ও ব্লুপ্রিন্ট', link: '/exam-guide/' },
+						{ label: 'দ্রুত রিভিশন শিট', link: '/quick-reference/' },
+						...DOMAINS.map((domain) => ({
+							label: `D${domain.id} শিট — ${sheetLabels[domain.id - 1]}`,
+							link: `/quick-reference/domain-${domain.id}/`,
+						})),
+					],
+				},
 			],
 			head: [
 				{

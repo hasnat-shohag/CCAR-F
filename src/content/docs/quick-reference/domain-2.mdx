@@ -1,0 +1,202 @@
+---
+title: ডোমেইন ২ রিভিশন শিট — টুল ডিজাইন ও MCP
+titleEn: "Quick Reference: Domain 2 — Tool Design & MCP Integration"
+description: Domain 2-এর এক-পাতার রিভিশন শিট — tool description, schema নিয়ম, tool_choice mode, MCP layer, structured error ও পরীক্ষার decision rule।
+domain: 2
+updated: 2026-09-12
+sourceUrl: https://claudecertificationguide.com/learn/quick-reference/domain-2
+---
+
+import ReadingProgress from '../../../components/progress/ReadingProgress.astro';
+import ReferenceTable from '../../../components/content/ReferenceTable.astro';
+import ExamTrap from '../../../components/content/ExamTrap.astro';
+import LessonList from '../../../components/content/LessonList.astro';
+import Attribution from '../../../components/content/Attribution.astro';
+
+<ReadingProgress />
+
+<div class="lesson-meta">
+	<span class="lesson-badge">Domain 2</span>
+	<span class="lesson-task">ওয়েট ১৮% · রিভিশন শিট</span>
+	<span class="lesson-source">পূর্ণ ব্যাখ্যা: লেসন ২.১–২.৫</span>
+</div>
+
+<p class="progress-hint">এক পাতার সারসংক্ষেপ। পরীক্ষার আগে শুধু এই পাতাটি স্ক্যান করুন — প্রিন্ট করতে `Ctrl+P` / `Cmd+P`।</p>
+
+## Tool Description ডিজাইন
+
+কোন টুল কল করবে তা বাছাইয়ের প্রধান সূত্র tool description — টুলের নাম নয়।
+
+Description-এ যা থাকা উচিত:
+
+- টুলটি কী করে (এক বাক্যে)
+- প্রত্যাশিত input ফরম্যাট ও সীমাবদ্ধতা
+- কী ফেরত দেয় (রেসপন্সের আকৃতি)
+- সীমানা শর্ত (কী করে **না**)
+- কোন ধরনের প্রশ্নে এই টুল ট্রিগার হবে, তার উদাহরণ
+
+ভুল বাছাইয়ের দুই ভিন্ন কারণ, আর সমাধানও উল্টো:
+
+<ReferenceTable
+	columns={['টুলের অবস্থা', 'সমাধান']}
+	rows={[
+		['সংখ্যায় ছোট, কিন্তু দুটির description একরকম শোনায়', 'description ধারালো করুন (TS 2.1)।'],
+		['আলাদা কাজ (query, transform, export)', 'ভূমিকা অনুযায়ী আলাদা agent-এ ভাগ করুন (TS 2.3)।'],
+		['একই কাজের ভিন্ন ভিন্ন রূপ, একই আকৃতি', 'একটি parameterised টুলে মিলিয়ে দিন (TS 2.3)।'],
+	]}
+/>
+
+Description প্রথম সমাধান কেবল তখনই, যখন টুলকিট আগেই কাজ করার মতো আকারে আছে। **প্রতি agent-এ ৪–৫টির বেশি** টুল হলে কেবল decision complexity-র কারণেই selection পড়ে যায় — ২২টি description নতুন করে লিখলেও সেই সমস্যা হাতের নাগালে থাকে না। Few-shot example দিয়ে misselection সারানোর কথা গাইডে নেই; পরীক্ষায় এটি ভুল হিসেবে ধরা হয়।
+
+<ExamTrap label="Diagnose before you fix">
+
+ছোট টুলকিটে দুটি একরকম টুল = description-এর সমস্যা। অতিরিক্ত বড় টুলকিট = বিতরণের সমস্যা, আর description কত ভালো হোক তার সমাধান হয় না।
+
+</ExamTrap>
+
+## Schema ডিজাইন নিয়ম
+
+- প্রতি agent-এর টুল সেট ছোট ও ভূমিকা-কেন্দ্রিক রাখুন।
+- প্যারামিটারের নাম বর্ণনামূলক দিন — `customer_email`, `email` নয়; `order_date_range`, `range` নয়।
+- কেবল সত্যিই বাধ্যতামূলক হলে parameter-কে required করুন। ডিফল্টসহ optional প্যারামিটার ঘর্ষণ কমায়।
+- সীমিত পছন্দে `enum` ধরন দিন — freeform string-এর চেয়ে মডেলকে ভালো পথ দেখায়।
+
+## `tool_choice` মোড
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['মোড', 'আচরণ', 'কখন']}
+	rows={[
+		['`auto`', 'টুল কল করবে কি না, মডেল নিজে ঠিক করে।', 'বেশিরভাগ agentic loop-এর ডিফল্ট।'],
+		['`any`', 'অন্তত একটি টুল কল করতেই হবে (কোনটি, তা মডেল ঠিক করে)।', 'input একাধিক schema-র যেকোনোটিতে মিলতে পারে, কিন্তু structured output নিশ্চিত দরকার।'],
+		['`tool` (forced)', 'নির্দিষ্ট নামের টুলটিই কল করতে হবে।', 'একটি জানা কাঠামোর জন্য schema compliance নিশ্চিত করা।'],
+	]}
+/>
+
+<ExamTrap label="পরীক্ষার মূল পয়েন্ট">
+
+প্রতিবার একই নির্দিষ্ট কাঠামো দরকার হলে `tool_choice: {type: "tool", name: "extract_data"}`। ডকুমেন্টের ধরন অজানা আর কয়েকটি extraction schema-র যেকোনোটি খাটতে পারে, তখন `tool_choice: "any"` — মডেল নিজে টুল বাছলেও structured output নিশ্চিত থাকে।
+
+Agentic loop-এর সঠিক ডিফল্ট `auto`; টুল কখন কল করবে আর কখন টেক্সট দিয়ে উত্তর দেবে — সেই স্বাধীনতা মডেলের থাকা দরকার।
+
+</ExamTrap>
+
+## MCP আর্কিটেকচার
+
+তিন স্তরের মডেল: **Host ⊃ Client ↔ Server** — host অ্যাপ্লিকেশন client ধরে রাখে, client server-এর সাথে যোগাযোগ করে।
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['স্তর', 'ভূমিকা', 'উদাহরণ']}
+	rows={[
+		['Host', 'client-এর জীবনচক্র সামলানো অ্যাপ্লিকেশন।', 'Claude Desktop, একটি IDE extension।'],
+		['Client', 'host-এর ভেতরের connector, যা একটি server-এ যুক্ত হয়ে তার টুল কল রাউট করে।', 'ডেস্কটপ অ্যাপ প্রতি server-এর জন্য যে client ইনস্ট্যান্স বানায়।'],
+		['Server', 'tool, resource ও prompt প্রকাশ করে।', 'একটি database connector, file system server।'],
+	]}
+/>
+
+Protocol: **JSON-RPC 2.0**, stdio বা streamable HTTP-এর উপর।
+
+Configuration ফাইল:
+
+- `.mcp.json` — প্রজেক্ট রুটে, প্রজেক্ট-স্তরের MCP server (টিমের সাথে শেয়ার হয়)
+- `~/.claude.json` — ব্যক্তিগত/গ্লোবাল MCP server (কমিট হয় না)
+
+মূল নিয়ম: আগে community MCP server খুঁজুন। আপনার দরকার কোনো community server মেটাতে না পারলে তবেই custom server বানান।
+
+## টুলের এরর হ্যান্ডলিং
+
+Structured error metadata — পরীক্ষায় ধরা প্যাটার্নটি। এটি result content-এর ভেতরে রাখা application-স্তরের convention, MCP envelope-এর অংশ নয়; প্রোটোকলের `CallToolResult` কেবল `content`, `structuredContent` আর `isError` সংজ্ঞায়িত করে:
+
+```json
+{
+  "errorCategory": "transient",
+  "isRetryable": true,
+  "description": "Rate limit hit; retry after 5 seconds"
+}
+```
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['ক্যাটাগরি', 'অর্থ', '`isRetryable`']}
+	rows={[
+		['transient', 'timeout, সার্ভিস unavailable।', '`true` — একই কল আবার পাঠান।'],
+		['validation', 'ভুল input।', '`false` — input ঠিক করে নতুন কল পাঠান।'],
+		['business', 'policy ভঙ্গ।', '`false` — বিকল্প পথে যান।'],
+		['permission', 'প্রবেশাধিকার নেই।', '`false` — যার অনুমতি আছে তার কাছে escalate করুন।'],
+	]}
+/>
+
+কেবল `transient` retryable: প্রশ্নটি একটাই — এই কলটা আবার পাঠালে কাজ হবে কি না? বাকি সব ক্ষেত্রে আগে input, অনুরোধ বা কলার বদলাতে হবে। **"Not found" ইচ্ছাকৃতভাবে বাদ** — কিছু না পাওয়া একটি বৈধ শূন্য ফল, এরর নয়।
+
+<ExamTrap label="সবচেয়ে জরুরি পার্থক্য">
+
+<strong>Access failure</strong> (auth error, network timeout) → retry করুন বা escalate করুন। কিছু একটা ভুল হয়েছে।
+
+<strong>Valid empty result</strong> (search-এ ০ ফল) → মেনে নিন। তথ্যের অনুপস্থিতিই এখানে উত্তর।
+
+</ExamTrap>
+
+বৈধ শূন্য ফলকে কখনো এরর ভাববেন না। Access failure কখনো চুপচাপ গিলে ফেলবেন না।
+
+## Claude Code-এ টুল নির্বাচন
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['টুল', 'কাজ', 'কখন']}
+	rows={[
+		['Grep', 'প্যাটার্ন দিয়ে ফাইলের ভেতরের লেখা খোঁজা।', 'কোড প্যাটার্ন বা string কোথায় আছে তা খুঁজতে।'],
+		['Glob', 'নাম/পাথ প্যাটার্ন দিয়ে ফাইল খোঁজা।', 'extension বা নামের রীতি ধরে ফাইল খুঁজতে।'],
+		['Read', 'নির্দিষ্ট ফাইল পড়া।', 'ফাইলের সঠিক পাথ জানা থাকলে।'],
+		['Write', 'সম্পূর্ণ ফাইল লেখা।', 'নতুন ফাইল বানাতে বা পুরো ফাইল বদলাতে।'],
+		['Edit', 'ফাইলের অংশ বদলানো।', 'আগের ফাইলে লক্ষ্যভিত্তিক পরিবর্তন করতে।'],
+		['Bash', 'shell command চালানো।', 'build, test, git — উপরের কোনোটিতে না পড়লে।'],
+	]}
+/>
+
+নির্বাচনের নীতিমালা: সবচেয়ে নির্দিষ্ট টুলটি বেছে নিন। ভেতরের লেখা খুঁজতে Grep, ফাইল খুঁজতে Glob, জানা ফাইল পড়তে Read। যে কাজে বিশেষায়িত টুল আছে, সেখানে Bash এড়িয়ে চলুন।
+
+Edit যদি non-unique match-এ ব্যর্থ হয়: গাইডের পরীক্ষিত fallback **Read + Write** — পুরো ফাইল পড়ে সংশোধিত সম্পূর্ণ ফাইল লিখে দিন।
+
+বর্তমান অবস্থা (১৪ আগস্ট ২০২৬ তারিখে যাচাই): লাইভ tools reference অনুযায়ী Claude আগে একটিমাত্র occurrence চিহ্নিত করার মতো লম্বা anchor string পাঠায়, অথবা `replace_all: true` সেট করে। পরীক্ষায় উত্তর দিন **Read + Write**; বর্তমান Claude Code-এ এই আচরণ চিনে রাখুন।
+
+## পরীক্ষার decision rule
+
+<ReferenceTable
+	columns={['প্রশ্নে যা থাকে', 'উত্তর সম্ভবত']}
+	rows={[
+		['"Claude keeps picking the wrong tool" (ছোট টুলকিট)', 'tool description উন্নত করুন।'],
+		['"Claude keeps picking the wrong tool" (২০+ টুল)', 'description নয় — ভূমিকা অনুযায়ী ভাগ করুন বা মিলিয়ে দিন।'],
+		['"guaranteed structured output"', 'জানা কাঠামোর জন্য forced `tool_choice`; একাধিক schema জুড়ে `tool_choice: "any"`।'],
+		['"model should decide which tool"', '`tool_choice: "auto"`।'],
+		['"must call a tool but can choose which"', '`tool_choice: "any"`।'],
+		['"search returned no results"', 'বৈধ শূন্য ফল — মেনে নিন।'],
+		['"API returned 401 / timeout"', 'access failure — retry বা escalate।'],
+		['"too many tools, selection errors"', 'ভূমিকা-সীমিত agent-এ ভাগ করুন, বা একই কাজের রূপগুলো মিলিয়ে দিন।'],
+		['"need a custom MCP server"', 'আগে community server দেখুন।'],
+		['"project-wide MCP config"', 'প্রজেক্ট রুটে `.mcp.json`।'],
+		['"personal MCP config"', '`~/.claude.json`।'],
+	]}
+/>
+
+## পরীক্ষার ফাঁদ
+
+<ReferenceTable
+	columns={['ফাঁদ', 'সঠিক উত্তর']}
+	rows={[
+		['"২২টি tool description-ই ভালো করে লিখে misselection সারান"', 'ভুল — ৪–৫টির পর সমস্যাটা decision complexity, শব্দ নয়।'],
+		['"misselection সারাতে few-shot example যোগ করুন"', 'ভুল — গাইডে অনুমোদিত পথ নয়; description বা distribution ঠিক করুন।'],
+		['"`tool_choice: "any"` নির্দিষ্ট একটি টুল নিশ্চিত করে"', 'ভুল — `any` টুল কল নিশ্চিত করে, নির্দিষ্ট টুল নয়।'],
+		['"MCP server-গুলো সরাসরি একে অন্যের সাথে যুক্ত হয়"', 'ভুল — সব যোগাযোগ client/host হয়ে যায়।'],
+		['"শূন্য search ফল মানে টুল ব্যর্থ"', 'ভুল — তথ্যের অনুপস্থিতি একটি বৈধ ফল।'],
+		['"টুল থেকে সাধারণ error string ফেরত দিন"', 'ভুল — ক্যাটাগরি, retryable আর পরামর্শসহ structured metadata দিন।'],
+		['"সাধারণ integration-এর জন্য custom MCP server বানান"', 'ভুল — আগে community server দেখুন।'],
+		['"টুলের নামই প্রধান নির্বাচন-সংকেত"', 'ভুল — tool description-ই প্রধান সংকেত।'],
+	]}
+/>
+
+## বিস্তারিত লেসন
+
+<LessonList domain={2} />
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />

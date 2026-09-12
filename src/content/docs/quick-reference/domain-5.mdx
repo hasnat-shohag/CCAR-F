@@ -1,0 +1,201 @@
+---
+title: ডোমেইন ৫ রিভিশন শিট — কনটেক্সট ও রিলায়েবিলিটি
+titleEn: "Quick Reference: Domain 5 — Context Management & Reliability"
+description: Domain 5-এর এক-পাতার রিভিশন শিট — persistent facts, scratchpad, structured error context, stratified validation, source attribution ও escalation।
+domain: 5
+updated: 2026-09-12
+sourceUrl: https://claudecertificationguide.com/learn/quick-reference/domain-5
+---
+
+import ReadingProgress from '../../../components/progress/ReadingProgress.astro';
+import ReferenceTable from '../../../components/content/ReferenceTable.astro';
+import ExamTrap from '../../../components/content/ExamTrap.astro';
+import LessonList from '../../../components/content/LessonList.astro';
+import Attribution from '../../../components/content/Attribution.astro';
+
+<ReadingProgress />
+
+<div class="lesson-meta">
+	<span class="lesson-badge">Domain 5</span>
+	<span class="lesson-task">ওয়েট ১৫% · রিভিশন শিট</span>
+	<span class="lesson-source">পূর্ণ ব্যাখ্যা: লেসন ৫.১–৫.৬</span>
+</div>
+
+<p class="progress-hint">এক পাতার সারসংক্ষেপ। পরীক্ষার আগে শুধু এই পাতাটি স্ক্যান করুন — প্রিন্ট করতে `Ctrl+P` / `Cmd+P`।</p>
+
+## Progressive summarisation trap
+
+সবচেয়ে সাধারণ ভুল: কথোপকথন বাড়তে থাকলে পুরনো কনটেক্সট মডেলকে ধীরে ধীরে সারসংক্ষেপ করতে দেওয়া। প্রতি summarisation pass-এ নির্দিষ্ট তথ্য হারায় — নাম, সংখ্যা, হুবহু উদ্ধৃতি, নিখুঁত timestamp।
+
+সমাধান: নির্দিষ্ট তথ্য বের করে **স্থায়ী structured block**-এ রাখুন, যা হুবহু এগিয়ে যায়। "আমরা কী নিয়ে কথা বলেছি সারসংক্ষেপ করো" বলবেন না — একটি structured facts অংশ রাখুন:
+
+```
+## Persistent Facts
+- Customer: Jane Smith (ID: 12847)
+- Order: #ORD-2024-8821, placed 2024-01-15
+- Issue: Delivery address incorrect (postcode SW1A 1AA, should be SW1A 2AA)
+- Status: Refund approved, reshipment pending
+```
+
+এই block হুবহু কপি হয়ে এগোয়, সারসংক্ষেপ হয় না। মডেল এই তথ্যগুলো হারাতে পারে না।
+
+## Scratchpad ফাইল
+
+একাধিক ধাপের অনুসন্ধানে কনটেক্সটের সীমানা পেরিয়ে finding টিকিয়ে রাখতে scratchpad ফাইল ব্যবহার করুন।
+
+কখন: কনটেক্সট উইন্ডো ছাড়াতে পারে এমন দীর্ঘ কাজ, বা যেখানে মধ্যবর্তী finding কনটেক্সট রিসেটও টিকিয়ে রাখতে হয়।
+
+- যে finding পাবেন, সাথে সাথেই scratchpad ফাইলে লিখুন
+- কনটেক্সটের সীমানায় scratchpad পড়ে অবস্থা ফিরিয়ে আনুন
+- scratchpad ডিস্কের ফাইল — যেকোনো কনটেক্সট রিসেট টিকিয়ে রাখে
+
+**মূল পার্থক্য:** scratchpad বাহ্যিক persistence (ফাইল), কথোপকথনের history অভ্যন্তরীণ persistence (কনটেক্সট উইন্ডো)। উইন্ডো ভরে গেলে conversation history হারায় — scratchpad ফাইল হারায় না।
+
+## TS 5.1-এর দুটি তথ্য
+
+- **Lost in the middle:** মডেল লম্বা input-এর শুরু ও শেষের তথ্য নির্ভরযোগ্যভাবে প্রসেস করে, মাঝের অংশের finding বাদ দিতে পারে। ক্রম গুরুত্বপূর্ণ — যা মিস হওয়া চলবে না, তা প্রান্তে রাখুন, মাঝখানে পুঁতে দেবেন না।
+- **API stateless:** কলের মাঝে কিছুই মনে রাখে না। প্রতি রিকোয়েস্টে যা দরকার, তার সম্পূর্ণ history সাথে পাঠাতে হয় — ঠিক এ কারণেই tool result জমতে থাকে আর উইন্ডো ভরে যায়।
+
+## এরর প্রোপাগেশন
+
+Structured error context-এ যা থাকা দরকার:
+
+<ReferenceTable
+	columns={['ফিল্ড', 'উদ্দেশ্য', 'উদাহরণ']}
+	rows={[
+		['Failure type', 'ব্যর্থতা কোন শ্রেণির।', '`"network_timeout"`, `"validation_error"`'],
+		['What was attempted', 'কোন query, কোন parameter, কোন target সিস্টেম।', '"Searched academic DB for renewable energy policy, 2022-2024"'],
+		['Partial results', 'ব্যর্থতার আগে যা পাওয়া গিয়েছিল।', '`{ "orders": [...], "payments": null }`'],
+		['Potential alternatives', 'coordinator এরপর কোন পথ নিতে পারে।', '"Try the mirror index, or broaden the date range"'],
+	]}
+/>
+
+শেষ দুটি খেয়াল করুন: গাইড চায় coordinator বেছে নিতে পারে এমন **সম্ভাব্য বিকল্প পথ** — আগে কী কী recovery করা হয়েছে তার লগ নয়। "দুবার retry করেছি" লেখা যায় "কী করার চেষ্টা হয়েছে" ফিল্ডে।
+
+সাধারণ error message কখনো প্রোপাগেট করবেন না। "Something went wrong" পরের agent বা মানুষের হাতে কিছুই দেয় না; structured error context intelligent recovery সম্ভব করে।
+
+## Valid empty বনাম access failure
+
+<ReferenceTable
+	columns={['অবস্থা', 'ধরন', 'সঠিক পদক্ষেপ']}
+	rows={[
+		['Search-এ ০ ফল', 'বৈধ শূন্য', 'মেনে নিন — তথ্যের অনুপস্থিতিই উত্তর।'],
+		['API 401 Unauthorised ফেরত দেয়', 'access failure', 'সঠিক credential দিয়ে retry করুন বা escalate করুন।'],
+		['Database query শূন্য সেট দেয়', 'বৈধ শূন্য', 'মেনে নিন — রেকর্ডটির অস্তিত্ব নেই।'],
+		['Network timeout', 'access failure', 'retry করুন বা fallback ব্যবহার করুন।'],
+		['Filter-এ কোনো item মেলে না', 'বৈধ শূন্য', 'মেনে নিন — filter ঠিক করুন বা ফল নেই জানান।'],
+		['Rate limit (429)', 'access failure', 'অপেক্ষা করে retry (Retry-After মেনে)।'],
+	]}
+/>
+
+পরীক্ষায় এই পার্থক্যটি বারবার আসে। টুল সফলভাবে চলেছে কিন্তু কিছু ফেরত দেয়নি — সেটি বৈধ ফল। টুল চালুই হতে ব্যর্থ হয়েছে — সেটি এরর, recovery দরকার।
+
+## Confidence calibration ও stratified validation
+
+সামগ্রিক metric প্রতি-শ্রেণির সমস্যা ঢেকে রাখে। ৯৫% overall accuracy-র আড়ালে একটি category-র ৬০% নির্ভুলতা লুকিয়ে থাকতে পারে।
+
+Stratified validation:
+
+1. Extraction-গুলো type/category ধরে ভাগ করুন
+2. প্রতি type-এর accuracy হিসাব করুন
+3. যে category-তে মডেল দুর্বল, তা চিহ্নিত করুন
+4. দুর্বল category-তে লক্ষ্যভিত্তিক fix (ভালো উদাহরণ, কড়া schema) চালান
+
+**Stratified random sampling:** প্রতি category থেকে অনুপাত মেনে validation sample বাছুন। এতে নতুন ধরনের error pattern ধরা পড়ে, যা সব category মিলিয়ে random sampling-এ মিস হয়।
+
+<ExamTrap label="পরীক্ষার মূল পয়েন্ট">
+
+প্রশ্নে "overall accuracy বেশি কিন্তু ব্যবহারকারী error রিপোর্ট করছেন" থাকলে উত্তর stratified validation — category ধরে accuracy ভেঙে দুর্বল জায়গা খুঁজুন।
+
+</ExamTrap>
+
+## Source attribution
+
+Structured claim-source mapping synthesis টিকিয়ে রাখে, inline link পারে না।
+
+<ReferenceTable
+	columns={['পদ্ধতি', 'Synthesis টিকে যায়?', 'কখন']}
+	rows={[
+		['Structured mapping: `{ claim, source, url, date }`', 'হ্যাঁ', 'প্রোডাকশন সিস্টেম, একাধিক ধাপের pipeline।'],
+		['লেখার ভেতরে inline link', 'না — summarisation-এ হারায়।', 'কেবল দ্রুত prototype।'],
+	]}
+/>
+
+**পরস্পরবিরোধী সূত্র:** দুটিতেই provenance ও তারিখ লিখে রাখুন। বিরোধী দাবি কখনো গড় করবেন না, চুপচাপ একটি বেছে নেবেন না। দুটিই সূত্রসহ উপস্থাপন করুন, সিদ্ধান্ত নিক ব্যবহারকারী।
+
+<ExamTrap label="উদাহরণ">
+
+দাবি: "Sonnet-এর কনটেক্সট উইন্ডো ১M token"।
+
+সূত্র A: Anthropic docs (2026-08-14) — 1M tokens। সূত্র B: ব্লগ পোস্ট (2024-03-15) — 200K tokens।
+
+এটি বিরোধ নয়, সময়ভিত্তিক পরিবর্তন — দুটির প্রকাশের মাঝে উইন্ডোটি বেড়েছে। দুটিই তারিখসহ রাখুন, ব্যাখ্যা করুক ব্যবহারকারী।
+
+</ExamTrap>
+
+## Escalation ও অ্যাম্বিগুইটি
+
+তিনটি বৈধ escalation trigger:
+
+- গ্রাহক স্পষ্টভাবে মানুষ চাইলেন — সাথে সাথে honoured করুন, আগে তদন্তের চেষ্টা নয়
+- Policy-তে ফাঁক বা ব্যতিক্রম — নীতিতে চুপ বা দ্বিধা (যেমন নিজের সাইটের adjustment-ই policy-তে থাকলে প্রতিযোগীর দাম মেলানোর অনুরোধ)
+- agent অর্থবহভাবে এগোতে পারছে না
+
+অবিশ্বাসযোগ্য trigger (পরীক্ষার ডিস্ট্র্যাক্টর): sentiment-ভিত্তিক escalation আর নিজের জানানো confidence score। কোনোটিই প্রকৃত case complexity মাপে না। সমস্যা মেটানো সম্ভব হলে বিরক্ত গ্রাহককে স্বীকৃতি আর সমাধানের প্রস্তাব দিন; কেবল আবার অনুরোধ করলে escalate করুন।
+
+- **একাধিক match:** টুল কয়েকটি customer record ফেরত দিলে বাড়তি identifier চান। কখনো heuristic দিয়ে বেছে নেবেন না।
+- **Policy gap বনাম violation:** ফাঁক (নীতিতে চুপ) মানে escalate; violation (নীতি নিষেধ করে) মানে নীতির ব্যাখ্যা দিয়ে প্রত্যাখ্যান।
+
+## Context window কৌশল
+
+<ReferenceTable
+	columns={['কৌশল', 'কখন']}
+	rows={[
+		['Persistent fact block', 'Summarisation-এ টিকিয়ে রাখতে হবে এমন জরুরি তথ্য।'],
+		['Scratchpad ফাইল', 'কনটেক্সটের সীমানা পেরিয়ে একাধিক ধাপের অনুসন্ধান।'],
+		['Per-file pass + integration', 'বড় codebase — attention dilution এড়াতে।'],
+		['Fresh start + summary injection', 'কনটেক্সট পুরনো বা পরস্পরবিরোধী হয়ে গেছে।'],
+		['Prompt caching', 'বারবার একই system prompt (খরচ ও latency সাশ্রয়)।'],
+	]}
+/>
+
+**Context window-এ চাপের সংকেত:** মডেল নিজের কথা দোহরাতে শুরু করে, আগের বক্তব্যের সাথে সাংঘর্ষিক বলে, বা সাম্প্রতিক তথ্য উপেক্ষা করে। এগুলোই বলে উইন্ডো ভরে গেছে বা কনটেক্সট পুরনো।
+
+## পরীক্ষার decision rule
+
+<ReferenceTable
+	columns={['প্রশ্নে যা থাকে', 'উত্তর সম্ভবত']}
+	rows={[
+		['"details lost over long conversation"', 'progressive summarisation নয় — persistent fact block।'],
+		['"findings need to survive context reset"', 'scratchpad ফাইল (বাহ্যিক persistence)।'],
+		['"tool returned nothing"', 'পার্থক্য করুন: valid empty (মেনে নিন) বনাম access failure (retry)।'],
+		['"high overall accuracy, users report errors"', 'stratified validation — প্রতি type-এর accuracy দেখুন।'],
+		['"sources disagree"', 'দুটিই provenance ও তারিখসহ লিখে রাখুন।'],
+		['"generic error message"', 'structured error context দিয়ে বদলান।'],
+		['"model contradicts itself"', 'fresh start + summary injection।'],
+		['"inline citations lost after processing"', 'structured claim-source mapping-এ যান।'],
+		['"stable metrics but quality complaints"', 'সামগ্রিক নয়, প্রতি type-এর error rate দেখুন।'],
+		['"long task exceeds context window"', 'scratchpad ফাইল + কনটেক্সট সীমানা ব্যবস্থাপনা।'],
+	]}
+/>
+
+## পরীক্ষার ফাঁদ
+
+<ReferenceTable
+	columns={['ফাঁদ', 'সঠিক উত্তর']}
+	rows={[
+		['"কনটেক্সট বাঁচাতে কথোপকথন সারসংক্ষেপ করুন"', 'ভুল — summarisation-এ তথ্য হারায়; persistent fact block ব্যবহার করুন।'],
+		['"৯৫% overall accuracy মানেই সিস্টেম নির্ভরযোগ্য"', 'ভুল — প্রতি type-এর accuracy দেখুন; সামগ্রিক হিসাব শ্রেণির সমস্যা ঢাকে।'],
+		['"সূত্র বিরোধ করলে সাম্প্রতিকটি বেছে নিন"', 'ভুল — দুটিই provenance-সহ লিখুন, সিদ্ধান্ত নিক ব্যবহারকারী।'],
+		['"Return \'No results found — please try again\'"', 'ভুল যদি search সত্যিই কিছু না পেয়ে থাকে — শূন্য ফল মেনে নিন।'],
+		['"লেখার ভেতরে inline citation যথেষ্ট"', 'প্রোডাকশনে ভুল — synthesis-এ হারায়; structured mapping ব্যবহার করুন।'],
+		['"গুণমান মাপতে সামগ্রিক error rate দেখুন"', 'ভুল — শ্রেণিভিত্তিক অবনতি ধরতে প্রতি type-এর error rate দেখুন।'],
+		['"সব কনটেক্সট কথোপকথনের history-তে রাখুন"', 'ভুল — সীমানা পেরোতে scratchpad ফাইলে বাহ্যিক persistence ব্যবহার করুন।'],
+	]}
+/>
+
+## বিস্তারিত লেসন
+
+<LessonList domain={5} />
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />

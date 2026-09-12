@@ -1,0 +1,201 @@
+---
+title: ডোমেইন ১ রিভিশন শিট — এজেন্টিক আর্কিটেকচার
+titleEn: "Quick Reference: Domain 1 — Agentic Architecture & Orchestration"
+description: Domain 1-এর এক-পাতার রিভিশন শিট — agentic loop, orchestration pattern, hook গার্ডরেল, Agent SDK, human handoff ও পরীক্ষার decision rule।
+domain: 1
+updated: 2026-09-12
+sourceUrl: https://claudecertificationguide.com/learn/quick-reference/domain-1
+---
+
+import ReadingProgress from '../../../components/progress/ReadingProgress.astro';
+import ReferenceTable from '../../../components/content/ReferenceTable.astro';
+import ExamTrap from '../../../components/content/ExamTrap.astro';
+import LessonList from '../../../components/content/LessonList.astro';
+import Attribution from '../../../components/content/Attribution.astro';
+
+<ReadingProgress />
+
+<div class="lesson-meta">
+	<span class="lesson-badge">Domain 1</span>
+	<span class="lesson-task">ওয়েট ২৭% · রিভিশন শিট</span>
+	<span class="lesson-source">পূর্ণ ব্যাখ্যা: লেসন ১.১–১.৭</span>
+</div>
+
+<p class="progress-hint">এক পাতার সারসংক্ষেপ। পরীক্ষার আগে শুধু এই পাতাটি স্ক্যান করুন — প্রিন্ট করতে `Ctrl+P` / `Cmd+P`।</p>
+
+## এজেন্টিক লুপ
+
+মূল এক্সিকিউশন সাইকেল: রিকোয়েস্ট পাঠান → `stop_reason` পড়ুন → টুল চালান বা থামুন।
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['`stop_reason`', 'মানে', 'লুপে করণীয়']}
+	rows={[
+		['`"tool_use"`', 'Claude এক বা একাধিক টুল কল করতে চায়।', 'টুল চালান, ফল conversation history-তে যোগ করুন, তারপর লুপ চালিয়ে যান।'],
+		['`"end_turn"`', 'Claude-এর কাজ শেষ।', 'লুপ বন্ধ করুন।'],
+	]}
+/>
+
+<ExamTrap label="মূল নিয়ম">
+
+টুলের ফল পরের iteration-এর আগে conversation history-তে যোগ করতেই হবে — না হলে Claude দেখতেই পায় না টুল কী ফেরত দিয়েছে।
+
+লুপ থামানোর একমাত্র নির্ভরযোগ্য সংকেত `stop_reason`; রেসপন্সের লেখা পার্স করা নয়। এই ফিল্ড deterministic ও দ্ব্যর্থহীন।
+
+</ExamTrap>
+
+বর্তমান অবস্থা (১৪ আগস্ট ২০২৬ তারিখে যাচাই): পরীক্ষায় মূলত `end_turn` ও `tool_use` ধরা হয়। লাইভ Messages API অবশ্য `pause_turn`, `max_tokens`, `stop_sequence`, `refusal` আর `model_context_window_exceeded`-ও ফেরত দেয় — তাই প্রোডাকশন লুপ দুটি মানের চেয়ে বেশি সামলায়।
+
+চেনার মতো তিনটি anti-pattern:
+
+<ReferenceTable
+	columns={['Anti-pattern', 'কেন ব্যর্থ']}
+	rows={[
+		['পাঠ্যের ভাষা পার্স করা ("I am done")', 'অস্পষ্ট — মডেল "প্রথম ধাপ শেষ" বলেও চালিয়ে যেতে চাইতে পারে।'],
+		['Iteration cap-কে প্রাইমারি কন্ট্রোল বানানো', 'হয় দরকারি কাজ কেটে ফেলে, নয়তো অপ্রয়োজনীয় iteration চালায়।'],
+		['`content[0].type == "text"` চেক করা', 'Claude একই রেসপন্সে text আর `tool_use` ব্লক একসাথে দিতে পারে।'],
+	]}
+/>
+
+Iteration cap শুধু safety net হিসেবে ঠিক — runaway agent আটকানোর সর্বোচ্চ সীমা। প্রাইমারি স্টপিং মেকানিজম কখনোই নয়।
+
+## অর্কেস্ট্রেশন প্যাটার্ন
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['প্যাটার্ন', 'কখন ব্যবহার করবেন', 'বৈশিষ্ট্য']}
+	rows={[
+		['Sequential', 'প্রতিটি ধাপ আগের ধাপের ফলের উপর নির্ভর করে।', 'A → B → C; প্রতি ধাপ আগের ফল পায়।'],
+		['Parallel', 'স্বাধীন subtask, latency গুরুত্বপূর্ণ।', 'Fan-out, fan-in; টাস্কগুলোর মধ্যে shared state নেই।'],
+		['Pipeline', 'ভিন্ন বিশেষায়িত ধাপ।', 'অ্যাসেম্বলি লাইন; একটির output পরেরটির input।'],
+		["Dynamic adaptive", 'কাজের জটিলতা আগে থেকে জানা নেই।', 'মডেল runtime-এ ভাগ ঠিক করে।'],
+		['Hub-and-spoke', 'Coordinator + specialist প্যাটার্ন।', 'কেন্দ্রীয় agent focused subagent-দের কাজ দেয়।'],
+	]}
+/>
+
+**Decision rule:** subtask স্বাধীন হলে parallel, প্রতিটি ধাপ আগের ফলের উপর নির্ভর করলে sequential, ডিজাইন করার সময় ভাগ অনুমান করা না গেলে dynamic adaptive।
+
+## গার্ডরেল হায়ারার্কি
+
+Prompt নির্দেশনা probabilistic, hook deterministic। এই পার্থক্যটাই এই ডোমেইনের সবচেয়ে বেশি পরীক্ষিত ধারণা — অথচ পরীক্ষায় সাতটির চারটি প্রশ্নে আসে।
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['যন্ত্র', 'ধরন', 'কোথায় খাটে', 'কীসের জন্য']}
+	rows={[
+		['System prompt নিয়ম', 'Probabilistic', 'মডেল নাও মানতে পারে।', 'স্টাইল-নির্দেশনা, নরম পছন্দ।'],
+		['`PreToolUse` hook', 'Deterministic', 'কোড-স্তরে, টুল চলার আগে।', 'বিপজ্জনক টুল কল আটকানো, প্যারামিটার যাচাই।'],
+		['`PostToolUse` hook', 'Deterministic', 'কোড-স্তরে, টুল ফেরার পরে।', 'ফল যাচাই, ফল পরিষ্কার করা, audit logging।'],
+	]}
+/>
+
+হুকের ক্রম: `PreToolUse` টুল চলার আগে, `PostToolUse` টুল ফেরার পরে। দুটোই প্রোগ্রাম্যাটিক — prompt injection দিয়ে বাইপাস করা যায় না।
+
+<ExamTrap label="পরীক্ষার সংকেত">
+
+প্রশ্নে <strong>"must always"</strong>, <strong>"guaranteed"</strong> বা <strong>"enforce"</strong> শব্দ থাকলে উত্তর hook — prompt নয়।
+
+</ExamTrap>
+
+## Claude Agent SDK
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['উপাদান', 'কাজ']}
+	rows={[
+		['`AgentDefinition`', 'agent-এর description, system prompt ও `tools` ফিল্ড ঘোষণা করে — কোন টুলে subagent-এর হাত থাকবে তা এই তালিকাই বাঁধে। ছোট, ভূমিকা-কেন্দ্রিক সেট রাখুন।'],
+		['`Task` tool', 'coordinator এই টুল দিয়ে কাজ ভাগ করে। coordinator-এর `allowedTools`-এ `Task` (Claude Code-এ এখন `Agent`) না থাকলে subagent তৈরি হবেই না, কারণ টুলটাই তার কাছে নেই।'],
+		['Context passing', 'subagent-দের মধ্যে shared memory নেই — সব কনটেক্সট task definition বা handoff payload-এ স্পষ্টভাবে পাঠাতে হয়।'],
+	]}
+/>
+
+গাইডে টুল সেটের তুলনা স্পষ্ট: **৪–৫টি টুল** বনাম **১৮টি** — সেট বড় হলে selection reliability পড়ে যায়।
+
+## মাল্টি-এজেন্ট সিস্টেম
+
+Coordinator + specialist প্যাটার্নে coordinator কাজ ভাগ করে, ক্রম ঠিক করে, ফল জোড়া লাগায়। প্রতি specialist একটি ডোমেইনে সীমিত, হাতে ছোট টুল সেট।
+
+<ReferenceTable
+	columns={['প্রশ্ন', 'উত্তর']}
+	rows={[
+		['একজন বড় agent-এর বদলে specialist কেন?', 'ছোট focused টুল সেট selection error কমায়; প্রতি agent-এর কনটেক্সট ছোট হলে নির্ভুলতা বাড়ে; আলাদা স্কেল ও টেস্ট করা সহজ।'],
+		['কাজের ভাগ কে ঠিক করে?', 'coordinator, runtime-এ। অনুমানযোগ্য কাজে fixed decomposition, খোলামেলা অনুসন্ধানে dynamic decomposition।'],
+		['কনটেক্সট কি শেয়ার হয়?', 'না — সব স্পষ্ট পাসিং, কোনো implicit state নেই।'],
+	]}
+/>
+
+## Human-in-the-Loop
+
+Structured handoff ফরম্যাট — পরীক্ষায় ঠিক এই চার-ফিল্ড প্যাটার্নটি ধরা হয়:
+
+<ReferenceTable
+	columns={['ফিল্ড', 'কী থাকে']}
+	rows={[
+		['Customer ID', 'কে ক্ষতিগ্রস্ত।'],
+		['Summary', 'কী ঘটেছে — তথ্য, ব্যাখ্যা নয়।'],
+		['Root cause', 'কেন ঘটেছে।'],
+		['Recommended action', 'agent কী করার সুপারিশ করে।'],
+	]}
+/>
+
+কখন escalate করবেন: policy-র ব্যতিক্রম, ধ্বংসাত্মক operation, আর উপলব্ধ কনটেক্সটে মেটানো যায় না এমন প্রকৃত দ্বিধা।
+
+<ExamTrap label="পরীক্ষার সূক্ষ্ম পার্থক্য">
+	<p>
+		প্রতি-ক্যাটাগরি threshold-এর নিচে classifier score বৈধ ট্রিগার — কিন্তু agent-এর <strong>নিজের জানানো confidence</strong> নয়; গাইড এটিকে খারাপভাবে calibrated বলে বাদ দেয়।
+	</p>
+</ExamTrap>
+
+মূল নিয়ম: চুপচাপ ব্যর্থ হওয়া চলবে না। কাজ শেষ করতে না পারলে structured handoff দিন, সাধারণ error message নয়।
+
+## এরর রিকভারি ও রেজিলিয়েন্স
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['কৌশল', 'কখন']}
+	rows={[
+		['`fork_session`', 'ভিন্ন পথে অনুসন্ধান — মূল কনটেক্সট নষ্ট না করে কয়েকটি approach চেষ্টা করা।'],
+		['Fresh start + summary injection', 'কনটেক্সট পুরনো বা দূষিত হয়ে গেছে; বের করা তথ্য নিয়ে নতুন কথোপকথন শুরু করা।'],
+		['Retry with error feedback', 'ক্ষণস্থায়ী ব্যর্থতা; মূল প্রম্পট + ব্যর্থ আউটপুট + নির্দিষ্ট এরর মডেলকে ফেরত পাঠানো।'],
+		['Graceful degradation', 'আংশিক ফল না পাওয়ার চেয়ে ভালো; যা আছে তা metadata-সহ ফেরত দেওয়া।'],
+	]}
+/>
+
+**Stale context-এর সংকেত:** মডেল নিজের কথা দোহরায়, আগের বক্তব্যের সাথে সাংঘর্ষিক কিছু বলে, বা সাম্প্রতিক টুল ফলের দিকে তাকায় না। সমাধান "আরও কনটেক্সট" নয় — বাছাই করা সারসংক্ষেপ নিয়ে নতুন শুরু।
+
+## পরীক্ষার decision rule
+
+<ReferenceTable
+	columns={['প্রশ্নে যা থাকে', 'উত্তর সম্ভবত']}
+	rows={[
+		['"guaranteed", "must always", "enforce"', 'Hook (deterministic), prompt নয়।'],
+		['"flexibility", "adapt", "unexpected"', 'মডেল-চালিত সিদ্ধান্ত।'],
+		['"independent subtasks"', 'Parallel অর্কেস্ট্রেশন।'],
+		['"each step needs previous output"', 'Sequential অর্কেস্ট্রেশন।'],
+		['"premature termination"', 'iteration cap নয় — `stop_reason` চেক ঠিক করুন।'],
+		['"runaway agent"', 'safety net হিসেবে iteration cap।'],
+		['"share context between agents"', 'স্পষ্ট পাসিং — subagent-দের shared memory নেই।'],
+		['"complex task, unknown structure"', 'Dynamic adaptive অর্কেস্ট্রেশন।'],
+		['"compliance", "regulatory", "audit"', 'প্রোগ্রাম্যাটিক enforcement (hook), মডেলের বিচার নয়।'],
+	]}
+/>
+
+## পরীক্ষার ফাঁদ
+
+<ReferenceTable
+	columns={['ফাঁদ', 'সঠিক উত্তর']}
+	rows={[
+		['"premature termination মেটাতে iteration cap বাড়ান"', 'ভুল — `stop_reason` চেক ঠিক করুন।'],
+		['"subagent coordinator-এর কনটেক্সট পড়তে পারে"', 'ভুল — সব কনটেক্সট স্পষ্টভাবে পাঠাতে হবে।'],
+		['"system prompt নিয়ম compliance নিশ্চিত করে"', 'ভুল — prompt probabilistic, নিশ্চয়তা দেয় hook।'],
+		['"সহজ রাখতে অনেক টুল নিয়ে একজন agent"', 'ভুল — প্রতি agent ছোট, ভূমিকা-কেন্দ্রিক টুল সেটে সীমিত রাখুন।'],
+		['"iteration cap-ই লুপের প্রধান কন্ট্রোল"', 'ভুল — `stop_reason` প্রাইমারি, cap কেবল safety net।'],
+		['"রেসপন্সে text থাকলে agent শেষ"', 'ভুল — text আর `tool_use` ব্লক একই রেসপন্সে আসতে পারে।'],
+	]}
+/>
+
+## বিস্তারিত লেসন
+
+<LessonList domain={1} />
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />

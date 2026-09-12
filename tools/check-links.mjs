@@ -79,6 +79,16 @@ for await (const file of walk(dist)) {
 		const href = match[1];
 		if (!href.startsWith('/') || href.startsWith('//')) continue;
 		links += 1;
+		// Astro does not add the site base to links written in Markdown/MDX or in Starlight
+		// hero actions, so a root-relative link that skips the base only resolves when the
+		// site is served from the domain root. Treat those as broken rather than silently
+		// matching a file that happens to exist at the dist root.
+		if (!href.startsWith(base)) {
+			broken.push(
+				`${relative(dist, file)} → ${href} (missing the ${base} base — use siteUrl() from src/lib/urls.ts)`,
+			);
+			continue;
+		}
 		const target = distTarget(href);
 		if (exists(target) || exists(join(target, 'index.html'))) continue;
 		if (isPlanned(href)) pending.push(`${relative(dist, file)} → ${href}`);

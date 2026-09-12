@@ -29,6 +29,7 @@ Consult these guides before working on related tasks:
 - Keep technical terms in English/Latin script (`stop_reason`, `MCP`, `CLAUDE.md`, `PreToolUse`); never transliterate code identifiers.
 - Add new terminology to `src/content/glossary-terms.json` before using it in a lesson; the glossary wins on conflicts.
 - Internal links inside `.astro` components must go through `siteUrl()` from `src/lib/urls.ts` (site is served under `/CCAR-F`).
+- The same applies to `.mdx` content: Astro adds no `base` to links written in Markdown or MDX, so `/learn/` 404s in production. Write `<a href={siteUrl('learn/')}>…</a>` instead. Starlight hero-action links in frontmatter cannot call `siteUrl()` and must spell out the base (`/CCAR-F/learn/`). `pnpm check:links` fails on any root-relative link missing the base.
 - Diagrams are Mermaid fenced blocks; they render client-side, so no build-time browser is needed.
 - Progress state stays in localStorage under `ccarf:v1` (`src/lib/progress.ts`); no backend.
 - Before committing: `pnpm check`, `pnpm build`, `pnpm check:links`.

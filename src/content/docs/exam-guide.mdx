@@ -1,0 +1,123 @@
+---
+title: পরীক্ষা গাইড — CCAR-F
+titleEn: "Exam Guide & Blueprint"
+description: Claude Certified Architect (Foundations) পরীক্ষার ফরম্যাট, ৬টি সিনারিও, ৫ ডোমেইনের ওয়েট, পাসের নিয়ম ও প্রস্তুতির পথ — বাংলায়।
+updated: 2026-09-12
+sourceUrl: https://claudecertificationguide.com/blog/claude-certified-architect-foundations-exam-guide
+sources:
+  - label: Claude Certified Architect (Foundations) — Exam Guide and Blueprint
+    href: https://claudecertificationguide.com/blog/claude-certified-architect-foundations-exam-guide
+    note: claudecertificationguide.com
+  - label: Anthropic — Claude documentation
+    href: https://docs.anthropic.com/
+    note: Anthropic
+---
+
+import { siteUrl } from '../../lib/urls';
+import ReferenceTable from '../../components/content/ReferenceTable.astro';
+import ExamTrap from '../../components/content/ExamTrap.astro';
+import DomainCards from '../../components/content/DomainCards.astro';
+import Attribution from '../../components/content/Attribution.astro';
+
+Claude Certified Architect (Foundations), কোড **CCAR-F** — Anthropic-এর চারটি সার্টিফিকেশনের মধ্যে এটিই একমাত্র **scenario-ভিত্তিক**। সেই ফরম্যাটই বলে দেয় আসলে কী যাচাই করা হয়: ডকুমেন্ট মুখস্থ আছে কি না নয়, বরং বাস্তব পরিস্থিতিতে একাধিক যুক্তিসঙ্গত অপশনের সামনে সঠিক আর্কিটেকচারাল সিদ্ধান্ত নিতে পারেন কি না।
+
+তাক করা প্রার্থী সে-ই, যে সত্যিই Claude দিয়ে কিছু শিপ করেছে — ডকুমেন্ট পড়ে শেখা নয়। গাইড মোটামুটি ছয় মাসের ব্যবহারিক অভিজ্ঞতা ধরে নেয়: Claude API, Agent SDK, Claude Code আর MCP জুড়ে।
+
+## পরীক্ষার ফরম্যাট: ৬টির ব্যাংক থেকে ৪টি সিনারিও
+
+বেশিরভাগ সার্টিফিকেশন পরীক্ষা বিচ্ছিন্ন প্রশ্ন ছোড়ে। Architect (Foundations) এর উল্টো — ছয়টি সিনারিওর ব্যাংক থেকে **চারটি** সিনারিও সামনে আসে, আর প্রশ্নগুলো সেই সিনারিওতেই যুক্ত থাকে। ছয়টি হলো:
+
+<ReferenceTable
+	columns={['সিনারিও (English)', 'বাংলায়']}
+	rows={[
+		['Customer Support Resolution Agent', 'গ্রাহক-সহায়তা সমাধানকারী agent।'],
+		['Code Generation with Claude Code', 'Claude Code দিয়ে কোড তৈরি।'],
+		['Multi-Agent Research System', 'মাল্টি-এজেন্ট গবেষণা সিস্টেম।'],
+		['Developer Productivity with Claude', 'Claude দিয়ে ডেভেলপার উৎপাদনশীলতা।'],
+		['Claude Code for Continuous Integration', 'CI pipeline-এ Claude Code।'],
+		['Structured Data Extraction', 'structured data extraction।'],
+	]}
+/>
+
+কোন চারটি আসবে তা জানা যায় না, তাই শর্টকাট নেই — ছয়টির **সবগুলো** নিয়ে আরামে ভাবতে পারতে হবে। প্রতিটি একটি ছোট প্রোডাকশন ডিজাইন সমস্যা; পরীক্ষা দেখতে চায় আপনি অভিজ্ঞ আর্কিটেক্টের মতোই বানাবেন কি না।
+
+## পাসের নিয়ম ও পরীক্ষার তথ্য
+
+<ReferenceTable
+	columns={['বিষয়', 'তথ্য']}
+	rows={[
+		['প্রশ্ন', '৬০টি — ৪টি সিনারিও, ৬টির ব্যাংক থেকে।'],
+		['সময়', '১২০ মিনিট।'],
+		['পাস মার্ক', '৭২০ / ১০০০ (scaled score), ১০০ থেকে ১০০০ স্কেলে।'],
+		['ক্রেডেনশিয়াল মেয়াদ', '১২ মাস।'],
+		['খরচ', '$১২৫ USD।'],
+		['দেওয়ার মাধ্যম', 'Pearson VUE — অনলাইন প্রোক্টর বা টেস্ট সেন্টার।'],
+		['সিলেবাস ভার্সন', 'v1.0, জুলাই ২০২৬ থেকে কার্যকর।'],
+	]}
+/>
+
+## পাঁচটি ডোমেইন ও ওয়েট
+
+ওয়েট অসম, আর নম্বর কোথায় আছে তা জানা লাভজনক।
+
+<DomainCards showLessons={false} />
+
+<ReferenceTable
+	columns={['ডোমেইন', 'ওয়েট', 'কী যাচাই হয়']}
+	rows={[
+		['D1 · এজেন্টিক আর্কিটেকচার ও অর্কেস্ট্রেশন', '২৭%', 'agentic loop, orchestration pattern, গার্ডরেল, Agent SDK।'],
+		['D2 · টুল ডিজাইন ও MCP ইন্টিগ্রেশন', '১৮%', 'tool schema, MCP server ও client, টুল রাউটিং।'],
+		['D3 · Claude Code কনফিগারেশন ও ওয়ার্কফ্লো', '২০%', 'settings hierarchy, CLAUDE.md, hook, permission, CI/CD।'],
+		['D4 · প্রম্পট ইঞ্জিনিয়ারিং ও স্ট্রাকচার্ড আউটপুট', '২০%', 'system prompt, few-shot, output validation।'],
+		['D5 · কনটেক্সট ম্যানেজমেন্ট ও রিলায়েবিলিটি', '১৫%', 'context window, caching, দীর্ঘ কথোপকথন, reliability।'],
+	]}
+/>
+
+শুধু Domain 1-ই পরীক্ষার এক-চতুর্থাংশের বেশি। এজেন্টিক আর্কিটেকচার ও অর্কেস্ট্রেশনেই সবচেয়ে বেশি প্রশ্ন, আর প্রার্থীরা এখানেই সবচেয়ে বেশি নম্বর হারায় — সাধারণত agentic loop ভুল সামলে বা সহজ সমাধান থাকতে জটিল কিছু বেছে নিয়ে।
+
+<ExamTrap label="প্রস্তুতির ক্রম">
+
+সময় সীমিত হলে আগে Domain 1-কে ওজন দিন। ওয়েট বেশি, দুর্বলতা বেশি — আগে সেখানে সময় দিন।
+
+</ExamTrap>
+
+পড়ার সাজানো ক্রম <a href={siteUrl('learn/')}>সিলেবাস ও পরীক্ষার তথ্য</a> পাতায় আছে।
+
+## পুরো পরীক্ষা জুড়ে একটা প্যাটার্ন
+
+প্রতিটি ডোমেইনে পরীক্ষা **যে সমাধানটি কাজ করে, তার সবচেয়ে সহজ রূপটিকেই** জেতে দেয়।
+
+- সিনারিও বলছে টুল ভুল সময়ে কল হচ্ছে? উত্তর প্রায় সবসময়ই "tool description আরও স্পষ্ট লেখো" — "routing classifier যোগ করো" নয়।
+- Output অসামঞ্জস্যপূর্ণ? সাধারণত "মডেলকে স্পষ্ট, মাপা যায় এমন criteria দাও" — "প্রথমটিকে যাচাই করার জন্য আরেকটি মডেল বসাও" নয়।
+
+ঘোষিত সমস্যাটি সবচেয়ে কম যন্ত্রপাতিতে মেটায়, সেই উত্তরটি খুঁজতে শিখুন। তাতে সঠিক বাছাইয়ের হার অনেক বাড়বে।
+
+## প্রস্তুতির পথ
+
+- <a href={siteUrl('learn/')}>সিলেবাস ও পরীক্ষার তথ্য</a> — ৫টি ডোমেইনের ৩০টি লেসন ও পড়ার ক্রম
+- <a href={siteUrl('quick-reference/')}>দ্রুত রিভিশন শিট</a> — প্রতি ডোমেইনের এক-পাতার শিট, শেষ রিভিশনের জন্য
+- <a href={siteUrl('glossary/')}>কীওয়ার্ড গ্লোসারি</a> — ২২৫টি শব্দ এক পাতায়, ডোমেইন ফিল্টারসহ
+- <a href={siteUrl('progress/')}>অগ্রগতি ড্যাশবোর্ড</a> — কোন লেসন শেষ, কত বাকি
+
+## প্রোগ্রামে এটি কোথায় বসে
+
+Architect (Foundations) Anthropic-এর চারটি Claude সার্টিফিকেশনের একটি — এটিই ডিজাইন-কেন্দ্রিক Foundations স্তর। যদি আপনার কাজ governance, stakeholder management আর প্রোডাকশন সিস্টেম শুরু থেকে শেষ পর্যন্ত সামলানোর দিকে যায়, Architect (Professional) স্তরটি তার জন্য বানানো। কোনোটির জন্যই অন্যটি আগে দরকার নেই।
+
+## সূত্র
+
+<ul>
+	{frontmatter.sources.map((source) => (
+		<li>
+			<a href={source.href} target="_blank" rel="noopener noreferrer">
+				{source.label}
+			</a>
+			{source.note ? ` — ${source.note}` : ''}
+		</li>
+	))}
+</ul>
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />
+
+<p class="progress-hint">
+	এটি সম্প্রদায়ের স্বাধীন রিসোর্স — Anthropic-এর সাথে সম্পর্কিত বা তাদের অনুমোদিত নয়।
+</p>

@@ -4,17 +4,20 @@ description: Claude Certified Architect (Foundations) পরীক্ষার �
 template: splash
 hero:
   tagline: Claude Certified Architect (Foundations) — CCAR-F পরীক্ষার জন্য বাংলা অনুবাদ, কীওয়ার্ড-ফোকাসড লেসন, ডায়াগ্রাম আর অগ্রগতি ট্র্যাকিং। যেখানে থামবেন, ঠিক সেখান থেকেই শুরু করুন।
+  # Starlight does not prefix hero action links with the site base, so the base is
+  # written out here. Body links below go through siteUrl() instead.
   actions:
     - text: শেখা শুরু করুন
-      link: /learn/
+      link: /CCAR-F/learn/
       icon: right-arrow
       variant: primary
     - text: আমার অগ্রগতি
-      link: /progress/
+      link: /CCAR-F/progress/
       icon: bars
 ---
 
 import DomainCards from '../../components/content/DomainCards.astro';
+import { siteUrl } from '../../lib/urls';
 
 ## পরীক্ষা এক নজরে
 
@@ -29,6 +32,8 @@ import DomainCards from '../../components/content/DomainCards.astro';
 | ক্রেডেনশিয়াল মেয়াদ | ১২ মাস |
 | সিলেবাস ভার্সন | v1.0, জুলাই ২০২৬ |
 
+পরীক্ষার ফরম্যাট, ৬টি সিনারিও, ওয়েট আর পাসের নিয়ম বিস্তারিত <a href={siteUrl('exam-guide/')}>পরীক্ষা গাইডে</a>।
+
 ## ৫টি ডোমেইন ও ওয়েট
 
 <DomainCards showLessons={false} />
@@ -37,10 +42,10 @@ import DomainCards from '../../components/content/DomainCards.astro';
 
 1. **ডায়াগনস্টিক ধারণা নিন** — কোন ডোমেইনে দুর্বল, তা আগে ঠিক করুন। ওয়েট বেশি, দুর্বলতা বেশি — আগে সেখানে সময় দিন।
 2. **লেসন পড়ুন** — প্রতিটি লেসনে বাংলা ব্যাখ্যা, কীওয়ার্ড টেবিল, ডায়াগ্রাম আর পরীক্ষার ফাঁদ এক পাতায়।
-3. **কীওয়ার্ড মুখস্থ করুন** — লেসনের কীওয়ার্ড টেবিল আর [গ্লোসারি](/glossary/) দিয়ে দ্রুত রিভিশন।
-4. **সম্পন্ন চিহ্নিত করুন** — লেসনের নিচে `সম্পন্ন হয়েছে` চাপুন। সাইডবারে ✓ বসবে, [অগ্রগতি ড্যাশবোর্ড](/progress/)-এ বার ভরবে।
-5. **পরীক্ষার আগের রাতে** — শুধু কীওয়ার্ড টেবিল আর পরীক্ষার ফাঁদ পড়ুন, পুরো লেসন নয়।
+3. **কীওয়ার্ড মুখস্থ করুন** — লেসনের কীওয়ার্ড টেবিল আর <a href={siteUrl('glossary/')}>গ্লোসারি</a> দিয়ে দ্রুত রিভিশন।
+4. **সম্পন্ন চিহ্নিত করুন** — লেসনের নিচে `সম্পন্ন হয়েছে` চাপুন। সাইডবারে ✓ বসবে, <a href={siteUrl('progress/')}>অগ্রগতি ড্যাশবোর্ড</a>-এ বার ভরবে।
+5. **পরীক্ষার আগের রাতে** — শুধু <a href={siteUrl('quick-reference/')}>দ্রুত রিভিশন শিট</a>, কীওয়ার্ড টেবিল আর পরীক্ষার ফাঁদ পড়ুন, পুরো লেসন নয়।
 
 ## সূত্র ও কৃতিত্ব
 
-এই সাইটের পাঠ্যগুলো [claudecertificationguide.com](https://claudecertificationguide.com/learn)-এর ইংরেজি স্টাডি গাইডের বাংলা অনুবাদ। পরীক্ষার ব্লুপ্রিন্ট ও প্রযুক্তিগত তথ্যের মূল সূত্র Anthropic-এর অফিসিয়াল ডকুমেন্টেশন। বিস্তারিত [উৎস ও লাইসেন্স](/about/) পাতায়।
+এই সাইটের পাঠ্যগুলো [claudecertificationguide.com](https://claudecertificationguide.com/learn)-এর ইংরেজি স্টাডি গাইডের বাংলা অনুবাদ। পরীক্ষার ব্লুপ্রিন্ট ও প্রযুক্তিগত তথ্যের মূল সূত্র Anthropic-এর অফিসিয়াল ডকুমেন্টেশন। বিস্তারিত <a href={siteUrl('about/')}>উৎস ও লাইসেন্স</a> পাতায়।

@@ -1,0 +1,217 @@
+---
+title: ডোমেইন ৩ রিভিশন শিট — Claude Code কনফিগারেশন
+titleEn: "Quick Reference: Domain 3 — Claude Code Configuration & Workflows"
+description: Domain 3-এর এক-পাতার রিভিশন শিট — CLAUDE.md ক্রম, rules, Skills, hook, plan mode, CLI flag, permission ও পরীক্ষার decision rule।
+domain: 3
+updated: 2026-09-12
+sourceUrl: https://claudecertificationguide.com/learn/quick-reference/domain-3
+---
+
+import ReadingProgress from '../../../components/progress/ReadingProgress.astro';
+import ReferenceTable from '../../../components/content/ReferenceTable.astro';
+import ExamTrap from '../../../components/content/ExamTrap.astro';
+import LessonList from '../../../components/content/LessonList.astro';
+import Attribution from '../../../components/content/Attribution.astro';
+
+<ReadingProgress />
+
+<div class="lesson-meta">
+	<span class="lesson-badge">Domain 3</span>
+	<span class="lesson-task">ওয়েট ২০% · রিভিশন শিট</span>
+	<span class="lesson-source">পূর্ণ ব্যাখ্যা: লেসন ৩.১–৩.৬</span>
+</div>
+
+<p class="progress-hint">এক পাতার সারসংক্ষেপ। পরীক্ষার আগে শুধু এই পাতাটি স্ক্যান করুন — প্রিন্ট করতে `Ctrl+P` / `Cmd+P`।</p>
+
+## Configuration হায়ারার্কি
+
+CLAUDE.md ফাইলগুলো **concatenate** হয়, override নয়। প্রযোজ্য সব ফাইল একসাথে লোড হয়, বিস্তৃত স্কোপ থেকে সংকীর্ণের দিকে এই ক্রমে:
+
+<ReferenceTable
+	columns={['ক্রম', 'অবস্থান', 'স্কোপ', 'Git-এ কমিট হয়?']}
+	rows={[
+		['১ (সবচেয়ে বিস্তৃত)', '`~/.claude/CLAUDE.md`', 'ব্যবহারকারী-গ্লোবাল, সব প্রজেক্ট।', 'না'],
+		['২', '`.claude/CLAUDE.md` (প্রজেক্ট রুট)', 'প্রজেক্ট-ব্যাপী।', 'হ্যাঁ'],
+		['৩', '`CLAUDE.md` (যেকোনো ডিরেক্টরি)', 'সেই ডিরেক্টরি ও নিচের সব।', 'হ্যাঁ'],
+	]}
+/>
+
+**`.claude/rules/` কোথায় বসে:** এই তালিকার শেষে নয়। `paths` ফ্রন্টম্যাটার ছাড়া rule-গুলো launch-এ `.claude/CLAUDE.md`-এর সমান অগ্রাধিকার নিয়ে লোড হয় — এগুলো একটিমাত্র বিশাল ফাইল ভাগ করার উপায়, কোনো "বেশি নির্দিষ্ট তাই জিতে যায়" স্তর নয়। `paths` থাকা rule শর্তসাপেক্ষে লোড হয়, যখন Claude সেই প্যাটার্নের ফাইল পড়ে। আলাদা করে: `~/.claude/rules/`-এর user-স্তরের rule প্রজেক্ট rule-এর আগে লোড হয়, তাই প্রজেক্ট rule-এর অগ্রাধিকার বেশি।
+
+<ExamTrap label="মূল নিয়ম">
+
+এটি load order, precedence chain নয় — কোনো ফাইল অন্যকে বদলায় না। দুই rule পরস্পরবিরোধী হলে Claude যেকোনোটি নিজের ইচ্ছায় বেছে নিতে পারে, তাই দ্বন্দ্ব উৎসেই সারান।
+
+"বেশি নির্দিষ্ট স্কোপ জেতে" বা "user-level project-level-কে override করে" — এমন ডিস্ট্র্যাক্টর ভুল।
+
+</ExamTrap>
+
+## `.claude/rules/` — শর্তসাপেক্ষ rule
+
+`.claude/rules/`-এ থাকা ফাইল `paths` ফিল্ডসহ YAML frontmatter ব্যবহার করে শর্তসাপেক্ষে লোড হয়:
+
+```yaml
+---
+paths:
+  - "src/api/**"
+  - "src/middleware/**"
+---
+Always validate authentication tokens before processing API requests.
+Use structured error responses with proper HTTP status codes.
+```
+
+Rule লোড হয় কেবল তখনই, যখন Claude Code সেই glob প্যাটার্নের ফাইল নিয়ে কাজ করে। এতে অপ্রয়োজনীয় rule কনটেক্সট উইন্ডো জুড়ে জায়গা খায় না।
+
+## Skills সিস্টেম
+
+<ReferenceTable
+	columns={['বিষয়', 'Project skill', 'Personal skill']}
+	rows={[
+		['অবস্থান', '`.claude/skills/`', '`~/.claude/skills/`'],
+		['Entry point', 'skill ডিরেক্টরির ভেতরে `SKILL.md`', 'skill ডিরেক্টরির ভেতরে `SKILL.md`'],
+		['টিমের সাথে শেয়ার', 'হ্যাঁ (কমিট হয়)', 'না (ব্যক্তিগত)'],
+	]}
+/>
+
+Skill-এর বৈশিষ্ট্য:
+
+- `allowed-tools` — পরীক্ষার গাইডে এটি skill-এর টুল অ্যাক্সেস সীমিত করার কথা বলে, আর পরীক্ষার প্রত্যাশিত উত্তরও সেটিই। বর্তমান Claude Code-এ (জুলাই ২০২৬) এটি তালিকাভুক্ত টুল আগেই অনুমোদন করে, যাতে permission prompt ছাড়াই চলে; নিষেধ করার কাজ করে `disallowed-tools` আর permission deny rule।
+- `context: fork` — ফর্ক করা কনটেক্সটে চলে, যাতে skill চালানোর ধুলো মূল কথোপকথনে না লাগে।
+
+Skill হলো পুনর্ব্যবহারযোগ্য capability module — "test চালাও", "staging-এ deploy করো" জাতীয় workflow, যার টুল অ্যাক্সেস frontmatter-এ ঠিক করা।
+
+## Commands
+
+<ReferenceTable
+	columns={['ধরন', 'অবস্থান', 'স্কোপ']}
+	rows={[
+		['প্রজেক্ট command', '`.claude/commands/`', 'টিমের সাথে শেয়ার হয়।'],
+		['ব্যক্তিগত command', '`~/.claude/commands/`', 'কেবল নিজের।'],
+	]}
+/>
+
+Command `/` প্রিফিক্স দিয়ে চালু হয়। এগুলো template — আগে থেকে লেখা প্রম্পট, যেখানে `$ARGUMENTS` placeholder দিয়ে ব্যবহারকারীর ইনপুট ঢোকে।
+
+**Skill থেকে পার্থক্য:** command আর skill একই সিস্টেমে মিলে গেছে — দুটোই `/command` বানায়। Command হলো একটি সমতল `.md` ফাইল (প্রম্পট template, `$ARGUMENTS` চলে); skill হলো একটি ডিরেক্টরি, যার entry point `SKILL.md`, সাথে বাড়তি ফাইল, frontmatter configuration আর প্রাসঙ্গিক হলে স্বয়ংক্রিয় invocation।
+
+## Hook — deterministic enforcement
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['Hook', 'কখন চলে', 'কীসের জন্য']}
+	rows={[
+		['`PreToolUse`', 'টুল চলার আগে।', 'বিপজ্জনক কল আটকানো, প্যারামিটার যাচাই, নিশ্চিতকরণ দরকার করা।'],
+		['`PostToolUse`', 'টুল ফেরত দেওয়ার পরে।', 'ফল যাচাই, ফল পরিষ্কার করা, audit logging, পরের কাজ ট্রিগার করা।'],
+	]}
+/>
+
+গুরুত্বপূর্ণ বৈশিষ্ট্য: hook deterministic — এগুলো কোড হিসেবে চলে, মডেলের নির্দেশ নয়। prompt injection বা মডেলের যুক্তি দিয়ে এগুলো বাইপাস করা যায় না।
+
+- Prompt: "প্রোডাকশন ফাইল কখনো মুছবে না" → probabilistic, ভাঙা যেতে পারে
+- `PreToolUse` hook, `/prod/` পাথে `rm` আটকায় → deterministic, ভাঙা যায় না
+
+## Working mode
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['মোড', 'কখন']}
+	rows={[
+		['Plan mode', 'জটিল কাজ, একাধিক সম্ভাব্য পথ, করার আগে ভাবা দরকার।'],
+		['Direct execution', 'স্কোপ স্পষ্ট, কাজ ভালোভাবে সংজ্ঞায়িত, পথ নিয়ে কোনো দ্বিধা নেই।'],
+		['`-p` flag (non-interactive)', 'CI/CD pipeline, স্বয়ংক্রিয় workflow, সামনে কেউ নেই।'],
+	]}
+/>
+
+**Plan mode-এর সংকেত:** কাজটি জটিল, একাধিক বৈধ পথ আছে, বা ভুল পথে গেলে পরিণতি বড়। Plan mode Claude-কে করার আগে পথটি সাজিয়ে বলতে বাধ্য করে।
+
+`-p` flag: Claude Code চলে non-interactive মোডে। CI/CD integration-এর জন্য অপরিহার্য — কোনো confirmation prompt নেই, কোনো interactive input নেই; command নিজেই সম্পূর্ণ হতে হবে।
+
+## CLI flag (headless ও non-interactive)
+
+`-p` সবচেয়ে বেশি পরীক্ষিত flag, তবে পূর্ণ headless toolkit-টাও জানা দরকার।
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['Flag', 'কী করে']}
+	rows={[
+		['`-p` / `--print`', 'CI/CD ও piping-এর জন্য non-interactive (print) মোড।'],
+		['`-c` / `--continue`', 'এই ডিরেক্টরির সবচেয়ে সাম্প্রতিক কথোপকথন আবার শুরু।'],
+		['`-r` / `--resume <id|name>`', 'নির্দিষ্ট session আবার শুরু।'],
+		['`--bare`', 'মিনিমাল মোড — দ্রুত scripted run-এর জন্য hooks, skills, plugins, MCP, memory আর CLAUDE.md বাদ দেয়।'],
+		['`--output-format text|json|stream-json`', '`-p`-এর আউটপুটের রূপ (`json` ও `stream-json` পার্স করা যায়)।'],
+		["`--json-schema '<schema>'`", '`-p`-এর জন্য schema-যাচাই করা আউটপুট (JSON envelope-এর `structured_output` ফিল্ডে আসে)।'],
+		['`--max-turns <n>`', 'Print mode-এ এজেন্টিক turn-এর সংখ্যা বেঁধে দেয়।'],
+		['`--permission-mode <mode>`', '`default`, `acceptEdits`, `plan`, `auto`, `dontAsk`, `bypassPermissions`, `manual` (`default`-এর alias)।'],
+		['`--allowedTools` / `--disallowedTools`', 'prompt ছাড়াই টুল কল অনুমোদন বা নিষেধ করা।'],
+		['`--add-dir <path>`', 'পাঠযোগ্য/সম্পাদনাযোগ্য একটি working directory যোগ করা।'],
+		['`--model <alias|name>`', 'session-এর মডেল ঠিক করা।'],
+	]}
+/>
+
+System prompt — append বনাম replace (পরীক্ষার প্রিয় প্রশ্ন):
+
+<ReferenceTable
+	monoColumns={[0]}
+	columns={['Flag', 'প্রভাব']}
+	rows={[
+		['`--append-system-prompt "<text>"`', 'ডিফল্ট প্রম্পটের সাথে যোগ হয়; টুল-নির্দেশনা ও safety instruction অটুট থাকে।'],
+		['`--system-prompt "<text>"`', 'পুরো ডিফল্ট প্রম্পট বদলে দেয়; যা দরকার তা সব আপনাকেই লিখতে হবে।'],
+	]}
+/>
+
+`*-file` রূপগুলো (`--append-system-prompt-file`, `--system-prompt-file`) একই লেখা ফাইল থেকে লোড করে।
+
+## ফিডব্যাক কৌশল
+
+- গদ্য বর্ণনার চেয়ে বাস্তব উদাহরণ জোরে। যে কোডটা চান, সেটাই দেখান — বর্ণনা করা অনুচ্ছেদ নয়।
+- নির্ভরশীল fix একসাথে এক মেসেজে batch করুন, যাতে মডেল একবারে সব সীমাবদ্ধতা দেখে। স্বাধীন সমস্যা এক-এক করে ক্রমান্বয়ে সারান।
+- **স্বাধীন review session:** যে session কোড লিখেছে, সেই session-এ কখনো review করবেন না। লেখার সময়ের reasoning bias থেকে যায়। Review-এর জন্য নতুন session নিন।
+- **Severity calibration:** কোনটি critical আর কোনটি ছোটখাটো style nit, তা উদাহরণ দিয়ে দেখান। Calibration ছাড়া মডেল সব সমস্যাকে সমান গুরুত্ব দেয়।
+
+## Permission ও সুরক্ষা
+
+- Permission টুল-স্তরে নিয়ন্ত্রিত — নির্দিষ্ট কোন টুলে অনুমতি দেবেন আর কোনটায় দেবেন না, সেই সিদ্ধান্ত।
+- Subagent-এর টুল সেট তার `AgentDefinition`-এর `tools` ফিল্ডে বাঁধা; skill `allowed-tools` frontmatter ব্যবহার করে।
+- Least privilege-এর নীতি: প্রতি agent/skill কেবল দরকারি টুলেই হাত দেবে।
+- প্রজেক্ট-স্তরের setting (`.claude/`) কমিট হয় ও শেয়ার হয়; ব্যক্তিগত setting (`~/.claude/`) হয় না।
+
+## পরীক্ষার decision rule
+
+<ReferenceTable
+	columns={['প্রশ্নে যা থাকে', 'উত্তর সম্ভবত']}
+	rows={[
+		['"guaranteed enforcement", "cannot be bypassed"', 'Hook (`PreToolUse` / `PostToolUse`)।'],
+		['"style guidance", "preferred approach"', 'CLAUDE.md-এ prompt নির্দেশনা।'],
+		['"applies only to specific file paths"', '`paths` frontmatterসহ `.claude/rules/`।'],
+		['"reusable workflow with restricted tools"', 'Skill (`.claude/skills/`)।'],
+		['"prompt template with arguments"', 'Command (`.claude/commands/`)।'],
+		['"CI/CD pipeline", "automated", "non-interactive"', '`-p` flag।'],
+		['"extra rules but keep default coding behaviour"', '`--append-system-prompt` (`--system-prompt` নয়)।'],
+		['"fast scripted run, skip project config/hooks/skills"', '`--bare`।'],
+		['"machine-parseable / schema-validated CI output"', '`--output-format json` + `--json-schema`।'],
+		['"review quality of generated code"', 'স্বাধীন session (যে session লিখেছে সেটি নয়)।'],
+		['"multiple approaches, complex task"', 'আগে plan mode।'],
+		['"personal preference, not shared"', '`~/.claude/` (user-স্তরের config)।'],
+	]}
+/>
+
+## পরীক্ষার ফাঁদ
+
+<ReferenceTable
+	columns={['ফাঁদ', 'সঠিক উত্তর']}
+	rows={[
+		['"সব rule প্রজেক্টের CLAUDE.md-এ রেখে দিন"', 'ভুল — পাথ-নির্দিষ্ট rule-এর জন্য `.claude/rules/`।'],
+		['"hook হলো prompt-ভিত্তিক গার্ডরেল"', 'ভুল — hook deterministic কোড, prompt নির্দেশ নয়।'],
+		['"যে session লিখেছে সেই session-এ review করুন"', 'ভুল — reasoning bias থেকে যায়; স্বাধীন session নিন।'],
+		['"`.claude/skills/`-এ সরাসরি সমতল `.md` ফাইল মানেই command"', 'ভুল — skill হলো `SKILL.md` entry pointসহ ডিরেক্টরি; সমতল ফাইল `.claude/commands/`-এ যায়।'],
+		['"user CLAUDE.md প্রজেক্ট CLAUDE.md-কে override করে"', 'ভুল — CLAUDE.md ফাইল concatenate হয়, কেউ কাউকে override করে না; দ্বন্দ্ব ইচ্ছামতো মেটে।'],
+		['"`-p` flag plan mode চালু করে"', 'ভুল — `-p` CI/CD-র জন্য non-interactive (piped) মোড চালু করে।'],
+		['"`--append-system-prompt` system prompt বদলে দেয়"', 'ভুল — এটি যোগ করে, ডিফল্ট অটুট রাখে; `--system-prompt` বদলায়।'],
+	]}
+/>
+
+## বিস্তারিত লেসন
+
+<LessonList domain={3} />
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />

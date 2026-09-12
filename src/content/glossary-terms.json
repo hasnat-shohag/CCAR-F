@@ -402,6 +402,12 @@
 		"domain": 2
 	},
 	{
+		"term": "structuredContent",
+		"bn": "MCP-এর CallToolResult ফিল্ড — টুলের যন্ত্রে-পাঠ্য structured output এখানে থাকে।",
+		"tip": "isError-এর পাশে host ও coordinator structured ফল পড়ে; free-text এররের বদলে এটি ব্যবহার করুন।",
+		"domain": 2
+	},
+	{
 		"term": "isRetryable",
 		"bn": "ঠিক এই কলটি আবার পাঠালে কাজ হবে কি না, কেবল সেই প্রশ্নের উত্তর।",
 		"tip": "শুধু transient = true; বাকি সব false, কারণ আগে ইনপুট/অনুরোধ/কলার বদলাতে হবে।",
@@ -846,6 +852,24 @@
 		"domain": 3
 	},
 	{
+		"term": "--bare",
+		"bn": "Claude Code-এর মিনিমাল মোড — hooks, skills, plugins, MCP, memory ও CLAUDE.md বাদ দিয়ে দ্রুত scripted run চালায়।",
+		"tip": "দ্রুত scripted run-এর জন্য; project config যাচাই করতে চাইলে এই flag নয়।",
+		"domain": 3
+	},
+	{
+		"term": "--max-turns",
+		"bn": "Print mode-এ এজেন্টিক turn-এর সর্বোচ্চ সংখ্যা বেঁধে দেয়।",
+		"tip": "Runaway ঠেকানোর safety net — প্রাইমারি লুপ কন্ট্রোল কখনোই নয়।",
+		"domain": 3
+	},
+	{
+		"term": "--permission-mode",
+		"bn": "টুল-অনুমতির mode ঠিক করে — default, plan, acceptEdits, bypassPermissions ইত্যাদি।",
+		"tip": "CI-তে non-interactive mode; মানুষের সামনে plan বা default।",
+		"domain": 3
+	},
+	{
 		"term": "Batch API vs real-time",
 		"bn": "Batch API-তে ৫০% সাশ্রয়, কিন্তু ২৪ ঘণ্টা পর্যন্ত সময় ও latency SLA নেই।",
 		"tip": "Pre-merge blocking check-এ real-time; overnight বা weekly analysis-এ Batch।",
@@ -1059,6 +1083,18 @@
 		"term": "progressive summarisation trap",
 		"bn": "দীর্ঘ কথোপকথনে পুরনো turn সারসংক্ষেপ করলে সংখ্যা, তারিখ, order number নষ্ট হয়।",
 		"tip": "Customer-facing ও data-processing সিস্টেমে ঠিক এই তথ্যই মুছে যায়।",
+		"domain": 5
+	},
+	{
+		"term": "graceful degradation",
+		"bn": "আংশিক ফলও ফেরত দেওয়া — যা পাওয়া গেছে তা coverage annotation-সহ, শূন্য বা generic এররের বদলে।",
+		"tip": "কিছু পাওয়া গেলে হারাবেন না; কী বাদ পড়েছে তা metadata-তে লিখুন।",
+		"domain": 5
+	},
+	{
+		"term": "stratified validation",
+		"bn": "সামগ্রিক নির্ভুলতার বদলে প্রতি category বা type ধরে accuracy মেপে দুর্বল শ্রেণি খুঁজে বের করা।",
+		"tip": "৯৫% overall accuracy-র আড়ালে ৬০% নির্ভুলতার একটি শ্রেণি লুকিয়ে থাকতে পারে।",
 		"domain": 5
 	},
 	{
