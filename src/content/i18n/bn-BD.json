@@ -1,0 +1,23 @@
+{
+  "skipLink.label": "মূল কনটেন্টে যান",
+  "search.label": "সাইটে খুঁজুন",
+  "search.shortcutLabel": "খুঁজতে চাপুন",
+  "themeSelect.accessibleLabel": "থিম বাছুন",
+  "themeSelect.auto": "সিস্টেম অনুযায়ী",
+  "themeSelect.dark": "ডার্ক",
+  "themeSelect.light": "লাইট",
+  "sidebarNav.accessibleLabel": "মূল মেনু",
+  "tableOfContents.onThisPage": "এই পাতায়",
+  "tableOfContents.overview": "সারসংক্ষেপ",
+  "page.editLink": "এই পাতাটি সম্পাদনা করুন",
+  "page.lastUpdated": "সর্বশেষ হালনাগাদ:",
+  "page.previousLink": "পূর্ববর্তী",
+  "page.nextLink": "পরবর্তী",
+  "pagefind.clear_search": "মুছুন",
+  "pagefind.load_more": "আরও ফলাফল",
+  "pagefind.search_label": "সাইটে খুঁজুন",
+  "pagefind.filters_label": "ফিল্টার",
+  "pagefind.zero_results": "[SEARCH_TERM] — কিছু পাওয়া যায়নি",
+  "pagefind.many_results": "[SEARCH_TERM] — [COUNT]টি ফলাফল",
+  "pagefind.one_result": "[SEARCH_TERM] — ১টি ফলাফল"
+}

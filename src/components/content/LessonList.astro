@@ -1,0 +1,47 @@
+---
+import { DOMAINS, type DomainId } from '../../lib/domains';
+import { domainLessons } from '../../lib/lessons';
+
+interface Props {
+	domain: DomainId;
+}
+
+const { domain } = Astro.props;
+const lessons = domainLessons(domain);
+const domainSlug = DOMAINS.find((item) => item.id === domain)?.slug ?? '';
+---
+
+<ol class="lesson-checklist">
+	{
+		lessons.map((lesson) => (
+			<li data-lesson-check={lesson.id}>
+				<span class="lesson-check-mark" aria-hidden="true">
+					○
+				</span>
+				<a href={`/learn/${domainSlug}/${lesson.slug}/`}>
+					{lesson.id} — {lesson.titleBn}
+				</a>
+				<span class="lesson-check-en">{lesson.titleEn}</span>
+			</li>
+		))
+	}
+</ol>
+
+<script>
+	import { LESSON_EVENT, isComplete, loadState } from '../../lib/progress';
+
+	function paintChecklist(): void {
+		const state = loadState();
+		document.querySelectorAll<HTMLElement>('[data-lesson-check]').forEach((item) => {
+			const id = item.dataset.lessonCheck;
+			if (!id) return;
+			const done = isComplete(state, id);
+			item.dataset.done = String(done);
+			const mark = item.querySelector<HTMLElement>('.lesson-check-mark');
+			if (mark) mark.textContent = done ? '✓' : '○';
+		});
+	}
+
+	paintChecklist();
+	window.addEventListener(LESSON_EVENT, paintChecklist);
+</script>

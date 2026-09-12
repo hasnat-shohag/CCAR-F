@@ -1,0 +1,106 @@
+---
+import Default from '@astrojs/starlight/components/Head.astro';
+
+const route = Astro.locals.starlightRoute;
+const frontmatter = route.entry?.data as { domain?: number } | undefined;
+const domain = typeof frontmatter?.domain === 'number' ? frontmatter.domain : undefined;
+---
+
+<Default />
+
+{
+	domain !== undefined && (
+		<script is:inline define:vars={{ domain }}>
+			document.documentElement.dataset.domain = String(domain);
+		</script>
+	)
+}
+
+<script>
+	import { LESSON_EVENT, loadState, isComplete } from '../../lib/progress';
+
+	/* ---- sidebar completion marks ---- */
+
+	function paintSidebar(): void {
+		const state = loadState();
+		document.querySelectorAll<HTMLAnchorElement>('a[data-lesson-id]').forEach((link) => {
+			const id = link.dataset.lessonId;
+			if (!id) return;
+			link.classList.toggle('is-complete', isComplete(state, id));
+		});
+	}
+
+	paintSidebar();
+	window.addEventListener(LESSON_EVENT, paintSidebar);
+	document.addEventListener('astro:page-load', paintSidebar);
+
+	/* ---- lazy mermaid rendering for ```mermaid blocks ---- */
+
+	const mermaidBlocks = Array.from(
+		document.querySelectorAll<HTMLElement>('pre > code.language-mermaid'),
+	).map((code) => ({ code, pre: code.parentElement as HTMLElement }));
+
+	if (mermaidBlocks.length > 0) {
+		void renderMermaid(mermaidBlocks);
+	}
+
+	async function renderMermaid(
+		entries: { code: HTMLElement; pre: HTMLElement }[],
+		attempt = 0,
+	): Promise<void> {
+		try {
+			const { default: mermaid } = await import('mermaid');
+			const isDark = document.documentElement.dataset.theme === 'dark';
+			mermaid.initialize({
+				startOnLoad: false,
+				securityLevel: 'strict',
+				theme: isDark ? 'dark' : 'default',
+				fontFamily: 'inherit',
+			});
+
+			const sources: { figure: HTMLElement; source: string }[] = [];
+
+			for (const [index, entry] of entries.entries()) {
+				const source = entry.code.textContent ?? '';
+				const figure = document.createElement('figure');
+				figure.className = 'mermaid-figure';
+				try {
+					const { svg } = await mermaid.render(`ccarf-mermaid-${index}`, source);
+					figure.innerHTML = svg;
+					entry.pre.replaceWith(figure);
+					sources.push({ figure, source });
+				} catch (error) {
+					console.warn('[ccarf] mermaid render failed', error);
+				}
+			}
+
+			const themeWatcher = new MutationObserver(() => {
+				const dark = document.documentElement.dataset.theme === 'dark';
+				mermaid.initialize({
+					startOnLoad: false,
+					securityLevel: 'strict',
+					theme: dark ? 'dark' : 'default',
+					fontFamily: 'inherit',
+				});
+				sources.forEach(({ figure, source }, index) => {
+					void mermaid
+						.render(`ccarf-mermaid-theme-${index}-${Date.now()}`, source)
+						.then(({ svg }) => {
+							figure.innerHTML = svg;
+						})
+						.catch(() => undefined);
+				});
+			});
+			themeWatcher.observe(document.documentElement, {
+				attributes: true,
+				attributeFilter: ['data-theme'],
+			});
+		} catch (error) {
+			if (attempt < 1) {
+				await new Promise((resolve) => setTimeout(resolve, 400));
+				return renderMermaid(entries, attempt + 1);
+			}
+			console.warn('[ccarf] mermaid unavailable', error);
+		}
+	}
+</script>

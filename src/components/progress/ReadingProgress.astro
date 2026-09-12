@@ -1,0 +1,17 @@
+<div class="reading-progress" aria-hidden="true" data-reading-progress></div>
+
+<script>
+	const bar = document.querySelector<HTMLElement>('[data-reading-progress]');
+
+	if (bar) {
+		const update = () => {
+			const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+			const progress = scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0;
+			bar.style.width = `${(progress * 100).toFixed(2)}%`;
+		};
+
+		update();
+		window.addEventListener('scroll', update, { passive: true });
+		window.addEventListener('resize', update, { passive: true });
+	}
+</script>

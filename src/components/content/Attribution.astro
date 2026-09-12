@@ -1,0 +1,24 @@
+---
+import { SOURCE_SITE } from '../../lib/domains';
+
+interface Props {
+	sourceUrl: string;
+	updated?: string;
+}
+
+const { sourceUrl, updated } = Astro.props;
+---
+
+<aside class="attribution">
+	<p>
+		এই পাঠটি <a href={sourceUrl} rel="noopener noreferrer" target="_blank">claudecertificationguide.com</a
+		>-এর ইংরেজি পাঠের বাংলা অনুবাদ। মূল লেখা ও পরীক্ষা-ব্লুপ্রিন্টের কৃতিত্ব সংশ্লিষ্ট লেখক ও
+		<a href="https://www.anthropic.com" rel="noopener noreferrer" target="_blank">Anthropic</a>-এর।
+	</p>
+	<p>
+		অনুবাদে ভুল থাকলে <a href="https://github.com/hasnat-shohag/CCAR-F/issues" rel="noopener noreferrer" target="_blank"
+			>issue খুলুন</a
+		>। মূল কনটেন্ট-মালিক অপসারণ চাইলে একই ঠিকানায় জানালে পাঠটি সরিয়ে নেওয়া হবে।
+	</p>
+	{updated && <p>সর্বশেষ হালনাগাদ: {updated} · সূত্র: {SOURCE_SITE.replace('https://', '')}</p>}
+</aside>

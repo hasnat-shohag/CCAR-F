@@ -1,0 +1,39 @@
+---
+import { DOMAINS } from '../../lib/domains';
+import { domainLessons } from '../../lib/lessons';
+
+interface Props {
+	showLessons?: boolean;
+}
+
+const { showLessons = true } = Astro.props;
+---
+
+<div class="landing-grid">
+	{
+		DOMAINS.map((domain) => (
+			<div class="landing-card" style={`--landing-accent: ${domain.accent}`}>
+				<h3>
+					<a href={`/learn/${domain.slug}/`}>
+						D{domain.id} · {domain.labelBn}
+					</a>
+				</h3>
+				<p>
+					পরীক্ষার ওয়েট: <strong>{domain.weight}%</strong> · {domain.lessons}টি লেসন ·{' '}
+					{domain.labelEn}
+				</p>
+				{showLessons && (
+					<ul>
+						{domainLessons(domain.id).map((lesson) => (
+							<li>
+								<a href={`/learn/${domain.slug}/${lesson.slug}/`}>
+									{lesson.id} — {lesson.titleBn}
+								</a>
+							</li>
+						))}
+					</ul>
+				)}
+			</div>
+		))
+	}
+</div>

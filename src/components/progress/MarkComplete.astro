@@ -1,0 +1,59 @@
+---
+interface Props {
+	lessonId: string;
+}
+
+const { lessonId } = Astro.props;
+---
+
+<div class="mark-complete" data-mark-complete data-lesson-id={lessonId} data-complete="false">
+	<button type="button" data-mark-complete-button aria-pressed="false">
+		<span data-mark-complete-icon aria-hidden="true">○</span>
+		<span data-mark-complete-label>সম্পন্ন হয়েছে বলে চিহ্নিত করুন</span>
+	</button>
+	<span class="mark-complete-status" data-mark-complete-status>অগ্রগতি শুধু এই ব্রাউজারে সংরক্ষিত হয়</span>
+</div>
+
+<script>
+	import { LESSON_EVENT, isComplete, loadState, setLessonComplete } from '../../lib/progress';
+
+	function paint(): void {
+		const state = loadState();
+		document.querySelectorAll<HTMLElement>('[data-mark-complete]').forEach((root) => {
+			const lessonId = root.dataset.lessonId;
+			if (!lessonId) return;
+			const complete = isComplete(state, lessonId);
+			root.dataset.complete = String(complete);
+			const button = root.querySelector<HTMLButtonElement>('[data-mark-complete-button]');
+			const icon = root.querySelector<HTMLElement>('[data-mark-complete-icon]');
+			const label = root.querySelector<HTMLElement>('[data-mark-complete-label]');
+			const status = root.querySelector<HTMLElement>('[data-mark-complete-status]');
+			if (button) button.setAttribute('aria-pressed', String(complete));
+			if (icon) icon.textContent = complete ? '✓' : '○';
+			if (label) {
+				label.textContent = complete
+					? 'সম্পন্ন হয়েছে — আবার চাপলে চিহ্ন মুছে যাবে'
+					: 'সম্পন্ন হয়েছে বলে চিহ্নিত করুন';
+			}
+			if (status) {
+				status.textContent = complete
+					? 'অগ্রগতি সংরক্ষিত হয়েছে'
+					: 'অগ্রগতি শুধু এই ব্রাউজারে সংরক্ষিত হয়';
+			}
+		});
+	}
+
+	document.addEventListener('click', (event) => {
+		const button = (event.target as HTMLElement | null)?.closest('[data-mark-complete-button]');
+		if (!button) return;
+		const root = button.closest<HTMLElement>('[data-mark-complete]');
+		const lessonId = root?.dataset.lessonId;
+		if (!lessonId) return;
+		const complete = isComplete(loadState(), lessonId);
+		setLessonComplete(lessonId, !complete);
+		paint();
+	});
+
+	paint();
+	window.addEventListener(LESSON_EVENT, paint);
+</script>

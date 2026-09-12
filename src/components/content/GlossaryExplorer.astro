@@ -1,0 +1,83 @@
+---
+import { DOMAINS } from '../../lib/domains';
+import terms from '../../content/glossary-terms.json';
+
+const sorted = [...terms].sort((a, b) => a.term.localeCompare(b.term));
+---
+
+<div class="glossary-filters" data-glossary-filters>
+	<button type="button" data-glossary-domain="all" aria-pressed="true">সব</button>
+	{
+		DOMAINS.map((domain) => (
+			<button type="button" data-glossary-domain={domain.id} aria-pressed="false">
+				D{domain.id} · {domain.labelBn}
+			</button>
+		))
+	}
+</div>
+
+<label class="glossary-search">
+	<span>শব্দ খুঁজুন</span>
+	<input type="search" data-glossary-search placeholder="যেমন: stop_reason, hook, MCP" autocomplete="off" />
+</label>
+
+<p class="progress-hint" data-glossary-count>
+	{sorted.length}টি শব্দ দেখানো হচ্ছে
+</p>
+
+<table class="keyword-table">
+	<thead>
+		<tr>
+			<th scope="col">শব্দ (English)</th>
+			<th scope="col">বাংলা অর্থ</th>
+			<th scope="col">পরীক্ষার টিপ</th>
+			<th scope="col">ডোমেইন</th>
+		</tr>
+	</thead>
+	<tbody>
+		{
+			sorted.map((entry) => (
+				<tr data-glossary-row data-domain={entry.domain} data-search={`${entry.term} ${entry.bn} ${entry.tip}`.toLowerCase()}>
+					<td class="keyword-term">{entry.term}</td>
+					<td>{entry.bn}</td>
+					<td>{entry.tip}</td>
+					<td>D{entry.domain}</td>
+				</tr>
+			))
+		}
+	</tbody>
+</table>
+
+<script>
+	const filters = document.querySelector<HTMLElement>('[data-glossary-filters]');
+	const search = document.querySelector<HTMLInputElement>('[data-glossary-search]');
+	const count = document.querySelector<HTMLElement>('[data-glossary-count]');
+	const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-glossary-row]'));
+	let activeDomain = 'all';
+
+	function apply(): void {
+		const query = search?.value.trim().toLowerCase() ?? '';
+		let visible = 0;
+		rows.forEach((row) => {
+			const matchesDomain = activeDomain === 'all' || row.dataset.domain === activeDomain;
+			const matchesQuery = query.length === 0 || (row.dataset.search ?? '').includes(query);
+			const show = matchesDomain && matchesQuery;
+			row.hidden = !show;
+			if (show) visible += 1;
+		});
+		if (count) count.textContent = `${visible}টি শব্দ দেখানো হচ্ছে`;
+	}
+
+	filters?.addEventListener('click', (event) => {
+		const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>('[data-glossary-domain]');
+		if (!button) return;
+		activeDomain = button.dataset.glossaryDomain ?? 'all';
+		filters.querySelectorAll<HTMLButtonElement>('[data-glossary-domain]').forEach((item) => {
+			item.setAttribute('aria-pressed', String(item === button));
+		});
+		apply();
+	});
+
+	search?.addEventListener('input', apply);
+	apply();
+</script>

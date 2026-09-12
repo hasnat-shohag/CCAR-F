@@ -1,0 +1,43 @@
+---
+title: Domain 1 — এজেন্টিক আর্কিটেকচার ও অর্কেস্ট্রেশন
+titleEn: Agentic Architecture & Orchestration
+description: CCAR-F Domain 1 (ওয়েট ২৭%) — ৭টি লেসন, মূল ধারণা ও পরীক্ষার ফোকাস।
+domain: 1
+order: 1
+sourceUrl: https://claudecertificationguide.com/learn/1-agentic-architecture
+updated: 2026-09-12
+---
+
+import LessonList from '../../../../components/content/LessonList.astro';
+import DomainProgress from '../../../../components/progress/DomainProgress.astro';
+import Attribution from '../../../../components/content/Attribution.astro';
+
+<div class="lesson-meta">
+	<span class="lesson-badge">Domain 1</span>
+	<span class="lesson-task">ওয়েট ২৭% · ৭টি লেসন</span>
+	<span class="lesson-source">পরীক্ষার সবচেয়ে বড় অংশ</span>
+</div>
+
+Claude-এর API দিয়ে এজেন্টিক সিস্টেম ডিজাইন ও বাস্তবায়ন — লুপ ম্যানেজমেন্ট, অর্কেস্ট্রেশন প্যাটার্ন, গার্ডরেল, আর Claude Agent SDK। এটাই সবচেয়ে বড় ডোমেইন (২৭%), তাই এখানে সময় সবচেয়ে বেশি দিন।
+
+## এই ডোমেইনে যা আসে
+
+- এজেন্টিক লুপ, `stop_reason` দিয়ে লুপ কন্ট্রোল, টুল ফলের হ্যান্ডঅফ
+- মাল্টি-এজেন্ট অর্কেস্ট্রেশন (hub-and-spoke, coordinator–subagent)
+- সাবএজেন্ট ইনভোকেশন, কনটেক্সট পাসিং, parallel spawning, `fork_session`
+- প্রোগ্রাম্যাটিক ওয়ার্কফ্লো এনফোর্সমেন্ট, prerequisite gate, মানুষের কাছে হ্যান্ডঅফ
+- Agent SDK হুক (`PreToolUse`, `PostToolUse`) দিয়ে ডেটা নরমালাইজেশন ও পলিসি এনফোর্সমেন্ট
+- টাস্ক ডিকম্পোজিশন (fixed pipeline বনাম dynamic adaptive) ও attention dilution
+- সেশন স্টেট, নামযুক্ত রিজাম্পশন, পুরনো কনটেক্সট এড়ানো
+
+## অগ্রগতি
+
+<div class="progress-list">
+	<DomainProgress domain={1} />
+</div>
+
+## ৭টি লেসন
+
+<LessonList domain={1} />
+
+<Attribution sourceUrl={frontmatter.sourceUrl} updated={frontmatter.updated} />

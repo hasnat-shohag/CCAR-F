@@ -1,0 +1,28 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# raw source snapshots used only for translation reference (never published)
+tools/.source/
+
+# playwright / test artifacts
+test-results/
+playwright-report/
+
+# macOS-specific files
+.DS_Store

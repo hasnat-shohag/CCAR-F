@@ -1,0 +1,12 @@
+---
+interface Props {
+	label?: string;
+}
+
+const { label = 'পরীক্ষার ফাঁদ' } = Astro.props;
+---
+
+<aside class="exam-trap">
+	<span class="callout-label">{label}</span>
+	<slot />
+</aside>

@@ -1,0 +1,47 @@
+---
+import { DOMAINS, TOTAL_LESSONS } from '../../lib/domains';
+import DomainProgress from './DomainProgress.astro';
+---
+
+<div class="progress-summary">
+	<strong data-overall-percent>0%</strong>
+	<span class="progress-count" data-overall-count>0/{TOTAL_LESSONS} লেসন সম্পন্ন</span>
+</div>
+
+<div class="progress-list">
+	{DOMAINS.map((domain) => <DomainProgress domain={domain.id} />)}
+</div>
+
+<div class="progress-actions">
+	<button type="button" data-progress-reset>অগ্রগতি রিসেট করুন</button>
+</div>
+
+<p class="progress-hint">
+	অগ্রগতি আপনার ব্রাউজারের localStorage-এ (<code>ccarf:v1</code>) থাকে — কোনো অ্যাকাউন্ট বা সার্ভার নেই, তাই এক
+	ডিভাইস থেকে অন্য ডিভাইসে অগ্রগতি যায় না। সাইটের সাইডবারে সম্পন্ন লেসনের পাশে ✓ চিহ্ন দেখাবে।
+</p>
+
+<script>
+	import { LESSON_EVENT, loadState, overallPercent, resetProgress } from '../../lib/progress';
+
+	function paintOverall(): void {
+		const percent = overallPercent(loadState());
+		const percentEl = document.querySelector<HTMLElement>('[data-overall-percent]');
+		const countEl = document.querySelector<HTMLElement>('[data-overall-count]');
+		if (percentEl) percentEl.textContent = `${percent}%`;
+		if (countEl) {
+			const completed = countEl.textContent?.split('/')[1] ?? '30';
+			countEl.textContent = `${Math.round((percent / 100) * Number(completed))}/${completed} লেসন সম্পন্ন`;
+		}
+	}
+
+	document.addEventListener('click', (event) => {
+		const button = (event.target as HTMLElement | null)?.closest('[data-progress-reset]');
+		if (!button) return;
+		resetProgress();
+		paintOverall();
+	});
+
+	paintOverall();
+	window.addEventListener(LESSON_EVENT, paintOverall);
+</script>

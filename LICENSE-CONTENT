@@ -1,0 +1,31 @@
+Bangla study content license
+============================
+
+The Bangla lesson text, keyword tables, glossary entries and translated
+explanations under `src/content/docs/`, `src/content/glossary-terms.json` and
+`src/components/content/` are licensed under:
+
+    Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+    (CC BY-NC-SA 4.0)
+
+Full license text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+You are free to:
+  - Share: copy and redistribute the material in any medium or format.
+  - Adapt: remix, transform and build upon the material.
+
+Under these terms:
+  - Attribution: credit claudecertificationguide.com (the original English
+    study guide), Anthropic (exam blueprint and technical documentation) and
+    this repository, and link to this license.
+  - NonCommercial: you may not use the material for commercial purposes.
+  - ShareAlike: derivatives must be released under the same license.
+
+Upstream sources:
+  - English study guide: https://claudecertificationguide.com/learn
+  - Claude Certified Architect (Foundations) exam blueprint and technical
+    documentation: Anthropic (https://www.anthropic.com)
+
+Removal requests: if you own the upstream content and want any translated page
+removed, open an issue at https://github.com/hasnat-shohag/CCAR-F/issues and it
+will be taken down.

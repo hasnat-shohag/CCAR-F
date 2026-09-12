@@ -1,0 +1,66 @@
+---
+import { DOMAINS, type DomainId } from '../../lib/domains';
+
+interface Props {
+	domain: DomainId;
+	showLabel?: boolean;
+}
+
+const { domain, showLabel = true } = Astro.props;
+const meta = DOMAINS.find((item) => item.id === domain)!;
+---
+
+<div class="progress-row" data-domain-progress={domain} data-domain-lessons={meta.lessons} style={`--progress-accent: ${meta.accent}`}>
+	{
+		showLabel && (
+			<div class="progress-head">
+				<span>
+					D{domain} · {meta.labelBn}
+				</span>
+				<span class="progress-count" data-domain-count>
+					0/{meta.lessons}
+				</span>
+			</div>
+		)
+	}
+	<div class="progress-track">
+		<div class="progress-fill" data-domain-fill></div>
+	</div>
+</div>
+
+<script>
+	import { DOMAINS } from '../../lib/domains';
+	import { LESSON_EVENT, domainCompleted, isComplete, loadState } from '../../lib/progress';
+
+	function paintDomains(): void {
+		const state = loadState();
+		document.querySelectorAll<HTMLElement>('[data-domain-progress]').forEach((row) => {
+			const domain = Number(row.dataset.domainProgress);
+			const meta = DOMAINS.find((item) => item.id === domain);
+			if (!meta) return;
+			const completed = domainCompleted(state, meta.id);
+			const percent = Math.round((completed / meta.lessons) * 100);
+			const fill = row.querySelector<HTMLElement>('[data-domain-fill]');
+			const count = row.querySelector<HTMLElement>('[data-domain-count]');
+			if (fill) fill.style.width = `${percent}%`;
+			if (count) count.textContent = `${completed}/${meta.lessons}`;
+		});
+	}
+
+	function paintLessonChecks(): void {
+		const state = loadState();
+		document.querySelectorAll<HTMLElement>('[data-lesson-check]').forEach((item) => {
+			const id = item.dataset.lessonCheck;
+			if (!id) return;
+			const done = isComplete(state, id);
+			item.dataset.done = String(done);
+		});
+	}
+
+	paintDomains();
+	paintLessonChecks();
+	window.addEventListener(LESSON_EVENT, () => {
+		paintDomains();
+		paintLessonChecks();
+	});
+</script>
