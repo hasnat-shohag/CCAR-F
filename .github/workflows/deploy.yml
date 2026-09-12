@@ -43,6 +43,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Check internal links
+        run: pnpm check:links
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

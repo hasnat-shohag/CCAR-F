@@ -524,3 +524,18 @@ pre.mermaid-source {
 	color: var(--sl-color-gray-3);
 	font-size: var(--sl-text-sm);
 }
+
+.lesson-pending-tag {
+	display: inline-block;
+	margin-inline-start: 0.4rem;
+	padding: 0.05rem 0.4rem;
+	border: 1px dashed var(--sl-color-hairline);
+	border-radius: 999px;
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+	white-space: nowrap;
+}
+
+.lesson-pending-title {
+	color: var(--sl-color-gray-3);
+}

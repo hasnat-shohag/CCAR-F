@@ -1,12 +1,18 @@
 ---
 import { DOMAINS } from '../../lib/domains';
 import { domainLessons } from '../../lib/lessons';
+import { siteUrl } from '../../lib/urls';
 
 interface Props {
 	showLessons?: boolean;
 }
 
 const { showLessons = true } = Astro.props;
+
+const docFiles = new Set(Object.keys(import.meta.glob('/src/content/docs/learn/**/*.mdx')));
+const hasDomainIndex = (slug: string) => docFiles.has(`/src/content/docs/learn/${slug}/index.mdx`);
+const hasLesson = (slug: string, lesson: string) =>
+	docFiles.has(`/src/content/docs/learn/${slug}/${lesson}.mdx`);
 ---
 
 <div class="landing-grid">
@@ -14,9 +20,15 @@ const { showLessons = true } = Astro.props;
 		DOMAINS.map((domain) => (
 			<div class="landing-card" style={`--landing-accent: ${domain.accent}`}>
 				<h3>
-					<a href={`/learn/${domain.slug}/`}>
-						D{domain.id} · {domain.labelBn}
-					</a>
+					{hasDomainIndex(domain.slug) ? (
+						<a href={siteUrl(`learn/${domain.slug}/`)}>
+							D{domain.id} · {domain.labelBn}
+						</a>
+					) : (
+						<>
+							D{domain.id} · {domain.labelBn}
+						</>
+					)}
 				</h3>
 				<p>
 					পরীক্ষার ওয়েট: <strong>{domain.weight}%</strong> · {domain.lessons}টি লেসন ·{' '}
@@ -26,9 +38,16 @@ const { showLessons = true } = Astro.props;
 					<ul>
 						{domainLessons(domain.id).map((lesson) => (
 							<li>
-								<a href={`/learn/${domain.slug}/${lesson.slug}/`}>
-									{lesson.id} — {lesson.titleBn}
-								</a>
+								{hasLesson(domain.slug, lesson.slug) ? (
+									<a href={siteUrl(`learn/${domain.slug}/${lesson.slug}/`)}>
+										{lesson.id} — {lesson.titleBn}
+									</a>
+								) : (
+									<>
+										{lesson.id} — {lesson.titleBn}{' '}
+										<span class="lesson-pending-tag">অনুবাদ বাকি</span>
+									</>
+								)}
 							</li>
 						))}
 					</ul>

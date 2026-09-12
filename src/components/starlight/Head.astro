@@ -37,15 +37,22 @@ const domain = typeof frontmatter?.domain === 'number' ? frontmatter.domain : un
 	/* ---- lazy mermaid rendering for ```mermaid blocks ---- */
 
 	const mermaidBlocks = Array.from(
-		document.querySelectorAll<HTMLElement>('pre > code.language-mermaid'),
-	).map((code) => ({ code, pre: code.parentElement as HTMLElement }));
+		document.querySelectorAll<HTMLElement>('pre[data-language="mermaid"], pre > code.language-mermaid'),
+	).map((node) => {
+		const pre = (node.tagName === 'PRE' ? node : node.parentElement) as HTMLElement;
+		const frame = pre.closest<HTMLElement>('figure.frame');
+		return {
+			code: pre.querySelector('code') ?? pre,
+			target: frame ?? pre,
+		};
+	});
 
 	if (mermaidBlocks.length > 0) {
 		void renderMermaid(mermaidBlocks);
 	}
 
 	async function renderMermaid(
-		entries: { code: HTMLElement; pre: HTMLElement }[],
+		entries: { code: HTMLElement; target: HTMLElement }[],
 		attempt = 0,
 	): Promise<void> {
 		try {
@@ -61,13 +68,13 @@ const domain = typeof frontmatter?.domain === 'number' ? frontmatter.domain : un
 			const sources: { figure: HTMLElement; source: string }[] = [];
 
 			for (const [index, entry] of entries.entries()) {
-				const source = entry.code.textContent ?? '';
+				const source = (entry.code.innerText || entry.code.textContent || '').trim();
 				const figure = document.createElement('figure');
 				figure.className = 'mermaid-figure';
 				try {
 					const { svg } = await mermaid.render(`ccarf-mermaid-${index}`, source);
 					figure.innerHTML = svg;
-					entry.pre.replaceWith(figure);
+					entry.target.replaceWith(figure);
 					sources.push({ figure, source });
 				} catch (error) {
 					console.warn('[ccarf] mermaid render failed', error);

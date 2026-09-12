@@ -10,6 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "check:links": "node tools/check-links.mjs",
     "astro": "astro",
     "fetch-source": "node tools/fetch-source.mjs"
   },

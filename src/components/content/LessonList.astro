@@ -1,6 +1,7 @@
 ---
 import { DOMAINS, type DomainId } from '../../lib/domains';
 import { domainLessons } from '../../lib/lessons';
+import { siteUrl } from '../../lib/urls';
 
 interface Props {
 	domain: DomainId;
@@ -9,6 +10,9 @@ interface Props {
 const { domain } = Astro.props;
 const lessons = domainLessons(domain);
 const domainSlug = DOMAINS.find((item) => item.id === domain)?.slug ?? '';
+
+const lessonFiles = new Set(Object.keys(import.meta.glob('/src/content/docs/learn/*/*.mdx')));
+const isAvailable = (slug: string) => lessonFiles.has(`/src/content/docs/learn/${domainSlug}/${slug}.mdx`);
 ---
 
 <ol class="lesson-checklist">
@@ -18,9 +22,18 @@ const domainSlug = DOMAINS.find((item) => item.id === domain)?.slug ?? '';
 				<span class="lesson-check-mark" aria-hidden="true">
 					○
 				</span>
-				<a href={`/learn/${domainSlug}/${lesson.slug}/`}>
-					{lesson.id} — {lesson.titleBn}
-				</a>
+				{isAvailable(lesson.slug) ? (
+					<a href={siteUrl(`learn/${domainSlug}/${lesson.slug}/`)}>
+						{lesson.id} — {lesson.titleBn}
+					</a>
+				) : (
+					<>
+						<span class="lesson-pending-title">
+							{lesson.id} — {lesson.titleBn}
+						</span>
+						<span class="lesson-pending-tag">অনুবাদ বাকি</span>
+					</>
+				)}
 				<span class="lesson-check-en">{lesson.titleEn}</span>
 			</li>
 		))

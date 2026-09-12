@@ -5,7 +5,7 @@ import DomainProgress from './DomainProgress.astro';
 
 <div class="progress-summary">
 	<strong data-overall-percent>0%</strong>
-	<span class="progress-count" data-overall-count>0/{TOTAL_LESSONS} লেসন সম্পন্ন</span>
+	<span class="progress-count" data-overall-count data-total={TOTAL_LESSONS}>0/{TOTAL_LESSONS} লেসন সম্পন্ন</span>
 </div>
 
 <div class="progress-list">
@@ -22,17 +22,14 @@ import DomainProgress from './DomainProgress.astro';
 </p>
 
 <script>
-	import { LESSON_EVENT, loadState, overallPercent, resetProgress } from '../../lib/progress';
+	import { LESSON_EVENT, completedCount, loadState, overallPercent, resetProgress } from '../../lib/progress';
 
 	function paintOverall(): void {
-		const percent = overallPercent(loadState());
+		const state = loadState();
 		const percentEl = document.querySelector<HTMLElement>('[data-overall-percent]');
 		const countEl = document.querySelector<HTMLElement>('[data-overall-count]');
-		if (percentEl) percentEl.textContent = `${percent}%`;
-		if (countEl) {
-			const completed = countEl.textContent?.split('/')[1] ?? '30';
-			countEl.textContent = `${Math.round((percent / 100) * Number(completed))}/${completed} লেসন সম্পন্ন`;
-		}
+		if (percentEl) percentEl.textContent = `${overallPercent(state)}%`;
+		if (countEl) countEl.textContent = `${completedCount(state)}/${countEl.dataset.total} লেসন সম্পন্ন`;
 	}
 
 	document.addEventListener('click', (event) => {
