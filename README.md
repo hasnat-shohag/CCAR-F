@@ -207,9 +207,15 @@ sources:                      # নিচে সোর্স লিস্ট
 
 `main`-এ পুশ করলেই Actions সাইট বিল্ড করে Pages-এ দেয়।
 
-1. GitHub → Settings → Pages → Source = **GitHub Actions** (একবারের সেটআপ)।
-2. `main`-এ পুশ অথবা Actions থেকে `workflow_dispatch`।
-3. URL: https://hasnat-shohag.github.io/CCAR-F/ — base path `/CCAR-F`, তাই `astro.config.mjs`-এর `base` বদলালে আগে `.github/workflows/deploy.yml`-ও মিলিয়ে নিন।
+**একবারের সেটআপ (GitHub UI থেকে, কেউ কোড দিয়ে করতে পারবে না):**
+
+1. Settings → General → Default branch = **main** (রিপোতে `master` branch-ও থাকলে সেটি `main`-এর সমান রাখা হয়েছে)।
+2. Settings → Pages → Source = **GitHub Actions**। Actions-এর `GITHUB_TOKEN` দিয়ে Pages চালু করা যায় না, তাই এই ধাপটি হাতে করতে হয় — না করলে ডিপ্লয় ওয়ার্কফ্লো `Configure Pages` ধাপে থেমে যায়।
+
+**এরপর প্রতিবার:** `main`-এ পুশ করলেই সাইট বিল্ড হয়ে ডিপ্লয় হয়, অথবা Actions থেকে `workflow_dispatch` চালান।
+
+- URL: https://hasnat-shohag.github.io/CCAR-F/ — base path `/CCAR-F`, তাই `astro.config.mjs`-এর `base` বদলালে আগে `.github/workflows/deploy.yml`-ও মিলিয়ে নিন।
+- CI ধাপ: install → `pnpm check` → `pnpm build` → `pnpm check:links` → Pages আর্টিফ্যাক্ট আপলোড → ডিপ্লয়।
 
 ## কনট্রিবিউট
 
