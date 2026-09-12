@@ -13,31 +13,50 @@ const docFiles = new Set(Object.keys(import.meta.glob('/src/content/docs/learn/*
 const hasDomainIndex = (slug: string) => docFiles.has(`/src/content/docs/learn/${slug}/index.mdx`);
 const hasLesson = (slug: string, lesson: string) =>
 	docFiles.has(`/src/content/docs/learn/${slug}/${lesson}.mdx`);
+const domainTitle = (domain: (typeof DOMAINS)[number]) =>
+	showLessons ? `D${domain.id} · ${domain.labelBn}` : domain.labelBn;
 ---
 
-<div class="domain-index">
+<div class:list={['domain-index', !showLessons && 'domain-index--compact']}>
 	{
 		DOMAINS.map((domain) => (
 			<section
 				class:list={['domain-row', !showLessons && 'domain-row--compact']}
 				aria-labelledby={`domain-${domain.id}-title`}
+				style={`--domain-accent: ${domain.accent}; --domain-weight: ${domain.weight}%;`}
 			>
 				<div class="domain-row-head">
+					{!showLessons && <span class="domain-badge">D{domain.id}</span>}
 					<h3 id={`domain-${domain.id}-title`}>
 						{hasDomainIndex(domain.slug) ? (
 							<a href={siteUrl(`learn/${domain.slug}/`)}>
-								D{domain.id} · {domain.labelBn}
+								{domainTitle(domain)}
 							</a>
 						) : (
 							<>
-								D{domain.id} · {domain.labelBn}
+								{domainTitle(domain)}
 							</>
 						)}
 					</h3>
-					<p>
-						পরীক্ষার ওজন: <strong>{domain.weight}%</strong> · {domain.lessons}টি লেসন ·{' '}
-						{domain.labelEn}
-					</p>
+					{showLessons ? (
+						<p>
+							পরীক্ষার ওজন: <strong>{domain.weight}%</strong> · {domain.lessons}টি লেসন ·{' '}
+							{domain.labelEn}
+						</p>
+					) : (
+						<>
+							<p class="domain-label-en">{domain.labelEn}</p>
+							<p class="domain-meta">
+								<span>
+									পরীক্ষার ওজন: <strong>{domain.weight}%</strong>
+								</span>
+								<span>{domain.lessons}টি লেসন</span>
+							</p>
+							<div class="domain-weight" aria-hidden="true">
+								<span></span>
+							</div>
+						</>
+					)}
 				</div>
 				{showLessons && (
 					<ol class="domain-lesson-list">

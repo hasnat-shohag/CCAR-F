@@ -20,20 +20,22 @@ const isAvailable = (slug: string) => lessonFiles.has(`/src/content/docs/learn/$
 		lessons.map((lesson) => (
 			<li data-lesson-check={lesson.id}>
 				<span class="lesson-state" aria-hidden="true"></span>
-				{isAvailable(lesson.slug) ? (
-					<a href={siteUrl(`learn/${domainSlug}/${lesson.slug}/`)}>
-						{lesson.id} — {lesson.titleBn}
-					</a>
-				) : (
-					<>
-						<span class="lesson-pending-title">
+				<div class="lesson-content">
+					{isAvailable(lesson.slug) ? (
+						<a href={siteUrl(`learn/${domainSlug}/${lesson.slug}/`)}>
 							{lesson.id} — {lesson.titleBn}
-						</span>
-						<span class="lesson-pending-tag">অনুবাদ বাকি</span>
-					</>
-				)}
-				<span class="sr-only" data-lesson-state-label>অসম্পন্ন</span>
-				<span class="lesson-check-en">{lesson.titleEn}</span>
+						</a>
+					) : (
+						<>
+							<span class="lesson-pending-title">
+								{lesson.id} — {lesson.titleBn}
+							</span>
+							<span class="lesson-pending-tag">অনুবাদ বাকি</span>
+						</>
+					)}
+					<span class="sr-only" data-lesson-state-label>অসম্পন্ন</span>
+					<span class="lesson-check-en">{lesson.titleEn}</span>
+				</div>
 			</li>
 		))
 	}
