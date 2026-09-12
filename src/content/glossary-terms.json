@@ -88,5 +88,257 @@
 		"bn": "পরীক্ষায় ফাঁদ হিসেবে আসা ভুল সমাধান-প্যাটার্ন।",
 		"tip": "লুপ থামাতে natural language parse, iteration cap, text-content check — তিনটিই ভুল।",
 		"domain": 1
+	},
+	{
+		"term": "hub-and-spoke",
+		"bn": "একটি কেন্দ্রীয় coordinator-কে ঘিরে সাজানো মাল্টি-এজেন্ট আর্কিটেকচার — সব যোগাযোগ কেন্দ্র হয়ে যায়।",
+		"tip": "পরীক্ষা শুধু এই প্যাটার্নই ধরে; subagent-to-subagent সরাসরি যোগাযোগ ভুল উত্তর।",
+		"domain": 1
+	},
+	{
+		"term": "coordinator agent",
+		"bn": "কেন্দ্রের এজেন্ট — টাস্ক ভাঙে, subagent বাছে, কনটেক্সট পাঠায়, ফল জোড়া লাগায় ও এরর সামলায়।",
+		"tip": "কভারেজ ফাঁক থাকলে দোষ coordinator-এর decomposition-এর, নিচের subagent-এর নয়।",
+		"domain": 1
+	},
+	{
+		"term": "subagent",
+		"bn": "coordinator-এর অধীন বিশেষায়িত এজেন্ট (web search, document analysis, synthesis, report generation)।",
+		"tip": "প্রতি ইনভোকেশন স্বতন্ত্র — আগের কলে কী হয়েছিল তা জানে না।",
+		"domain": 1
+	},
+	{
+		"term": "subagent isolation",
+		"bn": "subagent coordinator-এর conversation history, system prompt বা অন্য subagent-এর ফল স্বয়ংক্রিয়ভাবে পায় না।",
+		"tip": "প্রতিটি প্রয়োজনীয় তথ্য prompt-এ স্পষ্টভাবে পাঠাতে হয়; কোনো shared memory নেই।",
+		"domain": 1
+	},
+	{
+		"term": "task decomposition (coordinator)",
+		"bn": "Coordinator মূল কাজকে কতগুলো উপকাজে ভাগ করে কোনটি কাকে দেবে ঠিক করা।",
+		"tip": "খুব সংকীর্ণ ভাগাভাগিই coverage gap-এর মূল কারণ।",
+		"domain": 1
+	},
+	{
+		"term": "narrow decomposition failure",
+		"bn": "Coordinator টপিকের বিশাল অংশ বাদ দিয়ে হাতে গোনা উপকাজ ভাগ করলে পুরো ক্যাটাগরি অনাবিষ্কৃত থেকে যায়।",
+		"tip": "fix = ভালো সার্চ নয়, ভালো decomposition।",
+		"domain": 1
+	},
+	{
+		"term": "iterative refinement loop",
+		"bn": "Coordinator ফলের কভারেজ যাচাই করে ফাঁক পেলে নির্দিষ্ট প্রশ্ন দিয়ে আবার re-delegate করার চক্র।",
+		"tip": "একবার পাঠিয়ে ছেড়ে দিলে সেটা dispatcher, coordinator নয়।",
+		"domain": 1
+	},
+	{
+		"term": "observability",
+		"bn": "সব মেসেজ এক কেন্দ্রে লগ হওয়ায় পুরো সিস্টেম মনিটর করা যায়।",
+		"tip": "সরাসরি subagent-যোগাযোগ এই গুণটি নষ্ট করে।",
+		"domain": 1
+	},
+	{
+		"term": "Task tool",
+		"bn": "Coordinator যে টুল দিয়ে subagent spawn করে (পরীক্ষার গাইডে এই নামই চলে; বর্তমান Claude Code-এ নাম Agent, Task alias)।",
+		"tip": "coordinator-এর allowedTools-এ Task (বা Agent) না থাকলে spawn-ই করা যাবে না — binary gate।",
+		"domain": 1
+	},
+	{
+		"term": "allowedTools",
+		"bn": "Coordinator কোন টুল ব্যবহার করতে পারবে তার অনুমোদিত তালিকা।",
+		"tip": "বাস্তবে auto-approve list; Agent বাদ গেলে unattended run-এ permission callback denial-এ spawn থেমে যায়।",
+		"domain": 1
+	},
+	{
+		"term": "AgentDefinition",
+		"bn": "একটি subagent-এর সংজ্ঞা — description, system prompt ও tool restrictions।",
+		"tip": "Coordinator description দেখেই ঠিক করে কখন তা spawn করবে।",
+		"domain": 1
+	},
+	{
+		"term": "structured metadata",
+		"bn": "কনটেন্টের সাথে সোর্স-তথ্য আলাদা করে রাখা কাঠামো — source_url, document_name, page_number, confidence, retrieved_by।",
+		"tip": "Metadata ছাড়া পাঠালে synthesis এজেন্ট citation দিতে পারে না — attribution failure-এর মূল কারণ।",
+		"domain": 1
+	},
+	{
+		"term": "parallel spawning",
+		"bn": "একই coordinator response-এ একাধিক Task tool call দিয়ে স্বাধীন subagent একসাথে চালানো।",
+		"tip": "পরীক্ষায় \"single response\" / \"simultaneously\" শব্দ দেখলেই parallel প্যাটার্ন ধরে নিন।",
+		"domain": 1
+	},
+	{
+		"term": "sequential spawning",
+		"bn": "প্রতি coordinator turn-এ একটি করে subagent ডাকা।",
+		"tip": "স্বাধীন কাজে অকারণ latency যোগ করে — পরীক্ষায় ভুল উত্তর।",
+		"domain": 1
+	},
+	{
+		"term": "fork_session",
+		"bn": "শেয়ার্ড বেসলাইন থেকে স্বাধীন শাখা তৈরি করা — divergent exploration-এর জন্য (SDK-তে forkSession)।",
+		"tip": "Branch করে, append করে না; শাখাগুলো একে অন্যের ফল দেখে না।",
+		"domain": 1
+	},
+	{
+		"term": "--resume",
+		"bn": "আগের নামযুক্ত সেশন চালিয়ে যাওয়ার কন্ট্রোল (append)।",
+		"tip": "SDK-তে fork modifier-সহ ব্যবহৃত: ClaudeAgentOptions(resume=session_id, fork_session=True)।",
+		"domain": 1
+	},
+	{
+		"term": "prompt-based guidance",
+		"bn": "system prompt-এ নির্দেশ দিয়ে ওয়ার্কফ্লো-ক্রম মানানোর পদ্ধতি — সম্ভাব্যতাভিত্তিক, ৯০-৯৫% ক্ষেত্রে কাজ করে।",
+		"tip": "ব্যর্থতার হার শূন্য নয়; কম-ঝুঁকির কাজেই গ্রহণযোগ্য।",
+		"domain": 1
+	},
+	{
+		"term": "programmatic enforcement",
+		"bn": "hook, prerequisite gate বা কোড-লেভেল চেক দিয়ে নিচের টুল আটকে দেওয়া — ডিটারমিনিস্টিক, প্রতিবারই কাজ করে।",
+		"tip": "এক ব্যর্থতাও টাকা, নিরাপত্তা বা কমপ্লায়েন্স ভাঙলে উত্তর এটিই।",
+		"domain": 1
+	},
+	{
+		"term": "prerequisite gate",
+		"bn": "আগের শর্ত পূরণ না হওয়া পর্যন্ত একটি টুল চলতে না দেওয়া কোড-চেক (যেমন verified customer ID ছাড়া process_refund নিষিদ্ধ)।",
+		"tip": "মডেল bypass করতে পারে না; ক্রম ভাঙতে চাইলে এরর ফেরে।",
+		"domain": 1
+	},
+	{
+		"term": "structured handoff",
+		"bn": "মানুষের কাছে escalate করার সময় স্বয়ংসম্পূর্ণ সামারি দেওয়ার প্রোটোকল — transcript মানুষের হাতে থাকে না।",
+		"tip": "Customer ID, conversation summary, root cause, refund amount ও recommended action বাধ্যতামূলক।",
+		"domain": 1
+	},
+	{
+		"term": "SubagentStart",
+		"bn": "subagent spawn হওয়ার মুহূর্তে চলে যাওয়া lifecycle hook — শুধু observational।",
+		"tip": "block করতে পারে না; spawn-এ নিয়ম চাপাতে Agent টুলে PreToolUse hook বসান।",
+		"domain": 1
+	},
+	{
+		"term": "SubagentStop",
+		"bn": "subagent শেষ হওয়া ও ফল ফেরত দেওয়ার মুহূর্তে চলে যাওয়া hook; exit code 2 দিলে subagent আবার কাজে ফেরে।",
+		"tip": "ফল বদলায় না — আউটপুট reshape করার দায়িত্ব coordinator-এর।",
+		"domain": 1
+	},
+	{
+		"term": "multi-concern request",
+		"bn": "এক গ্রাহকের একাধিক সমস্যা একসাথে (ফেরত + ঠিকানা বদল + loyalty প্রশ্ন)।",
+		"tip": "ভাগ করে parallel-এ তদন্ত করুন, তারপর এক উত্তরে সম্মিলিত সমাধান।",
+		"domain": 1
+	},
+	{
+		"term": "PreToolUse",
+		"bn": "টুল চলার আগে চলে যাওয়া hook — outgoing call block, modify বা redirect করতে পারে (tool-call interception)।",
+		"tip": "permissionDecision: allow / deny / ask / defer, সাথে ঐচ্ছিক updatedInput।",
+		"domain": 1
+	},
+	{
+		"term": "PostToolUse",
+		"bn": "টুল চলার পরে, মডেল ফল পড়ার আগে চলে যাওয়া hook — ফল normalize বা replace করে।",
+		"tip": "টুল তখন ইতিমধ্যে চলেছে; block করলে side effect মুছে না।",
+		"domain": 1
+	},
+	{
+		"term": "tool-call interception",
+		"bn": "টুল কল আটকে নিয়ে নিয়ম খাটানো — PreToolUse hook-এর অন্য নাম।",
+		"tip": "1.4-এর prerequisite gate-এর বাস্তব রূপ।",
+		"domain": 1
+	},
+	{
+		"term": "permissionDecision",
+		"bn": "PreToolUse hook-এর উত্তর — allow, deny, ask বা defer।",
+		"tip": "deny হলে টুল একেবারেই চলে না।",
+		"domain": 1
+	},
+	{
+		"term": "updatedInput",
+		"bn": "PreToolUse hook টুল চলার আগে তার argument বদলে দিতে পারে এই ফিল্ডে।",
+		"tip": "rerouting বা argument সংশোধনে ব্যবহার হয়।",
+		"domain": 1
+	},
+	{
+		"term": "updatedToolOutput",
+		"bn": "PostToolUse hook মডেল যা দেখবে তা বদলে দিতে পারে (built-in ও MCP টুল দুটোতেই)।",
+		"tip": "পুরনো updatedMCPToolOutput কেবল MCP-র জন্য ছিল, এখন deprecated।",
+		"domain": 1
+	},
+	{
+		"term": "data normalisation",
+		"bn": "ভিন্ন ভিন্ন টুলের ভিন্ন ফরম্যাট (Unix timestamp, ISO 8601, numeric status) এক আদলে আনা।",
+		"tip": "মডেলকে ফরম্যাট বোঝার দায়িত্ব দিলে অনিশ্চয়তা ঢোকে; hook সবসময় পরিষ্কার ডেটা দেয়।",
+		"domain": 1
+	},
+	{
+		"term": "fixed sequential pipeline",
+		"bn": "আগেই ঠিক করা ধাপের ক্রম (prompt chaining); প্রতি ধাপ আগের ধাপের output ইনপুট নেয়।",
+		"tip": "পূর্বানুমেয়, স্ট্রাকচার্ড কাজে ভালো — অপ্রত্যাশিত ফলের সাথে খাপ খায় না।",
+		"domain": 1
+	},
+	{
+		"term": "dynamic adaptive decomposition",
+		"bn": "প্রতিটি ধাপে যা পাওয়া যায় তার ভিত্তিতে পরের উপকাজ বানানো — পরিকল্পনা চলতে চলতে বদলায়।",
+		"tip": "Open-ended investigation (legacy codebase, security audit) এ দরকার।",
+		"domain": 1
+	},
+	{
+		"term": "attention dilution",
+		"bn": "এক pass-এ অনেক আইটেম দিলে মনোযোগ ভাগ হয়ে গভীরতা অসমান হয় — শুরুর আইটেমে গভীর বিশ্লেষণ, শেষের আইটেমে সামান্য।",
+		"tip": "মডেল বা কনটেক্সট উইন্ডো বড় করলেই মেটে না; সমাধান multi-pass আর্কিটেকচার।",
+		"domain": 1
+	},
+	{
+		"term": "multi-pass architecture",
+		"bn": "প্রতি আইটেমে আলাদা local pass + সব আইটেম মিলিয়ে একটি cross-item integration pass।",
+		"tip": "প্রতিটি আইটেম নিজের মনোযোগ-বাজেট পায়, তাই গভীরতা সমান থাকে।",
+		"domain": 1
+	},
+	{
+		"term": "cross-item integration pass",
+		"bn": "সব local pass শেষে চলা আলাদা pass, যা আইটেম-ছাড়ানো দিক (data flow, pattern consistency) খোঁজে।",
+		"tip": "শুধু batch ভাগ করলে cross-batch সমস্যা ধরা পড়ে না — এই pass-ই ধরবে।",
+		"domain": 1
+	},
+	{
+		"term": "session state",
+		"bn": "এজেন্ট এক কাজ-সেশন থেকে আরেকটিতে যে কনটেক্সট (tool result, বিশ্লেষণ, reasoning chain) বহন করে।",
+		"tip": "দীর্ঘ কাজে এই সঞ্চিত অবস্থা কখন চালু রাখবেন, কখন শাখা বানাবেন, কখন নতুন শুরু করবেন — সেটিই 1.7।",
+		"domain": 1
+	},
+	{
+		"term": "stale context problem",
+		"bn": "ফাইল বদলের পর সেশন resume করলে পুরনো tool result হিস্ট্রিতে থেকে যায়; মডেল সেই বাসি ডেটা দেখে পরস্পরবিরোধী পরামর্শ দেয়।",
+		"tip": "শুধু \"আবার পড়ে নাও\" বললে বাসি ফল হিস্ট্রিতে থেকে যায় — যথেষ্ট নয়।",
+		"domain": 1
+	},
+	{
+		"term": "fresh start with summary injection",
+		"bn": "একেবারে নতুন সেশন শুরু করে আগের সেশনের স্ট্রাকচার্ড সামারি প্রাথমিক কনটেক্সটে ঢোকানো।",
+		"tip": "নতুন সেশনে বাসি tool result থাকে না, শুধু curated সামারি থাকে।",
+		"domain": 1
+	},
+	{
+		"term": "targeted re-analysis",
+		"bn": "সামারির সাথে কোন ফাইলগুলো বদলেছে তা জানিয়ে কেবল সেগুলোই আবার বিশ্লেষণ করানো।",
+		"tip": "৫০ ফাইলের পুরো re-exploration অপচয়; ৩টি বদলালে ৩টিই যথেষ্ট।",
+		"domain": 1
+	},
+	{
+		"term": "--name / -n, /rename",
+		"bn": "বর্তমান CLI-তে সেশনের নাম দেওয়ার উপায় (শুরুতে -n, চলার মধ্যে /rename)।",
+		"tip": "নাম ছাড়া resume করার জন্য --resume নাম/ID বা interactive picker দরকার — resume কখনো সেশন বানায় না।",
+		"domain": 1
+	},
+	{
+		"term": "--continue / -c",
+		"bn": "নাম না নিয়ে বর্তমান ডিরেক্টরির সবচেয়ে সাম্প্রতিক কথোপকথন চালিয়ে যাওয়ার কন্ট্রোল।",
+		"tip": "নাম দেওয়ার ঝামেলা ছাড়া দ্রুত ফেরার জন্য; নির্দিষ্ট সেশনে ফিরতে --resume।",
+		"domain": 1
+	},
+	{
+		"term": "context passing",
+		"bn": "Coordinator নিজে থেকে ঠিক করে কোন subagent কোন কনটেক্সট পাবে, আর তা explicitly prompt-এ পাঠায়।",
+		"tip": "নিচের এজেন্টের খারাপ ফলের আসল কারণ প্রায়ই অপর্যাপ্ত context passing।",
+		"domain": 1
 	}
 ]
