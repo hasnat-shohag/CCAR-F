@@ -87,6 +87,47 @@ html[data-theme='dark'][data-domain='5'] {
 	--sl-color-accent-high: #fecdd3;
 }
 
+/* ---------- page grid ---------- */
+
+/*
+ * Starlight splits the leftover width evenly between the article and the table-of-contents
+ * column, so that column keeps growing with the viewport (920px wide at 2560px) while the
+ * reading column stays pinned at `--sl-content-width` — the extra room was empty, because
+ * the TOC's own panel is sized from `--sl-sidebar-width` and never used it. Cap the column
+ * at that token (which is exactly the width the TOC already renders into) and hand the
+ * reclaimed width to the article, whose reading column can then breathe to 48rem.
+ * Below 72rem nothing changes: there the three columns already fill the viewport.
+ */
+@media (min-width: 72rem) {
+	html[data-has-toc] {
+		--sl-content-width: 48rem;
+	}
+
+	html[data-has-toc] .right-sidebar-container {
+		width: var(--sl-sidebar-width);
+	}
+
+	html[data-has-sidebar][data-has-toc] .main-pane {
+		width: calc(100% - var(--sl-sidebar-width));
+		/* centre the article in the wider pane instead of letting the slack pile up on one side */
+		--sl-content-margin-inline: auto;
+	}
+}
+
+/* ---------- accent text contrast ---------- */
+
+/*
+ * Starlight's light theme points `--sl-color-text-accent` at the raw accent. That works for
+ * its own saturated blue, but on white the amber and teal domain accents only reach 3.19:1
+ * and 3.74:1. The token paints content links, the nav title, the social icons, the focused
+ * skip link and the table-of-contents marker, so one change covers all of them — and
+ * `--sl-color-accent-high` is the shade defined to be legible on the page background (dark
+ * in light mode, light in dark), which is what the dark theme already resolves to.
+ */
+html[data-theme='light'] {
+	--sl-color-text-accent: var(--sl-color-accent-high);
+}
+
 /* ---------- reading progress bar ---------- */
 
 .reading-progress {
@@ -159,10 +200,13 @@ a[data-lesson-id].is-complete {
 	color: var(--sl-color-gray-3);
 }
 
+/* The tick takes the same high-contrast accent as the term columns: the raw accent reads
+ * at 3.19:1 on the light sidebar, and this keeps every accent-coloured glyph on the page
+ * on one token. */
 a[data-lesson-id].is-complete::after {
 	content: '✓';
 	float: inline-end;
-	color: var(--sl-color-accent);
+	color: var(--sl-color-accent-high);
 	font-weight: 700;
 }
 
@@ -394,10 +438,18 @@ a[data-lesson-id][aria-current='page'].is-complete::after {
 	overflow-x: auto;
 }
 
+/*
+ * Mermaid sizes each diagram to its own layout and pins that width inline
+ * (`style="max-width: 409.699px"`), so a small flowchart sat centred with a third of the
+ * column empty on either side — 410px of drawing in a 768px column. The SVG already asks
+ * for `width="100%"`, so lifting the inline cap is all it takes for the drawing to fill
+ * the column: every diagram then shares one predictable width, and its height follows from
+ * the viewBox, so nothing is distorted. The `!important` is required because the cap is an
+ * inline style that Mermaid re-applies on every theme re-render.
+ */
 .mermaid-figure svg {
-	max-width: 100%;
+	max-width: 100% !important;
 	height: auto;
-	margin: 0 auto;
 }
 
 pre.mermaid-source {

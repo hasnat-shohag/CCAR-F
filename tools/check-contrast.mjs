@@ -60,12 +60,21 @@ const PAGES = [
 	{ path: 'exam-guide', domain: 'none' },
 ];
 
-/** `pseudo` measures a generated marker; its floor is the 3:1 graphics bar, not text's 4.5:1. */
+/**
+ * `pseudo` measures a generated marker; its floor is the 3:1 graphics bar, not text's 4.5:1.
+ * `focus` focuses the element first, which is how the skip link's colours exist at all.
+ *
+ * `content-link`, `site-title` and `skip-link` all resolve `--sl-color-text-accent`, the token
+ * the light theme points at the high-contrast accent shade. That is deliberate: a regression
+ * in that one line shows up as failures on all three rather than passing unnoticed.
+ */
 const TARGETS = [
 	{ id: 'term', label: 'term column', selector: '.keyword-term', floor: 4.5 },
 	{ id: 'table-code', label: 'table inline code', selector: '.ref-table code', floor: 4.5 },
 	{ id: 'prose-code', label: 'prose inline code', selector: '.sl-markdown-content p code', floor: 4.5 },
 	{ id: 'content-link', label: 'content link', selector: '.sl-markdown-content p a', floor: 4.5 },
+	{ id: 'site-title', label: 'nav site title', selector: '.site-title', floor: 4.5 },
+	{ id: 'skip-link', label: 'focused skip link', selector: '.sl-skip-link', floor: 4.5, focus: true },
 	{ id: 'sidebar-current', label: 'sidebar current entry', selector: '.sidebar-content a[aria-current=page]', floor: 4.5 },
 	{
 		id: 'sidebar-tick',
@@ -78,12 +87,14 @@ const TARGETS = [
 
 /**
  * Pre-existing debt, recorded so the guard ships green and still catches a drop.
- * Key: `<target>:<domain>:<theme>`. Delete an entry once its value reaches the floor.
+ * Key: `<target>:<domain>:<theme>`.
+ *
+ * Empty on purpose: the light-theme accent gaps this shipped with (content links on the
+ * amber and teal domains, 3.19:1 and 3.74:1) are fixed at the token, so the guard now
+ * demands the full 4.5:1 there. Add an entry only for debt you cannot fix yet, and delete
+ * it once the value reaches the floor — the run prints a reminder when it does.
  */
-const KNOWN_GAPS = new Map([
-	['content-link:2:light', 3.74],
-	['content-link:3:light', 3.19],
-]);
+const KNOWN_GAPS = new Map();
 
 /** Lessons seeded into localStorage so the completed-tick target has something to measure. */
 const SEEDED_LESSONS = ['1-1', '3-2', '5-1'];
@@ -137,6 +148,7 @@ ${contrastFn}
 	return targets.map((target) => {
 		const el = document.querySelector(target.selector);
 		if (!el) return { id: target.id, missing: true };
+		if (target.focus) el.focus();
 		const color = getComputedStyle(el, target.pseudo ?? null).color;
 		const bg = effectiveBg(el);
 		return { id: target.id, color, bg, ratio: ratioOf(color, bg) };
@@ -397,8 +409,11 @@ function report(results) {
 		return;
 	}
 
-	const gapCount = [...KNOWN_GAPS.keys()].length;
-	console.log(`No contrast regressions. ${gapCount} recorded known gap(s).`);
+	console.log(
+		KNOWN_GAPS.size === 0
+			? 'No contrast regressions. No recorded known gaps.'
+			: `No contrast regressions. ${KNOWN_GAPS.size} recorded known gap(s).`,
+	);
 }
 
 await main();
