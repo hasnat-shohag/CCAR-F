@@ -28,6 +28,45 @@
 	line-height: 1.5;
 }
 
+.sl-menu-button {
+	align-items: center;
+	justify-content: center;
+}
+
+@media (max-width: 50rem) {
+	site-search .dialog-frame {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: auto minmax(0, 1fr);
+	}
+
+	site-search button[data-close-modal] {
+		position: static;
+		grid-column: 2;
+		grid-row: 1;
+		align-self: center;
+		height: auto;
+		min-height: 2.75rem;
+		padding-inline: 0.25rem;
+		max-width: 40vw;
+		overflow-wrap: anywhere;
+	}
+
+	site-search .search-container {
+		grid-column: 1 / -1;
+		grid-row: 2;
+		min-width: 0;
+	}
+
+	#starlight__search .pagefind-ui__search-input {
+		width: 100%;
+	}
+
+	#starlight__search .pagefind-ui__search-clear {
+		inset-inline-end: 0;
+	}
+}
+
 /* ---------- pagination ---------- */
 
 .pagination-links {
