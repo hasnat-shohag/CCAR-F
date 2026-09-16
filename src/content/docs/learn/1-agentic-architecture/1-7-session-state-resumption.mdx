@@ -9,23 +9,11 @@ sourceUrl: https://claudecertificationguide.com/learn/1-agentic-architecture/1-7
 updated: 2026-09-12
 keywords:
   - term: session state
-    bn: এক সেশন থেকে আরেকটিতে বহন করা কনটেক্সট — tool result, বিশ্লেষণ, reasoning chain।
-    tip: এই সঞ্চিত অবস্থা নিয়েই resume, fork ও fresh start-এর সিদ্ধান্ত।
   - term: --resume
-    bn: নির্দিষ্ট নামযুক্ত সেশন যেখানে ছিল সেখান থেকেই চালিয়ে যাওয়া; পুরো হিস্ট্রি ফেরে।
-    tip: ফাইল না বদলালে ভালো; বদলালে stale context ফাঁদে পড়বেন।
   - term: fork_session
-    bn: শেয়ার্ড বিশ্লেষণ-বেসলাইন থেকে স্বাধীন শাখা; শাখাগুলো একে অন্যকে দেখে না।
-    tip: ভিন্ন পথ তুলনার জন্য; একই তদন্ত চালিয়ে যেতে resume।
   - term: stale context problem
-    bn: ফাইল বদলের পর resume করলে পুরনো tool result হিস্ট্রিতে থেকে পরস্পরবিরোধী পরামর্শ আসে।
-    tip: শুধু "আবার পড়ে নাও" বললে বাসি ফল থেকে যায় — নতুন সেশন + সামারি লাগে।
   - term: fresh start with summary injection
-    bn: নতুন সেশন শুরু করে আগের সেশনের স্ট্রাকচার্ড সামারি ইনজেক্ট করা; বাসি tool result থাকে না।
-    tip: কোন ফাইল বদলেছে তা জানিয়ে দিলেই targeted re-analysis সম্ভব।
   - term: targeted re-analysis
-    bn: বদলানো ফাইলগুলো কেবল আবার বিশ্লেষণ করানো; সামারি বাকি সব ঢেকে রাখে।
-    tip: ৫০ ফাইল নতুন করে পড়া অপচয়; ৩টি বদলালে ৩টিই বিশ্লেষণ।
 sources:
   - label: Claude Agent SDK Overview
     href: https://platform.claude.com/docs/en/agent-sdk/overview

@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/4-prompt-engineering/4-3-s
 updated: 2026-09-12
 keywords:
   - term: tool_use with JSON schemas
-    bn: টুলের JSON schema দিয়ে Claude-এর ফেরত ডেটার গঠন বেঁধে দেওয়া।
-    tip: JSON syntax error (bracket, trailing comma) একেবারে দূর করে; কিন্তু ভুল মান আটকায় না।
   - term: prompt-based JSON
-    bn: টেক্সট উত্তরের ভেতরে JSON লিখতে বলা, কোনো schema-বাধা ছাড়া।
-    tip: Production-এ মাঝেমধ্যে unparseable আউটপুট দেয়; নির্ভরতার দিক থেকে নিচু স্তর।
   - term: '"auto"'
-    bn: মডেল নিজে ঠিক করে টুল কল করবে কি না; টেক্সটেও উত্তর দিতে পারে।
-    tip: "Auto মানে structured output-এর কোনো নিশ্চয়তা নেই।"
   - term: '"any"'
-    bn: মডেলকে টুল কল করতেই হবে, তবে কোন টুল তা মডেল বাছে।
-    tip: ডকুমেন্টের ধরন অজানা কিন্তু structured output নিশ্চিত চাইলে এটিই।
   - term: forced selection
-    bn: "`{type: tool, name: ...}` দিয়ে নির্দিষ্ট টুল কল করতে বাধ্য করা, যেমন extract_metadata।"
-    tip: Tool_choice প্রতি request-এ প্রযোজ্য; পরের request-এ না সরালে একই টুল আবার কল হবে।
   - term: semantic error
-    bn: গঠন ঠিক কিন্তু মান ভুল — যোগফলের গরমিল, ভুল field-এ মান, অনুপস্থিত তথ্যের বদলে বানানো মান।
-    tip: Schema কেবল গঠনের জামিন; correctness আলাদা ভ্যালিডেশন দাবি করে।
   - term: nullable/optional field
-    bn: উৎস ডকুমেন্টে তথ্য না থাকলে field-টি null ফেরাতে দেওয়ার সুযোগ।
-    tip: Fabrication ঠেকানোর প্রধান উপায় — required field মডেলকে মান বানাতে চাপ দেয়।
   - term: "unclear enum value"
-    bn: উৎস সত্যিই অস্পষ্ট হলে শ্রেণিবিন্যাস না করে "unclear" ফেরানোর অনুমতি।
-    tip: জোর করে শ্রেণিবিন্যাস ঠেকায়; অন্য দিকে "other" + detail string নতুন ক্যাটাগরি ধরে।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Task Statement 4.3
     href: https://claudecertificationguide.com/learn/4-prompt-engineering/4-3-structured-output

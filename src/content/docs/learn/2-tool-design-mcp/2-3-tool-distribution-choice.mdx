@@ -9,32 +9,14 @@ sourceUrl: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-3-tool
 updated: 2026-09-12
 keywords:
   - term: tool overload
-    bn: এক এজেন্টকে অনেক টুল দিলে সিলেকশন-নির্ভরযোগ্যতা পড়ে যায়।
-    tip: সর্বোত্তম পরিসর ৪-৫ টুল, এজেন্টের ভূমিকা অনুযায়ী সীমিত।
   - term: role-based tool scoping
-    bn: প্রতিটি এজেন্ট তার নির্দিষ্ট ভূমিকার টুলই পায়, অন্য ভূমিকার নয়।
-    tip: Synthesis এজেন্টের হাতে web search থাকলে সে নিজেই খুঁজতে শুরু করে — কাজ দ্বিগুণ।
   - term: tool consolidation
-    bn: একই আকারের কাছাকাছি টুলগুলো একটি parameterised টুলে জোড়া লাগানো।
-    tip: ১৯টি transformation এক transform_data + enum হলে টুল সংখ্যা কমে, ক্ষমতা কমে না।
   - term: tool_choice
-    bn: মডেল কীভাবে টুল ব্যবহার করবে তা নিয়ন্ত্রণকারী প্যারামিটার।
-    tip: তিনটি মান — "auto", "any" আর forced selection; প্রত্যেকের আলাদা কাজ।
   - term: '"auto"'
-    bn: ডিফল্ট মোড — মডেল নিজেই ঠিক করে টুল ডাকবে কি না, নাকি টেক্সট ফেরাবে।
-    tip: সাধারণ কাজে ব্যবহার করুন; বাধ্যতামূলক structured output দরকার হলে অপর্যাপ্ত।
   - term: '"any"'
-    bn: মডেল অবশ্যই একটি টুল ডাকবে, তবে কোনটি তা নিজে বাছবে।
-    tip: একাধিক extraction schema থাকলে নিশ্চিত structured outputের জন্য।
   - term: forced selection
-    bn: মডেলকে একটি নির্দিষ্ট নাম-ধরা টুল ডাকতে বাধ্য করা।
-    tip: বাধ্যতামূলক প্রথম ধাপ এনফোর্স করে — skip বা পুনর্বিন্যাস করা যায় না।
   - term: scoped cross-role tool
-    bn: অন্য ভূমিকার সামর্থ্যের সীমিত সংস্করণ, যে এজেন্টের দরকার তাকেই দেওয়া।
-    tip: সাধারণ case locally সারায়; coordinator round-trip-এর ২-৩ ধাপ ও ৪০% latency বাঁচে।
   - term: constrained tool
-    bn: জেনেরিক টুলের বদলে সীমিত, নির্দিষ্ট কাজের টুল।
-    tip: fetch_url-এর বদলে load_document — least privilege টুল ডিজাইনে প্রয়োগ।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 2, Task Statement 2.3
     href: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-3-tool-distribution-choice

@@ -9,32 +9,14 @@ sourceUrl: https://claudecertificationguide.com/learn/3-claude-code-config/3-1-c
 updated: 2026-09-12
 keywords:
   - term: CLAUDE.md hierarchy
-    bn: Claude Code-এর তিন স্তরের কনফিগ — user, project আর directory।
-    tip: কোন স্তর কোথায় খাটে, আর ভুল স্তর চেনা — পরীক্ষার বারবার আসা প্রশ্ন।
   - term: user-level CLAUDE.md
-    bn: ~/.claude/CLAUDE.md — কেবল আপনার জন্য, repo-র বাইরে, git-এ যায় না।
-    tip: ব্যক্তিগত পছন্দ এখানে; টিমের নিয়ম এখানে রাখলেই নতুন সদস্য পায় না।
   - term: project-level CLAUDE.md
-    bn: .claude/CLAUDE.md বা root CLAUDE.md — repo-তে থাকে, version-controlled, পুরো টিম পায়।
-    tip: Naming convention, error handling, testing requirement এখানেই।
   - term: directory-level CLAUDE.md
-    bn: Subdirectory-র CLAUDE.md — কেবল সেই directory-তে কাজ করার সময় খাটে।
-    tip: এক directory-র জন্য ভালো; বহু directory জুড়ে হলে .claude/rules/ ব্যবহার করুন।
   - term: CLAUDE.local.md
-    bn: CLAUDE.md-এর পাশে বসা ব্যক্তিগত override, সাধারণত gitignored।
-    tip: Same level-এ CLAUDE.md-এর পরে জুড়ে যায় — load order মাত্র, precedence নয়।
   - term: "@ path import"
-    bn: CLAUDE.md-এ @ দিয়ে অন্য ফাইল inline করার সিনট্যাক্স।
-    tip: '@import keyword বলে কিছু নেই; eager load — context ছোট হয় না।'
   - term: .claude/rules/
-    bn: বিষয়ভিত্তিক rule ফাইলের directory, ঐচ্ছিক YAML frontmatter দিয়ে path-scoped।
-    tip: Frontmatter ছাড়া সব সেশনে load হয়; এমন নিয়মে এটি context বাঁচায়।
   - term: /memory
-    bn: কোন memory ফাইল load হয়েছে তা জানার ডায়াগনস্টিক কমান্ড।
-    tip: পরীক্ষায় keyed উত্তর /memory; বর্তমান Claude Code-এ আসলে /context দেখায়।
   - term: concatenation (no precedence)
-    bn: সব CLAUDE.md একসাথে context-এ জুড়ে যায়; কোনোটি অন্যটিকে override করে না।
-    tip: দুই নিয়ম সংঘর্ষে Claude যেকোনোটি বেছে নিতে পারে — কঠিন নিয়ম settings.json-এ।
 sources:
   - label: How Claude remembers your project (CLAUDE.md and auto memory)
     href: https://platform.claude.com/docs/en/docs/claude-code/memory

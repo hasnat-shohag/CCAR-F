@@ -9,32 +9,14 @@ sourceUrl: https://claudecertificationguide.com/learn/3-claude-code-config/3-2-s
 updated: 2026-09-12
 keywords:
   - term: Skills system
-    bn: কাস্টম command আর skill মিলে যাওয়া একীভূত সিস্টেম, যা /command তৈরি করে।
-    tip: দুই path একই ফল দেয়, কিন্তু ফাইল-গঠন আলাদা — এটিই পরীক্ষার ফাঁদ।
   - term: .claude/skills/
-    bn: Canonical skill location — প্রতি skill একটি directory, ভেতরে SKILL.md।
-    tip: এই directory-তে সরাসরি রাখা loose .md ফাইল command হয় না।
   - term: .claude/commands/
-    bn: Backward-compatible alias — flat Markdown ফাইল, ফাইলের নামই command নাম।
-    tip: .claude/commands/deploy.md → /deploy; পুরনো কনফিগ অপরিবর্তিত চলে।
   - term: "context: fork"
-    bn: Skill-কে আলাদা sub-agent context-এ চালায়, যাতে verbose output মূল কথোপকথন নোংরা না করে।
-    tip: Codebase analysis বা brainstorming-এর মতো noisy কাজে অপরিহার্য।
   - term: allowed-tools
-    bn: Skill চলার সময় তালিকাভুক্ত টুল pre-approve করা; গাইডে এটি টুল access সীমিত করে।
-    tip: পরীক্ষায় উত্তর "restricts"; বর্তমান Claude Code-এ আসল সীমানা disallowed-tools।
   - term: argument-hint
-    bn: Autocomplete-এ দেখানো সংকেত, যা skill কী argument চায় তা জানায়।
-    tip: এটি label, interactive prompt নয় — argument ছাড়া ডাকলে থেমে জিজ্ঞেস করে না।
   - term: description (skill)
-    bn: Skill-এর frontmatter ফিল্ড, যা পড়ে Claude ঠিক করে skill প্রযোজ্য কি না।
-    tip: না থাকলে skill কেবল হাতে /name টাইপ করলেই চলে।
   - term: auto-invocation
-    bn: ব্যবহারকারীর উদ্দেশ্যের সাথে description মিললে Claude নিজেই skill ডেকে নেওয়া।
-    tip: 'disable-model-invocation: true থাকলে কেবল explicit invocation কাজ করে।'
   - term: Skills vs CLAUDE.md
-    bn: Skill = on-demand টাস্ক-ওয়ার্কফ্লো; CLAUDE.md = প্রতি সেশনে always-loaded standard।
-    tip: Task-specific পদ্ধতি CLAUDE.md-এ নয়, আর always-on নিয়ম skill-এ নয়।
 sources:
   - label: Claude Code Skills Documentation (custom slash commands are part of the unified Skills system)
     href: https://platform.claude.com/docs/en/docs/claude-code/skills

@@ -9,26 +9,12 @@ sourceUrl: https://claudecertificationguide.com/learn/1-agentic-architecture/1-4
 updated: 2026-09-12
 keywords:
   - term: prompt-based guidance
-    bn: system prompt-এর নির্দেশে ওয়ার্কফ্লো-ক্রম মানানো — সম্ভাব্যতাভিত্তিক।
-    tip: '"90-95% ক্ষেত্রে কাজ করে" মানেই ৫-১০% ব্যর্থতা; high-stakes-এ অপর্যাপ্ত।'
   - term: programmatic enforcement
-    bn: hook, prerequisite gate বা কোড-চেক দিয়ে ভুল ক্রম আটকে দেওয়া — ডিটারমিনিস্টিক।
-    tip: ডাকা, নিরাপত্তা বা কমপ্লায়েন্স জড়িত হলে উত্তর কেবল এটিই।
   - term: prerequisite gate
-    bn: আগের শর্ত পূরণ না হওয়া পর্যন্ত টুল চলতে না দেওয়া কোড।
-    tip: process_refund-এর আগে verified customer ID — prompt নয়, কোড।
   - term: structured handoff
-    bn: মানুষের কাছে escalate করার স্বয়ংসম্পূর্ণ সামারি (transcript মানুষের কাছে যায় না)।
-    tip: Customer ID, summary, root cause, refund amount, recommended action — সব প্রয়োজন।
   - term: SubagentStart
-    bn: subagent spawn-এর lifecycle hook; observational, block করতে পারে না।
-    tip: spawn-এ নিয়ম চাপাতে Agent টুলে PreToolUse hook ব্যবহার করুন।
   - term: SubagentStop
-    bn: subagent শেষ হওয়ার hook; exit code 2 দিলে subagent আবার কাজে ফেরে।
-    tip: ফল বদলায় না — আউটপুট reshape coordinator-এর কাজ।
   - term: multi-concern request
-    bn: একসাথে একাধিক অভিযোগ; ভাগ করে parallel-এ তদন্ত করে এক উত্তরে মেটাতে হয়।
-    tip: প্রথমটিই সারানো আর বাকি ভুলে যাওয়া পরীক্ষায় ভুল উত্তর।
 sources:
   - label: Claude Agent SDK Overview
     href: https://platform.claude.com/docs/en/agent-sdk/overview

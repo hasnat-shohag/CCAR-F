@@ -9,23 +9,11 @@ sourceUrl: https://claudecertificationguide.com/learn/4-prompt-engineering/4-1-s
 updated: 2026-09-12
 keywords:
   - term: explicit categorical criteria
-    bn: মডেল কী ধরনের সমস্যা রিপোর্ট করবে আর কী এড়িয়ে যাবে, তা স্পষ্ট শ্রেণিতে ভাগ করে বলা।
-    tip: "`be conservative`-এর বদলে: bug ও security vulnerability জানাও, style preference বাদ দাও।"
   - term: vague instruction
-    bn: "`Be conservative`, `only report high-confidence findings` টাইপ নির্দেশ, যার কোনো কার্যকর decision boundary নেই।"
-    tip: শুনতে যুক্তিসঙ্গত লাগে বলেই পরীক্ষায় ডিস্ট্র্যাক্টর হিসেবে আসে।
   - term: false positive trust problem
-    bn: এক ক্যাটাগরির উচ্চ false positive হার ডেভেলপারদের সব ক্যাটাগরির প্রতি আস্থা নষ্ট করে।
-    tip: Trust ক্যাটাগরি-নির্দিষ্ট নয় — পুরো output জুড়ে ছড়ায়।
   - term: severity calibration
-    bn: Critical, major, minor স্তর বাস্তব code example দিয়ে ঠিক করা, গদ্য বর্ণনায় নয়।
-    tip: "`could cause system failures` লেখা যথেষ্ট নয়; আসল code pattern দেখাতে হবে।"
   - term: confidence-based filtering
-    bn: মডেল নিজের রিপোর্ট করা confidence দেখে finding ছেঁকে ফেলা।
-    tip: LLM self-reported confidence খারাপভাবে calibrated; routing-এ কাজে লাগে, criteria-র বিকল্প নয়।
   - term: disabling problematic categories
-    bn: false positive হার বেশি এমন ক্যাটাগরি সাময়িকভাবে বন্ধ রেখে prompt ঠিক করা।
-    tip: পুরো সিস্টেমের আস্থা ফেরাতে প্রথম ধাপ; ক্যাটাগরি ছাড়া নয়, কেবল সাময়িক বন্ধ।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Task Statement 4.1
     href: https://claudecertificationguide.com/learn/4-prompt-engineering/4-1-system-prompts

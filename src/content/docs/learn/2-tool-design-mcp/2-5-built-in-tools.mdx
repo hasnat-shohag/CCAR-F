@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-5-buil
 updated: 2026-09-12
 keywords:
   - term: Grep
-    bn: ফাইলের ভেতরের কনটেন্টে প্যাটার্ন খোঁজার টুল।
-    tip: Function caller, error message, import statement — ফাইলে কী লেখা আছে তা খুঁজতে Grep।
   - term: Glob
-    bn: নাম, extension বা directory pattern দিয়ে ফাইলের path মেলানোর টুল।
-    tip: Test ফাইল, config, **/*.test.tsx — ফাইলের নাম খুঁজতে Glob।
   - term: Edit
-    bn: unique text matching দিয়ে লক্ষ্যযুক্ত পরিবর্তনের ডিফল্ট টুল।
-    tip: Text একাধিক জায়গায় থাকলে Edit fail করে — এটা নিরাপত্তা, bug নয়।
   - term: unique anchor
-    bn: Edit-এর old_string, যা ফাইলে ঠিক এক জায়গায় মেলে।
-    tip: Non-unique হলে exam-উত্তর Read + Write; বাস্তবে old_string প্রশস্ত করুন।
   - term: replace_all
-    bn: Edit-এর পতাকা — ইচ্ছাকৃতভাবে সব occurrence বদলাতে ব্যবহৃত।
-    tip: Non-unique match-এ widen করা না হলে এটিই সস্তা পথ।
   - term: incremental discovery
-    bn: কোডবেস ধাপে ধাপে জানা — Grep দিয়ে entry point, তারপর Read দিয়ে flow।
-    tip: সব ফাইল আগেই পড়া context-budget-এর সবচেয়ে বড় অপচয়।
   - term: barrel file
-    bn: একাধিক module re-export করা index.ts জাতীয় ফাইল।
-    tip: Barrel-এর নতুন নামে Grep করলেই indirect consumer ধরা পড়ে।
   - term: Read + Write fallback
-    bn: Edit-এর unique anchor না পেলে পূর্ণ ফাইল পড়ে নতুন করে লেখা।
-    tip: প্রতি পরিবর্তনে এটি ডিফল্ট নয় — context token পুড়িয়ে দেয়।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 2, Task Statement 2.5
     href: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-5-built-in-tools

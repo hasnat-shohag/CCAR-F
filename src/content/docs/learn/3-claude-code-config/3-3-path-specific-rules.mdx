@@ -9,23 +9,11 @@ sourceUrl: https://claudecertificationguide.com/learn/3-claude-code-config/3-3-p
 updated: 2026-09-12
 keywords:
   - term: path-specific rules
-    bn: ফাইল-ধরন অনুযায়ী শর্তসাপেক্ষে load হওয়া convention, যেকোনো directory-তে।
-    tip: বহু directory-তে ছড়ানো এক ফাইল-ধরনের নিয়মে এটিই সঠিক উত্তর।
   - term: paths frontmatter
-    bn: Rule ফাইলের YAML frontmatter-এ glob pattern-এর তালিকা।
-    tip: paths-এ মেলে এমন ফাইল এডিট করলেই rule load হয়; নইলে অদৃশ্য থাকে।
   - term: glob pattern
-    bn: '**/*.test.tsx জাতীয় প্যাটার্ন, যা গোটা কোডবেসে ফাইল মেলায়।'
-    tip: Test, API বা Terraform convention একটি ফাইলেই সব ক্ষেত্রে খাটে।
   - term: directory-level CLAUDE.md
-    bn: কেবল একটি directory-র ফাইলে খাটা CLAUDE.md।
-    tip: ৫০+ directory-তে test ছড়ানো থাকলে প্রতি directory-তে কপি করা drift ডাকে।
   - term: rules vs skills
-    bn: Rule background guidance হিসেবে load হয়; skill on-demand টাস্ক-ওয়ার্কফ্লো।
-    tip: 'কোনটি always-on convention? — উত্তর rules; skill নয়।'
   - term: token efficiency (path-scoped)
-    bn: মেলে এমন ফাইলে কাজ করার সময়ই কেবল rule load হয়ে অপ্রাসঙ্গিক কনটেক্সট কমায়।
-    tip: Root CLAUDE.md-এর সব নিয়ম প্রতি সেশনে token খায়, প্রাসঙ্গিক হোক বা না হোক।
 sources:
   - label: Claude Code Memory and Rules Documentation
     href: https://platform.claude.com/docs/en/docs/claude-code/memory

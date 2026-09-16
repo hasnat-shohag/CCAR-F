@@ -9,32 +9,14 @@ sourceUrl: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-2-stru
 updated: 2026-09-12
 keywords:
   - term: isError
-    bn: MCP-এর CallToolResult ফিল্ড, যা মডেলকে জানায় টুল চালানো ব্যর্থ হয়েছে।
-    tip: না সেট করলে মডেল এররের লেখাকে সফল ফলের মতোই পড়ে — recovery হয় না।
   - term: errorCategory
-    bn: অ্যাপ্লিকেশন-স্তরের চার ভাগের লেবেল — transient, validation, business, permission।
-    tip: MCP envelope-এর অংশ নয়; structuredContent-এ রাখা convention।
   - term: isRetryable
-    bn: ঠিক এই কলটি আবার পাঠালে কাজ হবে কি না — শুধু এই প্রশ্নের উত্তর।
-    tip: কেবল transient = true; বাকি সব false, কারণ আগে কিছু একটা বদলাতে হবে।
   - term: transient error
-    bn: timeout, সার্ভিস ডাউন বা rate limit — অনুরোধ বৈধ, সিস্টেম সাময়িক অক্ষম।
-    tip: Retryable; সামান্য বিলম্ব দিয়ে একই কল আবার পাঠান।
   - term: validation error
-    bn: ভুল ইনপুট ফরম্যাট, বাধ্যতামূলক ফিল্ড নেই, মান সীমার বাইরে।
-    tip: isRetryable false, তবু এজেন্ট নিজেই সারাতে পারে — ইনপুট ঠিক করে নতুন কল।
   - term: business error
-    bn: নীতি বা ব্যবসার নিয়ম লঙ্ঘন — অনুরোধ বৈধ, কিন্তু শর্ত ভাঙে।
-    tip: কোনোদিন retry-তে সারবে না; বিকল্প পথ বা human escalation লাগে।
   - term: permission error
-    bn: access denied — কলারের প্রয়োজনীয় অনুমতি নেই।
-    tip: আলাদা principal বা elevated credential দরকার; ভালো কল শুধরালে হবে না।
   - term: valid empty result
-    bn: টুল সফলভাবে query চালিয়েছে, কোনো মিল নেই — ফল শূন্য, ব্যর্থ নয়।
-    tip: isError false আর resultCount 0; এখানে retry করা নিষ্ফল।
   - term: access failure
-    bn: টুল ডেটাসোর্স পর্যন্ত পৌঁছাতেই পারেনি — ডেটা থাকতে পারে, দেখা যায়নি।
-    tip: valid empty result-এর সাথে গুলিয়ে ফেললে অকারণ retry ও ভুল escalation হয়।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 2, Task Statement 2.2
     href: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-2-structured-error-responses

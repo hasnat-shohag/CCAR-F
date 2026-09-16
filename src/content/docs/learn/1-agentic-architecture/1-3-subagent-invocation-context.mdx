@@ -9,26 +9,12 @@ sourceUrl: https://claudecertificationguide.com/learn/1-agentic-architecture/1-3
 updated: 2026-09-12
 keywords:
   - term: Task tool
-    bn: Coordinator যে টুল দিয়ে subagent spawn করে (বর্তমান Claude Code-এ নাম Agent; Task alias)।
-    tip: allowedTools-এ Task/Agent না থাকলে spawn অসম্ভব — binary gate।
   - term: allowedTools
-    bn: Coordinator কোন টুল চালাতে পারবে তার তালিকা; subagent spawn-এর অনুমতি এখানেই।
-    tip: Agent বাদ পড়লে unattended run-এ permission denial-এ সব spawn আটকে যায়।
   - term: AgentDefinition
-    bn: Subagent-এর সংজ্ঞা — description, system prompt ও tool restrictions।
-    tip: Description-ই coordinator-কে বলে কখন কোন subagent ডাকবে।
   - term: structured metadata
-    bn: সোর্স-তথ্য (source_url, document_name, page_number) কনটেন্ট থেকে আলাদা রেখে পাঠানোর কাঠামো।
-    tip: Metadata বাদ দিলে synthesis এজেন্ট citation দিতে পারে না।
   - term: parallel spawning
-    bn: এক response-এ একাধিক Task tool call — স্বাধীন subagent একসাথে চালানো।
-    tip: '"single response" বা "simultaneously" মানেই parallel উত্তর।'
   - term: fork_session
-    bn: শেয়ার্ড বেসলাইন থেকে স্বাধীন শাখা তৈরি (SDK-তে forkSession)।
-    tip: fork = branch, resume = append — দুটো আলাদা কাজ।
   - term: --resume
-    bn: আগের নামযুক্ত সেশন চালিয়ে যাওয়ার কন্ট্রোল।
-    tip: SDK-তে resume-এর পাশে fork_session দিলে append বদলে branch হয়।
 sources:
   - label: Claude Agent SDK Overview
     href: https://platform.claude.com/docs/en/agent-sdk/overview

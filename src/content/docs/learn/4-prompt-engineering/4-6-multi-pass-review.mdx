@@ -9,26 +9,12 @@ sourceUrl: https://claudecertificationguide.com/learn/4-prompt-engineering/4-6-m
 updated: 2026-09-12
 keywords:
   - term: self-review limitation
-    bn: একই সেশনে নিজের আউটপুট review করলে মডেল আগের reasoning ধরে রাখে, তাই নিজের সিদ্ধান্ত প্রশ্ন করা কমে।
-    tip: এটি bug নয় — single-session self-review-র স্বাভাবিক সীমা; ডিজাইন করতে হয় এর চারপাশ ঘিরে।
   - term: independent review instance
-    bn: আলাদা Claude invocation, যার generation-এর reasoning context নেই।
-    tip: "`please review carefully` লেখার চেয়ে আলাদা instance অনেক ভালো subtle সমস্যা ধরে।"
   - term: attention dilution
-    bn: এক পাসে অনেক ফাইল দিলে মনোযোগ অসমভাবে ছড়ায় — কোনো ফাইলে গভীর, কোনো ফাইলে উপরি review।
-    tip: 'উপসর্গ — মাঝের ফাইলে স্পষ্ট bug বাদ, একই pattern এক ফাইলে সমস্যা আরেক ফাইলে অনুমোদিত।'
   - term: per-file local analysis
-    bn: প্রতিটি ফাইল আলাদা focused পাসে review করা, যাতে সবখানে সমান গভীরতা আসে।
-    tip: Pass 1 — প্রতিটি invocation কেবল একটি ফাইল দেখে।
   - term: cross-file integration pass
-    bn: Per-file finding সব নিয়ে আলাদা পাসে module-এর মধ্যে data flow, API contract আর পরস্পরবিরোধী finding যাচাই।
-    tip: Pass 2 — কোনো single-file review যা ধরতে পারত না, সেটিই এখানে ধরা পড়ে।
   - term: confidence-based routing
-    bn: প্রতিটি finding-এ model-এর জানানো confidence দেখে routing — বেশি হলে সরাসরি, কম হলে মানব review-তে।
-    tip: Routing-এর জন্য threshold নির্ভরযোগ্য হতে হলে labelled set-এ calibrate করতে হবে।
   - term: calibrated confidence threshold
-    bn: লেবেলযুক্ত validation set-এ মিলিয়ে ঠিক করা threshold, যেখানে confidence আসল নির্ভুলতার সঙ্গে মেলে।
-    tip: কাঁচা confidence automated সিদ্ধান্তে অ্যান্টি-প্যাটার্ন; calibrated threshold routing-এ বৈধ।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Task Statement 4.6
     href: https://claudecertificationguide.com/learn/4-prompt-engineering/4-6-multi-pass-review

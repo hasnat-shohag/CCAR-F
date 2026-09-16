@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/4-prompt-engineering/4-5-b
 updated: 2026-09-12
 keywords:
   - term: Message Batches API
-    bn: একগুচ্ছ request একসঙ্গে জমা দেওয়ার API — ৫০% কম খরচ, কিন্তু ২৪ ঘণ্টা পর্যন্ত প্রসেসিং window।
-    tip: Latency-tolerant কাজের জন্য; blocking কাজের জন্য নয়।
   - term: "50% cost savings"
-    bn: Synchronous API কলের তুলনায় Message Batches API-তে খরচ অর্ধেক।
-    tip: এই সাশ্রয়ই পরীক্ষায় "সব কাজ batch-এ নিয়ে যাই" ডিস্ট্র্যাক্টরটি লোভনীয় করে তোলে।
   - term: 24-hour processing window
-    bn: Batch জমা দেওয়ার পর সর্বোচ্চ ২৪ ঘণ্টার মধ্যে ফল আসে — কখনো কয়েক মিনিটেই, কখনো শেষ পর্যন্ত।
-    tip: এটি সর্বোচ্চ window, delivery guarantee নয়; SLA হিসাব এই worst case ধরে করতে হয়।
   - term: no latency SLA
-    bn: Batch API কোনো নির্দিষ্ট সময়ের নিশ্চয়তা দেয় না।
-    tip: "ফল সাধারণত দ্রুত আসে, কিন্তু blocking workflow সেই best-case ধরে ডিজাইন করা যায় না।"
   - term: custom_id
-    bn: Batch-এর প্রতিটি request-এর অনন্য identifier, যা response-এর সঙ্গে মেলানোর কাজে লাগে।
-    tip: এই id দিয়েই কোন ডকুমেন্ট ব্যর্থ হয়েছে তা ধরা পড়ে; ছাড়া failure handling অসম্ভব।
   - term: blocking vs latency-tolerant
-    bn: Blocking workflow-এ কেউ ফলের জন্য অপেক্ষা করে (pre-merge check); latency-tolerant-এ ফল পরে খাওয়া হয় (overnight report)।
-    tip: Pre-merge check synchronous; overnight technical debt report batch-eligible।
   - term: expired batch
-    bn: ২৪ ঘণ্টার মধ্যে শেষ না হওয়া batch, যা expired হয়ে ফেরে।
-    tip: Errored-এর মতোই এটিকে ব্যর্থতা ধরুন আর আবার জমা দিন।
   - term: sample set refinement
-    bn: পুরো batch জমা দেওয়ার আগে ৫–১০টি প্রতিনিধিত্বমূলক ডকুমেন্টে প্রম্পট ঘষে নেওয়া।
-    tip: First-pass success বাড়ে; ৯০% সফল হলে ১০০০-তে ১০০ রিট্রাই, ৬০% হলে ৪০০ — চার গুণ খরচ।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Task Statement 4.5
     href: https://claudecertificationguide.com/learn/4-prompt-engineering/4-5-batch-processing

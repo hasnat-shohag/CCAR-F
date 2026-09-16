@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/3-claude-code-config/3-6-c
 updated: 2026-09-12
 keywords:
   - term: "-p (--print) flag"
-    bn: Claude Code-কে নন-ইন্টারঅ্যাকটিভ print mode-এ চালায়; prompt প্রসেস করে stdout-এ লেখে, তারপর বেরিয়ে যায়।
-    tip: CI job ঝুলে থাকলে উত্তর সবসময় -p; CLAUDE_HEADLESS বা --batch বলে কিছু নেই।
   - term: "--output-format json"
-    bn: Claude Code-এর রানকে JSON envelope-এ মুড়ায় — result text, session ID, cost ও usage metadata।
-    tip: মানুষ নয়, মেশিন পড়বে এমন CI আউটপুটে এটিই দরকার।
   - term: "--json-schema"
-    bn: এজেন্টের চূড়ান্ত output JSON Schema-র সাথে যাচাই করে (শুধু print mode)।
-    tip: যাচাই করা ডেটা envelope-এর structured_output ফিল্ডে আসে।
   - term: structured_output
-    bn: JSON envelope-এর ফিল্ড, যেখানে schema-মেনে চলা ডেটা নামে।
-    tip: jq '.structured_output' দিয়ে আনুন — top level থেকে নয়।
   - term: independent review instance
-    bn: আলাদা Claude Code invocation, যার কাছে generation session-এর reasoning context নেই।
-    tip: একই সেশনে নিজের কোড review করা দুর্বল — আগের যুক্তির প্রতি পক্ষপাত থাকে।
   - term: incremental review context
-    bn: আগের review-এর finding পরের রানে কনটেক্সটে দেওয়া, যাতে কেবল নতুন/অমীমাংসিত সমস্যা ওঠে।
-    tip: না দিলে প্রতি push-এ একই comment ফেরে, আর ডেভেলপাররা comment পড়া বন্ধ করে দেয়।
   - term: append vs replace system prompt
-    bn: --append-system-prompt ডিফল্ট prompt-এর সাথে যোগ করে; --system-prompt পুরোটাই বদলায়।
-    tip: Coding assistant রেখে বাড়তি নিয়ম চাইলে append; ভিন্ন identity/mode চাইলে replace।
   - term: Batch API vs real-time
-    bn: Batch API-তে ৫০% সাশ্রয়, কিন্তু ২৪ ঘণ্টা পর্যন্ত সময় ও latency SLA নেই।
-    tip: Pre-merge blocking check-এ real-time; overnight বা weekly analysis-এ Batch।
 sources:
   - label: Claude Code CLI Reference
     href: https://platform.claude.com/docs/en/docs/claude-code/cli-reference

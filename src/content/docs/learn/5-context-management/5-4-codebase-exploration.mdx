@@ -9,26 +9,12 @@ sourceUrl: https://claudecertificationguide.com/learn/5-context-management/5-4-c
 updated: 2026-09-12
 keywords:
   - term: context degradation
-    bn: দীর্ঘ exploration-এ verbose output জমতে থাকলে মডেল নির্দিষ্ট class, method ও dependency chain-এর বদলে "typical pattern" বলে উল্লেখ করতে শুরু করে।
-    tip: এটি token limit নয় — মডেল নির্দিষ্ট তথ্য হারায়, কারণ সাম্প্রতিক verbose output তা চাপা দেয়।
   - term: scratchpad file
-    bn: মূল finding লিখে রাখার ফাইল, যা পরের প্রশ্নে conversation context-এর বদলে পড়া হয়।
-    tip: Context degradation-এর প্রধান প্রতিকার; শুরু থেকেই ইচ্ছাকৃত কৌশল হিসেবে ব্যবহার করুন, শেষ মুহূর্তের উদ্ধার নয়।
   - term: subagent delegation
-    bn: নির্দিষ্ট investigation subagent-কে দেওয়া, যার নিজস্ব আলাদা context থাকে।
-    tip: মূল উপকার parallelisation নয়, context isolation — মূল agent-এর context পরিষ্কার থাকে।
   - term: context isolation
-    bn: Subagent verbose exploration নিজের context-এ চালায়, coordinator-এর context দূষিত করে না।
-    tip: Coordinator কেবল structured summary পায়; কাঁচা ফাইল-কনটেন্ট আর search result তার কাছে আসে না।
   - term: summary injection
-    bn: ধাপের মাঝে আগের ধাপের মূল finding সারসংক্ষেপ করে পরের ধাপের subagent-এর প্রাথমিক context-এ ঢুকিয়ে দেওয়া।
-    tip: Cold start সমস্যা ঠেকায় — না দিলে পরের subagent আগের কাজ দুবার করে।
   - term: "/compact"
-    bn: Claude Code-এর কমান্ড, যা দীর্ঘ সেশনে conversation সংক্ষেপ করে মূল তথ্য রেখে জায়গা খালি করে।
-    tip: Context limit-এ পৌঁছানোর অপেক্ষা না করে আগেই ব্যবহার করুন; এটি গুণও বাঁচায়, কেবল পরিমাণ নয়।
   - term: state manifest
-    bn: প্রতিটি agent-এর বর্তমান অবস্থা লিখে রাখা structured ফাইল — কী ঘেঁটেছে, মূল finding, চলতি phase, পরের ধাপ।
-    tip: Crash, network interruption বা context exhaustion-এর পর এখান থেকেই কাজ চালু হয়।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 5, Task Statement 5.4
     href: https://claudecertificationguide.com/learn/5-context-management/5-4-codebase-exploration

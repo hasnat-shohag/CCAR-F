@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-4-mcp-
 updated: 2026-09-12
 keywords:
   - term: .mcp.json
-    bn: Project root-এ থাকা project-level MCP কনফিগ — version-controlled, পুরো টিমের সাথে শেয়ার হয়।
-    tip: Jira, GitHub, internal API-র মতো team-wide server এখানেই বসে।
   - term: ~/.claude.json
-    bn: Home directory-র user-level কনফিগ — ব্যক্তিগত, version control-এ নেই, শেয়ার হয় না।
-    tip: Experimental বা personal server এখানে; টিমের server কখনো নয়।
   - term: environment variable expansion
-    bn: .mcp.json-এ ${VARIABLE_NAME} লিখে credential বাদ রেখে কনফিগ শেয়ার করা।
-    tip: ${VAR:-default} আকারও আছে; unset variable চুপচাপ এগিয়ে যায়, loudly fail করে না।
   - term: MCP resource
-    bn: টুল কল ছাড়াই এজেন্টের সামনে আনা কনটেন্ট ক্যাটালগ — schema, TOC, issue তালিকা।
-    tip: পরীক্ষার গাইডে resource applications-controlled; host সেটি সামনে আনলেই এজেন্ট দেখে।
   - term: community MCP server
-    bn: স্ট্যান্ডার্ড ইন্টিগ্রেশনের জন্য রক্ষণাবেক্ষণকৃত, কমিউনিটি-টেস্টেড সার্ভার।
-    tip: Jira/GitHub/Slack-এ প্রথম ধাপ সবসময় এটিই — custom build নয়।
   - term: custom MCP server
-    bn: নিজেদের বানানো সার্ভার — কেবল নিজস্ব workflow বা proprietary সিস্টেমের জন্য।
-    tip: পরিস্থিতিতে team-specific চাহিদা স্পষ্ট না থাকলে custom build ভুল উত্তর।
   - term: remote vs local server
-    bn: 'Remote server-এ "type": "http" ও url; local server-এ command ও args (stdio)।'
-    tip: url আছে কিন্তু type নেই — কনফিগ এরর, Claude Code stdio ভেবে server বাদ দেয়।
   - term: sparse MCP description
-    bn: সংক্ষিপ্ত MCP টুল বর্ণনা, যা সমৃদ্ধ built-in টুলের কাছে সিলেকশনে হেরে যায়।
-    tip: Grep-এর বদলে MCP টুল বাছাতে চাইলে capability ও output বিস্তারিত লিখুন।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 2, Task Statement 2.4
     href: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-4-mcp-server-integration

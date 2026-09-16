@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/1-agentic-architecture/1-2
 updated: 2026-09-12
 keywords:
   - term: hub-and-spoke
-    bn: একটি কেন্দ্রীয় coordinator-কে ঘিরে সাজানো মাল্টি-এজেন্ট আর্কিটেকচার।
-    tip: পরীক্ষা শুধু এই প্যাটার্নই ধরে; spoke-to-spoke সরাসরি যোগাযোগ ভুল উত্তর।
   - term: coordinator agent
-    bn: কেন্দ্রের এজেন্ট — টাস্ক ভাঙে, subagent বাছে, কনটেক্সট পাঠায়, ফল জোড়া লাগায়, এরর সামলায়।
-    tip: কভারেজ ফাঁকের দোষ সবসময় coordinator-এর decomposition-এ খুঁজুন।
   - term: subagent
-    bn: coordinator-এর অধীন বিশেষায়িত এজেন্ট (web search, document analysis, synthesis, report generation)।
-    tip: প্রতিটি invocation আলাদা; আগের কলে কী হয়েছিল তা জানে না।
   - term: subagent isolation
-    bn: subagent coordinator-এর conversation history, system prompt বা অন্য subagent-এর ফল স্বয়ংক্রিয়ভাবে পায় না।
-    tip: সব প্রয়োজনীয় তথ্য prompt-এ স্পষ্টভাবে দিতে হয় — কোনো shared memory নেই।
   - term: narrow decomposition failure
-    bn: Coordinator টপিকের বিশাল অংশ বাদ দিয়ে হাতে গোনা উপকাজ ভাগ করলে পুরো ক্যাটাগরি অনাবিষ্কৃত রয়ে যায়।
-    tip: fix = ভালো সার্চ নয়, ভালো coordinator decomposition।
   - term: iterative refinement loop
-    bn: কভারেজ যাচাই করে ফাঁক পেলে নির্দিষ্ট প্রশ্ন দিয়ে আবার re-delegate করার চক্র।
-    tip: একবার পাঠিয়ে ছেড়ে দেওয়া = dispatcher; coordinator নয়।
   - term: observability
-    bn: সব মেসেজ এক কেন্দ্রে লগ হওয়ায় পুরো সিস্টেম এক জায়গা থেকে মনিটর করা যায়।
-    tip: সরাসরি subagent-যোগাযোগ এই গুণটি নষ্ট করে।
   - term: context passing
-    bn: Coordinator নিজে থেকে ঠিক করে কোন subagent কোন কনটেক্সট পাবে, এবং সেটি explicitly পাঠানো।
-    tip: নিচের এজেন্টের খারাপ ফলের আসল কারণ প্রায়ই অপর্যাপ্ত context passing।
 sources:
   - label: Claude Agent SDK Overview
     href: https://platform.claude.com/docs/en/agent-sdk/overview

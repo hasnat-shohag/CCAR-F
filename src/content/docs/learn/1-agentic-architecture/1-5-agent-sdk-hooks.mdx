@@ -9,26 +9,12 @@ sourceUrl: https://claudecertificationguide.com/learn/1-agentic-architecture/1-5
 updated: 2026-09-12
 keywords:
   - term: PreToolUse
-    bn: টুল চলার আগে চলে যাওয়া hook — outgoing call block, modify বা redirect করে।
-    tip: permissionDecision (allow/deny/ask/defer) + ঐচ্ছিক updatedInput।
   - term: PostToolUse
-    bn: টুল চলার পরে, মডেল ফল দেখার আগে চলে যাওয়া hook — ফল normalize বা replace করে।
-    tip: টুল ইতিমধ্যে চলেছে; block করলে side effect মুছে না।
   - term: tool-call interception
-    bn: টুল কল আটকে নিয়ে নিয়ম খাটানো — PreToolUse hook-এর অপর নাম।
-    tip: 1.4-এর prerequisite gate-এর হাতে-কলমে রূপ।
   - term: permissionDecision
-    bn: PreToolUse hook-এর উত্তর — allow, deny, ask বা defer।
-    tip: deny হলে টুল একেবারেই চলে না।
   - term: updatedInput
-    bn: PreToolUse hook টুল চলার আগে argument বদলাতে পারে।
-    tip: Redirect বা argument সংশোধনে ব্যবহার হয়।
   - term: updatedToolOutput
-    bn: PostToolUse hook মডেল যা দেখবে তা বদলে দেয় (built-in ও MCP দুটোতেই)।
-    tip: পুরনো updatedMCPToolOutput কেবল MCP-র জন্য, এখন deprecated।
   - term: data normalisation
-    bn: ভিন্ন টুলের ভিন্ন ফরম্যাট এক আদলে আনা (Unix timestamp, ISO 8601, numeric status)।
-    tip: মডেলকে ফরম্যাট বোঝার দায়িত্ব দিলে অনিশ্চয়তা ঢোকে।
 sources:
   - label: Claude Agent SDK Overview
     href: https://platform.claude.com/docs/en/agent-sdk/overview

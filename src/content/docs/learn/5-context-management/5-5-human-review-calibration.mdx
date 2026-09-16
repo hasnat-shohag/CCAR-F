@@ -9,26 +9,12 @@ sourceUrl: https://claudecertificationguide.com/learn/5-context-management/5-5-h
 updated: 2026-09-12
 keywords:
   - term: aggregate metrics trap
-    bn: সামগ্রিক ৯৭% accuracy ডকুমেন্ট-ধরনভেদে ৪০% ব্যর্থতা লুকিয়ে রাখতে পারে।
-    tip: Volume-এ standard invoice প্রাধান্য পেলে aggregate ভালো দেখায়, অথচ দুর্বল segment ঢাকা পড়ে।
   - term: document type and field segment validation
-    bn: Automation-এর আগে accuracy ডকুমেন্ট-ধরন ও field-ভিত্তিক আলাদা করে যাচাই করা।
-    tip: কেবল aggregate মেট্রিক দেখে automation সিদ্ধান্ত নেবেন না।
   - term: stratified random sampling
-    bn: প্রতিটি stratum (ডকুমেন্ট-ধরন, confidence band, field-ধরন) থেকে প্রতিনিধিত্বমূলক sample নিয়ে মানুষ দিয়ে যাচাই করানো।
-    tip: উচ্চ-confidence extraction-ও sample করতে হবে; কেবল নিম্ন-confidence দেখলে নতুন systematic error চোখে পড়ে না।
   - term: field-level confidence
-    bn: প্রতিটি field-এর জন্য মডেলের জানানো confidence score।
-    tip: "কাঁচা score absolute নয় — ০.৯৫ date field-এ ৮৮%, আবার amount field-এ ৯৯% নির্ভুল হতে পারে।"
   - term: calibration curve
-    bn: Labelled validation set (ground truth) দিয়ে জানানো confidence আর আসল accuracy মিলিয়ে বানানো সম্পর্ক।
-    tip: এই curve থেকেই calibrated threshold বেরোয়, যা routing চালায়।
   - term: calibrated threshold
-    bn: Labelled set-এ যাচাই করা threshold, যা ঠিক করে কোন field স্বয়ংক্রিয় যাবে আর কোনটি মানব review-তে।
-    tip: Ambiguous zone-এর field-গুলো অগ্রাধিকারভিত্তিক মানব review-তে যায়।
   - term: reviewer capacity prioritisation
-    bn: সীমিত মানব review-র ক্ষমতা সবচেয়ে অনিশ্চিত item-এ আগে খরচ করা, সমানভাবে ছড়ানো নয়।
-    tip: Queue dynamic — একজন reviewer শেষ করলে তার পরের item সবচেয়ে বেশি অনিশ্চিতটি।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 5, Task Statement 5.5
     href: https://claudecertificationguide.com/learn/5-context-management/5-5-human-review-calibration

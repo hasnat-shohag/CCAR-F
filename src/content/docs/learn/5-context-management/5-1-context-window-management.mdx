@@ -9,23 +9,11 @@ sourceUrl: https://claudecertificationguide.com/learn/5-context-management/5-1-c
 updated: 2026-09-12
 keywords:
   - term: progressive summarisation trap
-    bn: দীর্ঘ কথোপকথনে পুরনো turn সারসংক্ষেপ করলে সংখ্যা, তারিখ, order number-এর মতো লেনদেন-তথ্য নষ্ট হয়।
-    tip: Customer-facing ও data-processing সিস্টেমে এই তথ্য সবচেয়ে জরুরি, আর summarisation ঠিক সেটিই মুছে দেয়।
   - term: persistent case facts block
-    bn: লেনদেন-তথ্য (amount, date, order number, status) বের করে আলাদা structured block-এ রাখা, যা প্রতিটি prompt-এ থাকে ও কখনো summarise হয় না।
-    tip: Context management-এর সবচেয়ে জরুরি প্যাটার্ন — progressive summarisation-এর মূল সমাধান।
   - term: lost in the middle
-    bn: দীর্ঘ ইনপুটের শুরু ও শেষ মডেল ভালো পড়ে; মাঝখানে চাপা তথ্য বাদ পড়তে পারে বা কম গুরুত্ব পায়।
-    tip: প্রতিকার গঠনগত — মূল finding ইনপুটের শুরুতে রাখুন, স্পষ্ট section header দিন।
   - term: tool result trimming
-    bn: প্রতিটি turn-এ টোকেন খাওয়া verbose tool output ছেঁকে কেবল দরকারি field রাখা।
-    tip: ৪০+ field-এর order lookup থেকে ৫টি দরকার; history-তে ঢোকার আগেই ছাঁটাই করুন।
   - term: stateless API
-    bn: Claude API server-এ session state রাখে না; প্রতিটি request-এ পূর্ণ কথোপকথন history পাঠাতে হয়।
-    tip: Selective truncation করলে coherence ভাঙে; summarisation আর case facts block দিয়ে চালান।
   - term: prompt caching
-    bn: স্থির prefix-কে cache_control দিয়ে চিহ্নিত করে API-তে সংরক্ষণ করা, যাতে পরের request-এ কম খরচে পুনর্ব্যবহার হয়।
-    tip: Static block সবার আগে, breakpoint তার শেষে; volatile content পরে।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 5, Task Statement 5.1
     href: https://claudecertificationguide.com/learn/5-context-management/5-1-context-window-management

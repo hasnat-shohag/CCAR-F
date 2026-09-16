@@ -9,26 +9,12 @@ sourceUrl: https://claudecertificationguide.com/learn/4-prompt-engineering/4-4-v
 updated: 2026-09-12
 keywords:
   - term: retry-with-error-feedback
-    bn: ব্যর্থ extraction আবার করতে মডেলকে তিনটি জিনিস ফেরত দেওয়া — মূল ডকুমেন্ট, ব্যর্থ extraction আর নির্দিষ্ট ভ্যালিডেশন error।
-    tip: নির্দিষ্ট error ছাড়া রিট্রাই একই ভুল ফেরায়; error দিলে মডেল লক্ষ্যভিত্তিক সংশোধন করতে পারে।
   - term: retry effectiveness boundary
-    bn: রিট্রাই কোন ভুল সারায় আর কোনটি সারায় না, সেই সীমারেখা।
-    tip: Format, গঠন, ভুল field-এ মান, যোগফলের ভুল সারায়; উৎসে না-থাকা তথ্য কখনো আনে না।
   - term: calculated_total vs stated_total
-    bn: Line item থেকে মডেলের হিসাব করা মোট আর ডকুমেন্টে লেখা মোট — দুটোই extract করে মিলিয়ে দেখা।
-    tip: অমিল থাকলে বাইরের লজিক ছাড়াই total_discrepancy ধরা পড়ে।
   - term: conflict_detected
-    bn: উৎস ডকুমেন্টে পরস্পরবিরোধী তথ্য থাকলে boolean field-এ সেটি চিহ্নিত করা।
-    tip: 'যেমন এক জায়গায় "payment due: 30 days", আরেক জায়গায় "net 60" — দুটোই extract করে flag তুলুন।'
   - term: detected_pattern
-    bn: Structured finding-এ কোন code construct ট্রিগার করল, সেই pattern লিখে রাখা।
-    tip: কোন pattern-এর finding ডেভেলপাররা নিয়মিত খারিজ করে, তা বিশ্লেষণ করে prompt ঠিক করুন।
   - term: semantic validation errors
-    bn: JSON গঠন ঠিক, কিন্তু মান ভুল — যোগফলের গরমিল, ভুল datetime ক্রম, ভুল field-এ মান।
-    tip: Schema এগুলো ধরতে পারে না; আলাদা ভ্যালিডেশন লজিক আর রিট্রাই লুপ লাগে।
   - term: Pydantic
-    bn: Python-এ structure (type, required field, enum) আর cross-field semantic নিয়ম দুটোই এক ValidationError-এ ধরে ধরে machine-readable error দেয়।
-    tip: Tool_use schema মিটলেও cross-field নিয়ম (যোগফল, তারিখের ক্রম) Pydantic validator-এ লেখেন।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Task Statement 4.4
     href: https://claudecertificationguide.com/learn/4-prompt-engineering/4-4-validation-retry-loops

@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-1-tool
 updated: 2026-09-12
 keywords:
   - term: tool description
-    bn: মডেলের টুল বাছাইয়ের প্রাথমিক ভিত্তি — supplementary metadata নয়, মূল প্রক্রিয়া।
-    tip: পাঁচ উপাদান লাগে — কী করে, কী ইনপুট নেয়, উদাহরণ, edge case, আর সীমানা।
   - term: misrouting
-    bn: ওভারল্যাপিং বা এক-লাইনের বর্ণনার কারণে মডেল ভুল টুলে চলে যাওয়া।
-    tip: '"check my order #12345"-এর মতো অনুরোধ ভুল টুলে গেলে আগে বর্ণনা ঠিক করুন।'
   - term: overlapping descriptions
-    bn: দুই টুলের বর্ণনা প্রায় একই হলে সিলেকশন বিভ্রান্তি তৈরি হয়।
-    tip: Fix = প্রতিটি বর্ণনায় "Do NOT use for … — use … instead" লিখে সীমানা টানা।
   - term: tool splitting
-    bn: বিশাল জেনেরিক টুল ভেঙে এক-কাজের purpose-specific টুল বানানো।
-    tip: analyze_document-এর বদলে extract_data_points, summarize_content, verify_claim_against_source।
   - term: tool renaming
-    bn: ইন্টারফেস স্তরে নাম বদলে দুটি টুলের বিভ্রান্তিকর মিল দূর করা।
-    tip: implementation ছোঁয়ার দরকার নেই — কেবল নাম ও বর্ণনা বদলান।
   - term: routing classifier
-    bn: মডেলের আগে ইনপুট parse করে টুল বেছে দেওয়া আলাদা স্তর।
-    tip: প্রথম ধাপ হিসেবে over-engineered — পরীক্ষা এটিকে ডিস্ট্র্যাক্টর করে।
   - term: tool consolidation
-    bn: কাছাকাছি টুল জোড়া লাগিয়ে একটি টুল বানানো।
-    tip: দীর্ঘমেয়াদে বৈধ, তবে বর্ণনা ঠিক করার চেয়ে অনেক বেশি খরচের কাজ।
   - term: keyword-sensitive system prompt
-    bn: system prompt-এর সংবেদনশীল শব্দ, যা ভালো বর্ণনাকেও override করে ভুল টুলে পাঠায়।
-    tip: বর্ণনা ঠিক করার পর system prompt আবার পড়ুন — "always check customer details" ফাঁদ।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 2, Task Statement 2.1
     href: https://claudecertificationguide.com/learn/2-tool-design-mcp/2-1-tool-schema-design

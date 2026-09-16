@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/1-agentic-architecture/1-1
 updated: 2026-09-12
 keywords:
   - term: stop_reason
-    bn: লুপ চলবে কি থামবে, তা নির্ধারণকারী একমাত্র নির্ভরযোগ্য ফিল্ড।
-    tip: 'মান দুটি: "tool_use" (চালিয়ে যান) আর "end_turn" (শেষ)।'
   - term: tool_use
-    bn: Claude এক বা একাধিক টুল কল করতে চাইছে — লুপ চলবে।
-    tip: টুল চালিয়ে ফল conversation history-তে tool_result হিসেবে যোগ করতেই হবে।
   - term: end_turn
-    bn: Claude কাজ শেষ করেছে — লুপ বন্ধ করে উত্তর দিন।
-    tip: end_turn ছাড়া বাকি সব মানকে "শেষ হয়নি" ধরে কারণ খুঁজুন।
   - term: tool_result
-    bn: টুল চালানোর ফল, যা user মেসেজ হিসেবে হিস্ট্রিতে ফেরত যেতে হয়।
-    tip: না যোগ করলে মডেল পরের ইটারেশনে নতুন তথ্য দেখতেই পায় না — এখানেই লুপ ভাঙে।
   - term: Messages API
-    bn: প্রতি টার্নে system prompt, আগের মেসেজ ও টুল ফলসহ পূর্ণ হিস্ট্রি পাঠানোর API।
-    tip: হিস্ট্রি কখনো আংশিক পাঠাবেন না; প্রতিবার সম্পূর্ণ কনটেক্সট যাবে।
   - term: model-driven decision-making
-    bn: কোন টুল কল করবে, তা কনটেক্সট পড়ে মডেল নিজেই ঠিক করে।
-    tip: হার্ডকোড করা নির্দিষ্ট ক্রমের চেয়ে পরীক্ষায় এটাই প্রাধান্য পায়।
   - term: iteration cap
-    bn: লুপ সর্বোচ্চ কতবার চলবে সেই সীমা।
-    tip: safety net হিসেবে ঠিক আছে, কিন্তু প্রধান স্টপিং মেকানিজম হিসেবে ভুল উত্তর।
   - term: tool_choice
-    bn: মডেল কীভাবে টুল বাছবে তার নিয়ন্ত্রণ (auto / any / forced)।
-    tip: '"any" জোর করে দিলে মডেল কখনো শেষ করতে পারে না — infinite loop।'
 sources:
   - label: Claude Agent SDK Overview
     href: https://platform.claude.com/docs/en/agent-sdk/overview

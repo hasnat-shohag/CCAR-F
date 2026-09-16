@@ -9,29 +9,13 @@ sourceUrl: https://claudecertificationguide.com/learn/5-context-management/5-3-e
 updated: 2026-09-12
 keywords:
   - term: structured error context
-    bn: Subagent ব্যর্থ হলে coordinator-কে চারটি তথ্য ফেরানো — failure type, কী করতে চেয়েছিল, আংশিক ফল, সম্ভাব্য বিকল্প পথ।
-    tip: এতে coordinator retry, বিকল্প, partial result নিয়ে এগোনো, বা escalate — সব সিদ্ধান্ত নিতে পারে।
   - term: failure type
-    bn: ব্যর্থতার শ্রেণি — transient (timeout, rate limit), validation (খারাপ input), business (নিয়ম ভঙ্গ), permission (অ্যাক্সেস নেই)।
-    tip: শ্রেণি ভেদে প্রতিকারের পথ আলাদা; permission ব্যর্থতা authorization বদল ছাড়া retry-যোগ্য নয়।
   - term: silent suppression
-    bn: Timeout ঘটেও result খালি রেখে status successful ফেরানো — সবচেয়ে খারাপ anti-pattern।
-    tip: Coordinator ভাবে search চলে কিন্তু কিছু মেলেনি; retry করে না, বিকল্পও খোঁজে না, পুরো একটি গবেষণা ক্ষেত্র চুপচাপ বাদ পড়ে।
   - term: workflow termination
-    bn: একটি subagent ব্যর্থ হলেই পুরো pipeline বন্ধ করে দেওয়া।
-    tip: চারটি সফল subagent-এর কাজ নষ্ট হয়; proportionate নয়, আর সুস্থ হওয়ার কোনো পথ থাকে না।
   - term: access failure
-    bn: টুল ডেটা-সোর্স পর্যন্ত পৌঁছাতেই পারেনি — timeout, connection error, permission denial।
-    tip: "Query চলে নি; একই বা বদলানো parameter নিয়ে retry বিবেচনা করুন (shouldRetry: true)।"
   - term: valid empty result
-    bn: টুল সোর্সে পৌঁছে query চালিয়েছে, কিন্তু কিছু মেলেনি — এটিই উত্তর।
-    tip: "Retry লাগবে না (shouldRetry: false); বিরোধিতাটি এই ব্যর্থতার সঙ্গে মেলানো ভুল।"
   - term: coverage annotation
-    bn: Synthesis আউটপুটে কোন অংশ ভালোভাবে সমর্থিত আর কোথায় শূন্যতা, তা স্পষ্ট লেখা।
-    tip: চুপচাপ বাদ দেওয়ার বদলে "এই অংশে journal access ছিল না" লেখা ভালো।
   - term: local recovery
-    bn: Transient ব্যর্থতা subagent নিজেই সামলানো (retry, fallback source, degraded response), তারপর coordinator-এর কাছে পাঠানো।
-    tip: Coordinator-এর জটিলতা কমে; কেবল স্থায়ী ব্যর্থতাই উপরে ওঠে।
 sources:
   - label: Claude Certified Architect Foundations Exam Guide — Domain 5, Task Statement 5.3
     href: https://claudecertificationguide.com/learn/5-context-management/5-3-error-propagation

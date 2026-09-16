@@ -9,20 +9,10 @@ sourceUrl: https://claudecertificationguide.com/learn/1-agentic-architecture/1-6
 updated: 2026-09-12
 keywords:
   - term: fixed sequential pipeline
-    bn: আগেই ঠিক করা ধাপের ক্রম (prompt chaining); প্রতি ধাপ আগের output ইনপুট নেয়।
-    tip: পূর্বানুমেয়, স্ট্রাকচার্ড কাজে ভালো — অপ্রত্যাশিত ফল সামলাতে পারে না।
   - term: dynamic adaptive decomposition
-    bn: প্রতিটি ধাপে যা মেলে তার ভিত্তিতে পরের উপকাজ তৈরি — পরিকল্পনা চলতে চলতে বদলায়।
-    tip: Open-ended investigation-এ (legacy codebase, security audit) দরকার।
   - term: attention dilution
-    bn: এক pass-এ অনেক আইটেম দিলে মনোযোগ ভাগ হয়ে গভীরতা অসমান হয়।
-    tip: শুরুর ফাইলে গভীর বিশ্লেষণ, শেষের ফাইলে সামান্য — এটাই লক্ষণ।
   - term: multi-pass architecture
-    bn: প্রতি আইটেমে আলাদা local pass + শেষে একটি cross-item integration pass।
-    tip: বড় মডেল বা বড় কনটেক্সট উইন্ডো এই সমস্যার সমাধান নয়।
   - term: cross-item integration pass
-    bn: সব local pass শেষে চলা pass, যা আইটেম-ছাড়ানো বিষয় (data flow, pattern consistency) খোঁজে।
-    tip: Batch ভাগ করলে cross-batch সমস্যা থেকে যায় — এই pass সেটি ধরে।
 sources:
   - label: Claude Agent SDK Overview
     href: https://platform.claude.com/docs/en/agent-sdk/overview
