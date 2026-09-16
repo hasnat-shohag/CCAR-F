@@ -147,6 +147,23 @@ Explore subagent:
 	</details>
 </ExamTrap>
 
+## প্র্যাকটিস সিনারিও (নিজে উত্তর ভাবুন, তারপর খুলুন)
+
+> আপনার টিমের সামনে তিনটি কাজ: (১) monolith-কে microservices-এ ভাঙা, (২) স্পষ্ট stack trace-সহ একটি ফাংশনের null pointer exception ঠিক করা, (৩) ৩০টি ফাইল জুড়ে একটি logging library থেকে অন্যটিতে যাওয়া। কোনটির জন্য কোন মোড?
+
+<details>
+	<summary>উত্তর দেখুন</summary>
+
+	**সঠিক উত্তর:** (১) ও (৩)-এর জন্য plan mode, (২)-এর জন্য direct execution।
+
+	**কেন বাকিগুলো ভুল:**
+
+	- *তিনটির জন্যই plan mode* — (২) কঠিন কিন্তু দ্ব্যর্থহীন। স্পষ্ট fix-এ পরিকল্পনা বাড়তি খরচ, সিদ্ধান্ত নয়।
+	- *তিনটির জন্যই direct execution* — (১)-এ একাধিক বৈধ আর্কিটেকচার, আর (৩) ৩০ ফাইলে ছড়ানো; পরিকল্পনা ছাড়া inconsistency-র ঝুঁকি।
+	- *কেবল (১)-এর জন্য plan mode* — (৩)-এর মতো ৩০-ফাইল migration-ও একাধিক পথ আর ব্যাপক পরিবর্তনের কাজ, তাই সেখানেও plan দরকার।
+
+</details>
+
 <BuildExercise
 	title="Plan Mode বনাম Direct Execution সিদ্ধান্ত-নেওয়ার অভ্যাস"
 	difficulty="Advanced"

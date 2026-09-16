@@ -188,6 +188,23 @@ paths: ["terraform/**/*", "**/*.tf", "infrastructure/**/*"]
 	</details>
 </ExamTrap>
 
+## প্র্যাকটিস সিনারিও (নিজে উত্তর ভাবুন, তারপর খুলুন)
+
+> একটি কোডবেসে ৫০+ directory জুড়ে source ফাইলের পাশেই test ফাইল রয়েছে (যেমন `Button.tsx`-এর পাশে `Button.test.tsx`)। টিম চায় অবস্থান যাই হোক সব test একই convention মানুক। সবচেয়ে রক্ষণাবেক্ষণযোগ্য উপায় কোনটি?
+
+<details>
+	<summary>উত্তর দেখুন</summary>
+
+	**সঠিক উত্তর:** `.claude/rules/`-এ `paths: ["**/*.test.tsx", "**/*.test.ts"]` frontmatter-সহ একটি rule ফাইল বানানো।
+
+	**কেন বাকিগুলো ভুল:**
+
+	- *Root CLAUDE.md-তে সব test convention যোগ করা* — Root-এর প্রতিটি নিয়ম প্রতি সেশনে টোকেন খায়, প্রাসঙ্গিক হোক বা না হোক।
+	- *Test ফাইল থাকা প্রতিটি directory-তে আলাদা CLAUDE.md* — ৫০+ কপি রাখলে যেকোনো পরিবর্তনে drift অনিবার্য।
+	- *Convention-সহ একটি skill বানিয়ে test লেখার আগে সেটি ডাকতে বলা* — Always-on convention-এর উত্তর rules, skill নয়; মানুষের মনে রাখার উপর নির্ভর করা ভঙ্গুর।
+
+</details>
+
 <BuildExercise
 	title="Glob Pattern দিয়ে Path-Specific Rules কনফিগার করুন"
 	difficulty="Intermediate"

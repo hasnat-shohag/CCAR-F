@@ -172,6 +172,23 @@ Fix: নির্দেশ user-level থেকে project-level configuration-�
 	</details>
 </ExamTrap>
 
+## প্র্যাকটিস সিনারিও (নিজে উত্তর ভাবুন, তারপর খুলুন)
+
+> ডেভেলপার A-র Claude Code টিমের API naming convention নিখুঁতভাবে মানে। গত সপ্তাহে যোগ দেওয়া ডেভেলপার B একই রিপো ও একই ব্রাঞ্চে কাজ করেও অসঙ্গত নাম পাচ্ছেন। সবচেয়ে সম্ভাব্য মূল কারণ কোনটি?
+
+<details>
+	<summary>উত্তর দেখুন</summary>
+
+	**সঠিক উত্তর:** Naming convention-গুলো ডেভেলপার A-র user-level CLAUDE.md-এ (`~/.claude/CLAUDE.md`) রাখা, project-level কনফিগে নয়।
+
+	**কেন বাকিগুলো ভুল:**
+
+	- *B naming rule দেওয়া MCP server ইনস্টল করেননি* — এখানে সমস্যা কনফিগারেশনের স্তরে, টুলে নয়। সংকেতটাই বলে দেয় নিয়ম কেবল একজনের মেশিনে খাটছে।
+	- *নিয়ম `.claude/rules/`-এ আছে কিন্তু B-র সেটআপ সেটি সাপোর্ট করে না* — `.claude/rules/` সবার জন্য একই রিপো থেকে লোড হয়; কারো সেটআপে আলাদা করে সাপোর্ট করা লাগে না।
+	- *B `/memory` চালাননি, তাই project instruction কনটেক্সটে আসেনি* — CLAUDE.md লোড হতে `/memory` চালানো লাগে না। এটি কী লোড হয়েছে তা দেখার কমান্ড, শর্ত নয়।
+
+</details>
+
 <BuildExercise
 	title="বহু-স্তরের CLAUDE.md কনফিগারেশন বানান"
 	difficulty="Intermediate"

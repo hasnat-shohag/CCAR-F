@@ -193,6 +193,23 @@ argument-hint: "Specify the module path to analyse (e.g., src/api/auth)"
 	</details>
 </ExamTrap>
 
+## প্র্যাকটিস সিনারিও (নিজে উত্তর ভাবুন, তারপর খুলুন)
+
+> একটি টিম চায় `/review` কমান্ডটি রিপো clone করা সবার পাওয়া উচিত। একই ডেভেলপার চান একটি ব্যক্তিগত `/brainstorm` skill, যেটি মূল কথোপকথন না ভরিয়ে verbose codebase বিশ্লেষণ দেবে। কোনটি কোথায় বানাতে হবে, আর skill-টির কী কনফিগারেশন লাগবে?
+
+<details>
+	<summary>উত্তর দেখুন</summary>
+
+	**সঠিক উত্তর:** `/review` `.claude/commands/`-এ (টিম-শেয়ারিং), আর `/brainstorm` `~/.claude/skills/brainstorm/SKILL.md`-এ `context: fork` frontmatter-সহ।
+
+	**কেন বাকিগুলো ভুল:**
+
+	- *দুটোই `~/.claude/commands/`-এ, README-তে কপি করার নির্দেশ দিয়ে* — User-level কমান্ড সবার কাছে পৌঁছায় না, আর হাতে কপি করা মানে drift।
+	- *দুটোই `.claude/commands/`-এ, brainstorm-এ `context: fork`* — তাহলে ব্যক্তিগত skill টিমের সবার কাছে চলে যায়, অথচ চাহিদা ছিল ব্যক্তিগত।
+	- *`/review` CLAUDE.md-এ, `/brainstorm` `.claude/skills/`-এ* — CLAUDE.md always-on নিয়মের জায়গা, ডাকার মতো কমান্ডের নয়; আর টিম-শেয়ার্ড `/review`-এর ঘর `.claude/commands/`।
+
+</details>
+
 <BuildExercise
 	title="কাস্টম Command ও Skills বানান"
 	difficulty="Intermediate"

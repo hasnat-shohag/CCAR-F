@@ -194,6 +194,23 @@ for code by what it does rather than what it contains."
 	</details>
 </ExamTrap>
 
+## প্র্যাকটিস সিনারিও (নিজে উত্তর ভাবুন, তারপর খুলুন)
+
+> একটি টিম Claude Code ওয়ার্কফ্লোতে issue tracking-এর জন্য Jira ইন্টিগ্রেট করতে চায়। একজন ডেভেলপার custom MCP server বানানোর প্রস্তাব দিলেন। সঠিক প্রথম ধাপ কোনটি?
+
+<details>
+	<summary>উত্তর দেখুন</summary>
+
+	**সঠিক উত্তর:** Jira-র জন্য বিদ্যমান community MCP server আছে কি না দেখা, আর সেগুলো team-specific চাহিদা মেটাতে না পারলেই কেবল custom বানানো।
+
+	**কেন বাকিগুলো ভুল:**
+
+	- *Jira ইন্টিগ্রেশন ~/.claude.json-এ রাখা* — এটি user-level ও ব্যক্তিগত, version control-এ থাকে না। টিমের সবার দরকারি server-এর জায়গা `.mcp.json`।
+	- *MCP বাদ দিয়ে Bash থেকে সরাসরি Jira REST API ডাকা* — server setup বাঁচে ঠিকই, কিন্তু টুল ডিসকভারি, স্কোপিং আর টিম-শেয়ারিং সব হাতছাড়া হয়।
+	- *টিমের দরকারি endpoint ধরে custom MCP server বানানো* — পরিস্থিতিতে team-specific চাহিদা স্পষ্ট না থাকলে custom build ভুল উত্তর। Standard ইন্টিগ্রেশনে community server-ই প্রথম পছন্দ।
+
+</details>
+
 <BuildExercise
 	title="Scoping ও environment variable সহ MCP server কনফিগার করুন"
 	difficulty="Intermediate"

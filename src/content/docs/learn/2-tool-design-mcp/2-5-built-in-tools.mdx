@@ -195,6 +195,23 @@ Edit:
 	</details>
 </ExamTrap>
 
+## প্র্যাকটিস সিনারিও (নিজে উত্তর ভাবুন, তারপর খুলুন)
+
+> একজন ডেভেলপারের এমন সব ফাইল খুঁজতে হবে যারা deprecated ফাংশন `processLegacyOrder()` কল করে, আর সেই কলারদের test ফাইলও খুঁজতে হবে। সঠিক টুল-ক্রম কোনটি?
+
+<details>
+	<summary>উত্তর দেখুন</summary>
+
+	**সঠিক উত্তর:** আগে `processLegacyOrder` দিয়ে Grep করে কলার খোঁজা — এতে ফাংশনটি import করা test ফাইলও ধরা পড়ে — তারপর প্রতিটি কলারের পাশের test ফাইল Glob করা।
+
+	**কেন বাকিগুলো ভুল:**
+
+	- *Bash-এ find আর xargs grep দিয়ে দুটো ধাপ এক pipeline-এ* — ফাইলের ভেতরে কী লেখা আছে তা খুঁজতে Grep-ই সঠিক টুল; built-in টুল ছেড়ে shell-এ গেলে context-budget আর স্কোপিং দুটোই হাতছাড়া।
+	- *আগে Glob দিয়ে `**/*processLegacyOrder*` খোঁজা* — Glob ফাইলের নাম মেলায়, ফাইলের ভেতরের কল নয়। এভাবে কলারই ধরা পড়ে না।
+	- *সব source ফাইল Read করে হাতে খোঁজা* — প্রতিটি ফাইল পড়া context-budget-এর সবচেয়ে বড় অপচয়।
+
+</details>
+
 <BuildExercise
 	title="Built-in টুল দিয়ে deprecated function ট্রেস ও refactor করুন"
 	difficulty="Intermediate"

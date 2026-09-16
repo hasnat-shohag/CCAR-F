@@ -237,6 +237,23 @@ flowchart TD
 	</details>
 </ExamTrap>
 
+## প্র্যাকটিস সিনারিও (নিজে উত্তর ভাবুন, তারপর খুলুন)
+
+> একটি CI pipeline স্ক্রিপ্ট prompt নিয়ে `claude` চালায়, কিন্তু job অসীম সময় ঝুলে থাকে। লগে দেখা যায় Claude Code ইন্টারঅ্যাকটিভ ইনপুটের অপেক্ষায় বসে আছে। সঠিক সমাধান কোনটি?
+
+<details>
+	<summary>উত্তর দেখুন</summary>
+
+	**সঠিক উত্তর:** `-p` flag যোগ করা, যাতে Claude Code নন-ইন্টারঅ্যাকটিভ print মোডে চলে।
+
+	**কেন বাকিগুলো ভুল:**
+
+	- *`CLAUDE_HEADLESS=true` সেট করা* — এমন environment variable নেই; পরীক্ষায় এটি ডিস্ট্র্যাক্টর।
+	- *`--batch` flag যোগ করা* — এমন flag-ও নেই। Batch API আলাদা বিষয়, CLI মোড নয়।
+	- *`/dev/null` থেকে stdin redirect করা* — ঝুলে থাকা হয়তো থামবে, কিন্তু আউটপুট কাঠামোবদ্ধ থাকে না; CI-র জন্য `-p`-ই আসল উত্তর।
+
+</details>
+
 <BuildExercise
 	title="Claude Code দিয়ে CI/CD pipeline সাজান"
 	difficulty="Advanced"
