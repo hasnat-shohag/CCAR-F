@@ -46,6 +46,10 @@ jobs:
       - name: Check internal links
         run: pnpm check:links
 
+      # Its first check scans dist/ for i18n keys that leaked into the page, so it runs after Build.
+      - name: Check terminology and content integrity
+        run: pnpm check:terms
+
       # Reads computed colours from dist/ in headless Chrome, which the runner image ships.
       - name: Check contrast
         run: pnpm check:contrast
