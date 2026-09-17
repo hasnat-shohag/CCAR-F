@@ -127,7 +127,7 @@ Claude API **stateless**। প্রতিটি request-এ পূর্ণ �
 
 এতে কনটেক্সট সীমার সঙ্গে টানাপোড়েন: coherence-এর জন্য পূর্ণ history লাগে, কিন্তু history প্রতি turn-এ বাড়ে। Persistent case facts block এই টানাপোড়েন মেটায় — জরুরি তথ্য summarise-যোগ্য narrative থেকে আলাদা করে রাখে, ফলে কথোপকথনের ধারা সারসংক্ষেপ করা যায়, অথচ প্রতিটি লেনদেন-বিস্তারিত অটুট থাকে।
 
-## Upstream Agent Optimisation
+## Upstream এজেন্ট অপটিমাইজেশন
 
 Multi-agent সিস্টেমে upstream agent প্রায়ই verbose reasoning chain ও কাঁচা কনটেন্ট ফেরায়, যা downstream agent-এর দরকার নেই। একটি research subagent তার পূর্ণ চিন্তার ধারা synthesis agent-কে পাঠালে, সীমিত কনটেক্সট বাজেটের synthesis agent এমন reasoning-এ টোকেন নষ্ট করে যা সে ব্যবহারই করতে পারে না।
 

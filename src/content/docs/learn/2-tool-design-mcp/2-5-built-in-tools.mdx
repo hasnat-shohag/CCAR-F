@@ -121,7 +121,7 @@ Edit:
 
 **Current state:** পরীক্ষার গাইড v1.0 Read + Write-কে documented fallback হিসেবে ধরে ("Using Read to load full file contents followed by Write when Edit cannot find unique anchor text")। ১৪ আগস্ট ২০২৬-এ Edit টুলের reference non-unique match-এ `old_string` প্রশস্ত করা বা `replace_all: true`-কে আচরণ হিসেবে লেখে। পরীক্ষায় উত্তর দিন Read + Write। বাস্তব কাজে আগে anchor প্রশস্ত করুন — সস্তা, আর উপরের practice তখনও খাটে।
 
-## Incremental Codebase Understanding
+## ধাপে ধাপে কোডবেস বোঝা
 
 কোডবেস কীভাবে ঘাঁটবেন সেটা কোন টুল ব্যবহার করলেন তার মতোই জরুরি। একটি সঠিক পথ আছে, একটি ভুল।
 
@@ -151,7 +151,7 @@ Edit:
 
 এই বহু-ধাপের ট্রেস এক Grep-এ মিস হওয়া indirect consumer ধরে।
 
-## Deprecation Scenario
+## Deprecation সিনারিও
 
 পরীক্ষার প্রস্তুতিতে এটি বারবার আসে: এমন প্রতিটি ফাইল খুঁজুন যারা একটি deprecated function কল করে **এবং** যে test ফাইলগুলো সেটি চালায়। সঠিক ক্রম:
 

@@ -66,7 +66,7 @@ claude -p "Analyse this pull request for security issues"
 
 এটি নিছক মুখস্থের বিষয়। পরীক্ষা ঝুলে পড়া CI job, Claude-এর ইনপুট-অপেক্ষার লগ দেখিয়ে fix বাছতে বলে। উত্তর `-p` flag। `CLAUDE_HEADLESS=true` নয় (অস্তিত্ব নেই)। `--batch` নয় (অস্তিত্ব নেই)। `/dev/null` থেকে stdin redirect নয় (Claude Code-এর interactive mode-এর আসল সমস্যা মেটায় না)।
 
-**Key Concept:** `-p` flag Domain 3-এর সবচেয়ে সরাসরি পরীক্ষিত তথ্য; official sample question-এ এটি প্রশ্ন ১০। CI pipeline ঝুলছে আর লগে Claude ইনপুটের অপেক্ষা করছে — এমন দেখলেই উত্তর `-p`।
+**মূল ধারণা:** `-p` flag Domain 3-এর সবচেয়ে সরাসরি পরীক্ষিত তথ্য; official sample question-এ এটি প্রশ্ন ১০। CI pipeline ঝুলছে আর লগে Claude ইনপুটের অপেক্ষা করছে — এমন দেখলেই উত্তর `-p`।
 
 ## CI-র জন্য Structured Output
 
@@ -91,7 +91,7 @@ Schema-মেনে চলা ডেটা envelope-এর `structured_output` �
 - Severity অনুযায়ী আলাদা notification channel-এ পাঠাতে পারে
 - Review-রান জুড়ে ট্র্যাক করতে পারে
 
-## Session Context Isolation
+## সেশন কনটেক্সট আইসোলেশন
 
 যে সেশন কোড লিখল, সেই সেশনই নিজের বদল review করতে কম কার্যকর। এটি তত্ত্বীয় দুশ্চিন্তা নয় — মাপা যায় এমন প্রভাব।
 
@@ -149,7 +149,7 @@ CLAUDE.md-এ এই কনটেক্সট না থাকলে CI-চা�
 - Available fixtures: test/fixtures/users.json, test/fixtures/orders.json
 ```
 
-## CLI Flags Reference
+## CLI Flag রেফারেন্স
 
 `-p` flag সবচেয়ে সরাসরি পরীক্ষিত, তবে headless রানের আকার দেওয়া flag-গুলোও পরীক্ষা চায়: output কীভাবে ফরম্যাট হবে, কোন system prompt ব্যবহার হবে, permission ও টুল কীভাবে scope হবে। এগুলো `claude -p`-এর সাথে CI-তে আর ইন্টারঅ্যাকটিভ `claude` কমান্ডেও খাটে।
 

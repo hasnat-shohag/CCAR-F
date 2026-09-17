@@ -80,7 +80,7 @@ Skill-এর বৈশিষ্ট্য:
 
 Skill হলো পুনর্ব্যবহারযোগ্য capability module — "test চালাও", "staging-এ deploy করো" জাতীয় workflow, যার টুল অ্যাক্সেস frontmatter-এ ঠিক করা।
 
-## Commands
+## কমান্ড
 
 <ReferenceTable
 	columns={['ধরন', 'অবস্থান', 'স্কোপ']}
@@ -94,7 +94,7 @@ Command `/` প্রিফিক্স দিয়ে চালু হয়�
 
 **Skill থেকে পার্থক্য:** command আর skill একই সিস্টেমে মিলে গেছে — দুটোই `/command` বানায়। Command হলো একটি সমতল `.md` ফাইল (প্রম্পট template, `$ARGUMENTS` চলে); skill হলো একটি ডিরেক্টরি, যার entry point `SKILL.md`, সাথে বাড়তি ফাইল, frontmatter configuration আর প্রাসঙ্গিক হলে স্বয়ংক্রিয় invocation।
 
-## Hook — deterministic enforcement
+## Hook — ডিটারমিনিস্টিক এনফোর্সমেন্ট
 
 <ReferenceTable
 	monoColumns={[0]}
@@ -110,7 +110,7 @@ Command `/` প্রিফিক্স দিয়ে চালু হয়�
 - Prompt: "প্রোডাকশন ফাইল কখনো মুছবে না" → probabilistic, ভাঙা যেতে পারে
 - `PreToolUse` hook, `/prod/` পাথে `rm` আটকায় → deterministic, ভাঙা যায় না
 
-## Working mode
+## ওয়ার্কিং মোড
 
 <ReferenceTable
 	monoColumns={[0]}

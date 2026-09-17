@@ -46,7 +46,7 @@ import Attribution from '../../../../components/content/Attribution.astro';
 
 Task Statement 1.4 এজেন্টের আচরণ নিয়ন্ত্রণের দুই পথের মধ্যে স্পষ্ট দাগ টানে — **prompt-based guidance** আর **programmatic enforcement**। পরীক্ষা এই পার্থক্যটি বারবার ধরে, আর high-stakes পরিস্থিতিতে ভুল করলে নম্বর যায়।
 
-## Enforcement Spectrum
+## এনফোর্সমেন্ট স্পেকট্রাম
 
 এজেন্টিক সিস্টেমে ওয়ার্কফ্লো-ক্রম মানানোর দুই আলাদা উপায়:
 
@@ -111,7 +111,7 @@ Claude Agent SDK subagent ব্যবস্থাপনার জন্য আ�
 
 **Stop hook auto-conversion:** Subagent-এর frontmatter-এ `Stop` hook থাকলে তা স্বয়ংক্রিয়ভাবে `SubagentStop` event-এ বদলে যায়, কারণ subagent শেষ হওয়ার সময় সেই event-ই চলে। তাই cleanup বা validation logic subagent-এর নিজের কনফিগে লিখে রেখে completion-এ চালানোর ভরসা করা যায়।
 
-## Multi-Concern Request Handling
+## একাধিক উদ্বেগের রিকোয়েস্ট হ্যান্ডলিং
 
 গ্রাহকরা প্রায়ই একাধিক সমস্যা একসাথে নিয়ে আসে: "I want to return my order, update my shipping address, and ask about my loyalty points." পরীক্ষা এই যৌগিক অনুরোধ কীভাবে হ্যান্ডল হবে তা ধরে।
 
@@ -123,7 +123,7 @@ Claude Agent SDK subagent ব্যবস্থাপনার জন্য আ�
 
 ভুল পদ্ধতি — আলাদা আলাদা কথোপকথনে একের পর এক সারানো, বা শুধু প্রথম আইটেমটি মিটিয়ে বাকি ভুলে যাওয়া।
 
-## Structured Handoff Protocol
+## Structured Handoff প্রোটোকল
 
 এজেন্ট সমস্যা মেটাতে না পারলে মানুষের কাছে escalate করবে, আর সেই হ্যান্ডঅফ একটি কাঠামোবদ্ধ প্রোটোকল মানবে। কঠিন শর্ত: **মানুষের এজেন্টের হাতে conversation transcript থাকে না।** সে চ্যাট হিস্ট্রি স্ক্রল করে বুঝতে পারে না কী হয়েছে।
 

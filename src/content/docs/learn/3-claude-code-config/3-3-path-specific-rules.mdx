@@ -108,7 +108,7 @@ Glob pattern-যুক্ত path-specific rule এটি পুরোপুর�
 
 Root CLAUDE.md যে সেশনেই load হয়, কোন ফাইল এডিট করছেন তা নির্বিশেষে। Terraform convention root CLAUDE.md-এ রাখলে React component এডিট করার সময়ও সেগুলো token খায়। Test convention সেখানে রাখলে API handler লেখার সময়ও সেগুলো load হয়।
 
-**Key Concept:** Path-scoped rule root CLAUDE.md-এর চেয়ে বেশি token-সাশ্রয়ী, কারণ কেবল মেলে এমন ফাইল এডিট করলেই load হয়। এতে অপ্রাসঙ্গিক কনটেক্সট কমে আর মডেল বর্তমান কাজে যে নিয়মগুলো আসলেই খাটে সেগুলোতেই মনোযোগ দেয়। বহু convention-শ্রেণির বড় প্রজেক্টে এই লাভ উল্লেখযোগ্য।
+**মূল ধারণা:** Path-scoped rule root CLAUDE.md-এর চেয়ে বেশি token-সাশ্রয়ী, কারণ কেবল মেলে এমন ফাইল এডিট করলেই load হয়। এতে অপ্রাসঙ্গিক কনটেক্সট কমে আর মডেল বর্তমান কাজে যে নিয়মগুলো আসলেই খাটে সেগুলোতেই মনোযোগ দেয়। বহু convention-শ্রেণির বড় প্রজেক্টে এই লাভ উল্লেখযোগ্য।
 
 ## বাস্তব Rule File-এর উদাহরণ
 
