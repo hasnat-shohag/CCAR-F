@@ -1,0 +1,55 @@
+{
+  "$comment": "Terminology policy for the Bangla content. `preferred` is enforced by tools/check-terms.mjs and applied by the Stage 6 sweep: the left side is what lesson prose should say, the right side is the variant to avoid. `protected` lists the strings a sweep must never rewrite even when a `preferred` key is a substring of them -- Bangla is agglutinative, so a naive replace turns পাঠানো (\"to send\") into লেসনানো. See CONTRIBUTING.md. SCOPE: the policy applies to lesson BODY prose, frontmatter `description`, mermaid node labels and component prose. It does NOT apply to navigation -- lesson titles (frontmatter `title`, and the same strings in src/lib/lessons.ts) and the five domain labels in src/lib/domains.ts stay Bangla by decision, so the sweep and the checker both skip `title:`/`titleEn:` lines and src/lib/domains.ts.",
+  "policy": {
+    "phrases-latin": "Multi-word API concept phrases stay Latin: conversation history, tool call, iteration cap, system prompt.",
+    "nouns-bangla": "General technical nouns keep their Bangla transliteration: টুল, এজেন্ট, কনটেক্সট, প্রম্পট, ডেভেলপার.",
+    "identifiers-latin": "Code identifiers are never transliterated: stop_reason, tool_use, tool_choice, PreToolUse, CLAUDE.md, fork_session."
+  },
+  "preferred": [
+    { "avoid": "কনভারসেশন হিস্ট্রি", "use": "conversation history" },
+    { "avoid": "কনভারসেশন history", "use": "conversation history" },
+    { "avoid": "হিস্ট্রি", "use": "history" },
+    { "avoid": "টুল কল", "use": "tool call" },
+    { "avoid": "কনটেক্সট উইন্ডো", "use": "context window" },
+    { "avoid": "রিট্রাই লুপ", "use": "retry loop" },
+    { "avoid": "এরর প্রোপাগেশন", "use": "error propagation" },
+    { "avoid": "ইটারেশন ক্যাপ", "use": "iteration cap" },
+    { "avoid": "সিস্টেম প্রম্পট", "use": "system prompt" },
+    { "avoid": "স্ল্যাশ কমান্ড", "use": "slash command" },
+    { "avoid": "ফিউ-শট", "use": "few-shot" },
+    { "avoid": "প্ল্যান মোড", "use": "plan mode" },
+    { "avoid": "ফিডব্যাক লুপ", "use": "feedback loop" },
+    { "avoid": "মডেল-ড্রিভেন সিদ্ধান্ত গ্রহণ", "use": "model-driven decision-making" },
+    { "avoid": "মডেল-ড্রাইভ সিদ্ধান্ত গ্রহণ", "use": "model-driven decision-making" },
+    { "avoid": "মডেল-ড্রাইভ সিদ্ধান্ত", "use": "model-driven সিদ্ধান্ত" },
+    { "avoid": "মডেল-ড্রিভেন", "use": "model-driven" },
+    { "avoid": "মডেল-ড্রাইভ", "use": "model-driven" },
+    { "avoid": "পাঠটির", "use": "লেসনটির" },
+    { "avoid": "পাঠটিতে", "use": "লেসনটিতে" },
+    { "avoid": "পাঠটি", "use": "লেসনটি" },
+    { "avoid": "পাঠের", "use": "লেসনের" }
+  ],
+  "protected": [
+    "কনফিগার",
+    "কনফিগারেশন",
+    "পাঠ",
+    "পাঠানো",
+    "পাঠায়",
+    "পাঠানোর",
+    "পাঠ্য",
+    "পাঠযোগ্য",
+    "পাঠকের",
+    "টুল ডিজাইন",
+    "স্ট্রাকচার্ড আউটপুট"
+  ],
+  "knownGaps": [
+    {
+      "variants": ["আপডেট", "হালনাগাদ"],
+      "note": "Both idiomatic and already user-visible (bn-BD.json, Attribution.astro); not an error, so not swept."
+    },
+    {
+      "variants": ["কনফিগার", "কনফিগারেশন"],
+      "note": "Different parts of speech -- কনফিগার করুন is the verb, কনফিগারেশন the noun. Both correct."
+    }
+  ]
+}

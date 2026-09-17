@@ -60,7 +60,7 @@ Always validate authentication tokens before processing API requests.
 Use structured error responses with proper HTTP status codes.
 ```
 
-Rule লোড হয় কেবল তখনই, যখন Claude Code সেই glob প্যাটার্নের ফাইল নিয়ে কাজ করে। এতে অপ্রয়োজনীয় rule কনটেক্সট উইন্ডো জুড়ে জায়গা খায় না।
+Rule লোড হয় কেবল তখনই, যখন Claude Code সেই glob প্যাটার্নের ফাইল নিয়ে কাজ করে। এতে অপ্রয়োজনীয় rule context window জুড়ে জায়গা খায় না।
 
 ## Skills সিস্টেম
 
@@ -142,7 +142,7 @@ Command `/` প্রিফিক্স দিয়ে চালু হয়�
 		["`--json-schema '<schema>'`", '`-p`-এর জন্য schema-যাচাই করা আউটপুট (JSON envelope-এর `structured_output` ফিল্ডে আসে)।'],
 		['`--max-turns <n>`', 'Print mode-এ এজেন্টিক turn-এর সংখ্যা বেঁধে দেয়।'],
 		['`--permission-mode <mode>`', '`default`, `acceptEdits`, `plan`, `auto`, `dontAsk`, `bypassPermissions`, `manual` (`default`-এর alias)।'],
-		['`--allowedTools` / `--disallowedTools`', 'prompt ছাড়াই টুল কল অনুমোদন বা নিষেধ করা।'],
+		['`--allowedTools` / `--disallowedTools`', 'prompt ছাড়াই tool call অনুমোদন বা নিষেধ করা।'],
 		['`--add-dir <path>`', 'পাঠযোগ্য/সম্পাদনাযোগ্য একটি working directory যোগ করা।'],
 		['`--model <alias|name>`', 'session-এর মডেল ঠিক করা।'],
 	]}

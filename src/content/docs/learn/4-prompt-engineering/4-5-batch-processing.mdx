@@ -150,7 +150,7 @@ Batch API একটি request-এর ভেতরে multi-turn tool calling �
 - Tool result প্রসেস করে একই batch item-এর ভেতরে কথোপকথন চালিয়ে যাওয়া
 - একটি batch request-এ agentic loop চালানো
 
-Workflow-এ mid-processing টুল চলানো দরকার হলে synchronous API ব্যবহার করতেই হবে। এই সীমাটি সরাসরি পরীক্ষার বিষয় — batch workflow-এ প্রসেসিংয়ের মাঝে বাইরের টুল কল দরকার হলে সেই ধাপের সঠিক উত্তর synchronous API।
+Workflow-এ mid-processing টুল চলানো দরকার হলে synchronous API ব্যবহার করতেই হবে। এই সীমাটি সরাসরি পরীক্ষার বিষয় — batch workflow-এ প্রসেসিংয়ের মাঝে বাইরের tool call দরকার হলে সেই ধাপের সঠিক উত্তর synchronous API।
 
 ## Batch জমার আগে Prompt Optimisation
 

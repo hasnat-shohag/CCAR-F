@@ -50,15 +50,15 @@ Claude থেকে schema-মেনে চলা নিশ্চিত structur
 1. **JSON schema-সহ `tool_use`** — JSON syntax error সম্পূর্ণ দূর করে।
 2. **Prompt-based JSON** — মডেল malformed JSON বানাতে পারে।
 
-পরীক্ষা এই ক্রমের উপরেই দাঁড়ায়। Tool use-এ টুলের JSON schema Claude-এর ফেরত ডেটার আকার বেঁধে দেয়; বন্ধনী হারানো, trailing comma বা unquoted key-র মতো syntax সমস্যা আর হয় না। আর `tool_choice` প্যারামিটারটিই মডেলকে টুল কল করতে বাধ্য করে। Prompt-based extraction (টেক্সট উত্তরে JSON লিখতে বলা) কোনো গঠন-নিশ্চয়তা দেয় না; production-এ মাঝেমধ্যেই unparseable আউটপুট দেবে।
+পরীক্ষা এই ক্রমের উপরেই দাঁড়ায়। Tool use-এ টুলের JSON schema Claude-এর ফেরত ডেটার আকার বেঁধে দেয়; বন্ধনী হারানো, trailing comma বা unquoted key-র মতো syntax সমস্যা আর হয় না। আর `tool_choice` প্যারামিটারটিই মডেলকে tool call করতে বাধ্য করে। Prompt-based extraction (টেক্সট উত্তরে JSON লিখতে বলা) কোনো গঠন-নিশ্চয়তা দেয় না; production-এ মাঝেমধ্যেই unparseable আউটপুট দেবে।
 
 ## tool_choice-এর তিন মোড
 
-`tool_choice` প্যারামিটার ঠিক করে মডেল টুল কল করবে কি না, আর কীভাবে করবে। পরীক্ষার জন্য তিনটি মোড চিনে রাখুন:
+`tool_choice` প্যারামিটার ঠিক করে মডেল tool call করবে কি না, আর কীভাবে করবে। পরীক্ষার জন্য তিনটি মোড চিনে রাখুন:
 
-- **`"auto"` (ডিফল্ট):** মডেল নিজে সিদ্ধান্ত নেয় টুল কল করবে, নাকি টেক্সটে উত্তর দেবে। Extraction টুলের বদলে সে conversationally টেক্সটও ফেরাতে পারে। মডেলের সত্যিই কথোপকথনের স্বাধীনতা দরকার হলে এটি ব্যবহার করুন।
-- **`"any"`:** মডেলকে টুল কল করতেই হবে, তবে কোন টুল তা সে বাছে। একাধিক extraction schema থাকলে (যেমন `extract_invoice`, `extract_receipt`, `extract_contract`) আর ডকুমেন্টের ধরন অজানা হলে এটি ব্যবহার করুন। নিশ্চিত structured output, টুল বাছার স্বাধীনতাও আছে।
-- **`{"type": "tool", "name": "extract_metadata"}`:** মডেলকে হুবহু নির্দিষ্ট টুল কল করতে বাধ্য করে। বাধ্যতামূলক প্রথম ধাপ নিশ্চিত করতে ব্যবহার করুন — যেমন enrichment ধাপের আগে metadata extraction চালানো।
+- **`"auto"` (ডিফল্ট):** মডেল নিজে সিদ্ধান্ত নেয় tool call করবে, নাকি টেক্সটে উত্তর দেবে। Extraction টুলের বদলে সে conversationally টেক্সটও ফেরাতে পারে। মডেলের সত্যিই কথোপকথনের স্বাধীনতা দরকার হলে এটি ব্যবহার করুন।
+- **`"any"`:** মডেলকে tool call করতেই হবে, তবে কোন টুল তা সে বাছে। একাধিক extraction schema থাকলে (যেমন `extract_invoice`, `extract_receipt`, `extract_contract`) আর ডকুমেন্টের ধরন অজানা হলে এটি ব্যবহার করুন। নিশ্চিত structured output, টুল বাছার স্বাধীনতাও আছে।
+- **`{"type": "tool", "name": "extract_metadata"}`:** মডেলকে হুবহু নির্দিষ্ট tool call করতে বাধ্য করে। বাধ্যতামূলক প্রথম ধাপ নিশ্চিত করতে ব্যবহার করুন — যেমন enrichment ধাপের আগে metadata extraction চালানো।
 
 ```typescript
 // ডকুমেন্টের ধরন অজানা, কিন্তু structured output নিশ্চিত দরকার
@@ -80,7 +80,7 @@ const response = await client.messages.create({
 });
 ```
 
-`extract_metadata` এখানে আপনার নিজের বানানো টুল; নাম যা খুশি হতে পারে। `tool_choice` প্রতি request-এ কাজ করে, পুরো conversation জুড়ে নয়। বাধ্য করা কলটি ফেরার পর পরের request-এ `auto` দিন (বা প্যারামিটার বাদ দিন), নইলে মডেল আবার একই টুল কল করতে বাধ্য হবে — লুপ।
+`extract_metadata` এখানে আপনার নিজের বানানো টুল; নাম যা খুশি হতে পারে। `tool_choice` প্রতি request-এ কাজ করে, পুরো conversation জুড়ে নয়। বাধ্য করা কলটি ফেরার পর পরের request-এ `auto` দিন (বা প্যারামিটার বাদ দিন), নইলে মডেল আবার একই tool call করতে বাধ্য হবে — লুপ।
 
 ## tool_use যা ঠেকায় না
 
@@ -151,7 +151,7 @@ flowchart TD
 
 <ExamTrap>
 	<p>
-		<strong>tool_choice <code>"auto"</code>-কে <code>"any"</code> ভেবে ফেলা</strong> — <code>auto</code> টুল না কল করে টেক্সট ফেরানোর স্বাধীনতা দেয়, তাই structured output-এর নিশ্চয়তা নেই। <code>any</code> টুল কল নিশ্চিত করে, তবে কোন টুল তা মডেল বাছে। ডকুমেন্টের ধরন অজানা কিন্তু নিশ্চিত structured output চাইলে <code>any</code>।
+		<strong>tool_choice <code>"auto"</code>-কে <code>"any"</code> ভেবে ফেলা</strong> — <code>auto</code> টুল না কল করে টেক্সট ফেরানোর স্বাধীনতা দেয়, তাই structured output-এর নিশ্চয়তা নেই। <code>any</code> tool call নিশ্চিত করে, তবে কোন টুল তা মডেল বাছে। ডকুমেন্টের ধরন অজানা কিন্তু নিশ্চিত structured output চাইলে <code>any</code>।
 	</p>
 </ExamTrap>
 
@@ -202,9 +202,9 @@ flowchart TD
 			expect: 'অন্তত একটি রেসপন্সে মডেল extraction টুল না ডেকে ডকুমেন্টের বিষয় গদ্যে বর্ণনা করে। এতেই বোঝা যায়, নিশ্চিত structured output দরকার হলে auto অনুপযুক্ত।',
 		},
 		{
-			title: 'tool_choice any-তে বদলে যাচাই করুন মডেল সর্বদা টুল কলের মাধ্যমে structured output দেয়।',
-			why: 'tool_choice any টুল কল নিশ্চিত করে, আর কোন টুল তা মডেলকে বাছতে দেয়। ডকুমেন্টের ধরন অজানা কিন্তু structured output নিশ্চিত চাইলে এটিই সঠিক সেটিং।',
-			expect: 'প্রতিটি রেসপন্সে stop_reason = tool_use, এবং schema-মেনে বৈধ structured output-সহ টুল কল। কেবল টেক্সটে কোনো উত্তর নেই।',
+			title: 'tool_choice any-তে বদলে যাচাই করুন মডেল সর্বদা tool call-ের মাধ্যমে structured output দেয়।',
+			why: 'tool_choice any tool call নিশ্চিত করে, আর কোন টুল তা মডেলকে বাছতে দেয়। ডকুমেন্টের ধরন অজানা কিন্তু structured output নিশ্চিত চাইলে এটিই সঠিক সেটিং।',
+			expect: 'প্রতিটি রেসপন্সে stop_reason = tool_use, এবং schema-মেনে বৈধ structured output-সহ tool call। কেবল টেক্সটে কোনো উত্তর নেই।',
 		},
 		{
 			title: 'tool_choice {type: tool, name: extract_metadata} দিয়ে নির্দিষ্ট টুল বাধ্য করে দেখুন বাধ্যতামূলক extraction ধাপ চলে কি না।',

@@ -31,7 +31,7 @@ import Attribution from '../../../components/content/Attribution.astro';
 	monoColumns={[0]}
 	columns={['`stop_reason`', 'মানে', 'লুপে করণীয়']}
 	rows={[
-		['`"tool_use"`', 'Claude এক বা একাধিক টুল কল করতে চায়।', 'টুল চালান, ফল conversation history-তে যোগ করুন, তারপর লুপ চালিয়ে যান।'],
+		['`"tool_use"`', 'Claude এক বা একাধিক tool call করতে চায়।', 'টুল চালান, ফল conversation history-তে যোগ করুন, তারপর লুপ চালিয়ে যান।'],
 		['`"end_turn"`', 'Claude-এর কাজ শেষ।', 'লুপ বন্ধ করুন।'],
 	]}
 />
@@ -84,7 +84,7 @@ Prompt নির্দেশনা probabilistic, hook deterministic। এই �
 	columns={['যন্ত্র', 'ধরন', 'কোথায় খাটে', 'কীসের জন্য']}
 	rows={[
 		['System prompt নিয়ম', 'Probabilistic', 'মডেল নাও মানতে পারে।', 'স্টাইল-নির্দেশনা, নরম পছন্দ।'],
-		['`PreToolUse` hook', 'Deterministic', 'কোড-স্তরে, টুল চলার আগে।', 'বিপজ্জনক টুল কল আটকানো, প্যারামিটার যাচাই।'],
+		['`PreToolUse` hook', 'Deterministic', 'কোড-স্তরে, টুল চলার আগে।', 'বিপজ্জনক tool call আটকানো, প্যারামিটার যাচাই।'],
 		['`PostToolUse` hook', 'Deterministic', 'কোড-স্তরে, টুল ফেরার পরে।', 'ফল যাচাই, ফল পরিষ্কার করা, audit logging।'],
 	]}
 />

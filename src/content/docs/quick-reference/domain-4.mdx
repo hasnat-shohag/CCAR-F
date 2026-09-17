@@ -43,8 +43,8 @@ System prompt সাজানোর ক্রম:
 	monoColumns={[0]}
 	columns={['পদ্ধতি', 'নিশ্চয়তা', 'কখন']}
 	rows={[
-		['Forced `tool_choice` (`{type: "tool", name: ...}`)', 'টুল কল নিশ্চিত; টুলের JSON schema কাঠামো বেঁধে দেয়।', 'প্রতিবার একই নির্দিষ্ট কাঠামো দরকার।'],
-		['`tool_choice: "any"`', 'টুল কল নিশ্চিত, কোনটি তা মডেল বাছে।', 'একাধিক extraction schema, ডকুমেন্টের ধরন অজানা।'],
+		['Forced `tool_choice` (`{type: "tool", name: ...}`)', 'tool call নিশ্চিত; টুলের JSON schema কাঠামো বেঁধে দেয়।', 'প্রতিবার একই নির্দিষ্ট কাঠামো দরকার।'],
+		['`tool_choice: "any"`', 'tool call নিশ্চিত, কোনটি তা মডেল বাছে।', 'একাধিক extraction schema, ডকুমেন্টের ধরন অজানা।'],
 		['`tool_choice: "auto"`', 'টুল লাগতে পারে, নাও লাগতে পারে।', 'Agentic loop, যেখানে টেক্সট উত্তরণও বৈধ।'],
 		['Prompt-ভিত্তিক JSON', 'কোনো schema enforcement নেই।', 'সহজ ক্ষেত্র, কেবল prototype।'],
 	]}

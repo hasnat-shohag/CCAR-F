@@ -107,7 +107,7 @@ Claude Agent SDK subagent ব্যবস্থাপনার জন্য আ�
 
 `SubagentStop` চলে যখন subagent কাজ শেষ করে coordinator-কে ফল ফেরত দেয়। Hook subagent-এর id ও final message পায়, তাই output যাচাই ও performance monitoring-এর জন্য completion লগ করা যায়। যাচাই ব্যর্থ হলে — ধরুন output প্রত্যাশিত schema মানে না — hook exit code 2 দেয়, যা subagent-কে থামতে দেয় না, আবার কাজে ফেরত পাঠায়। Exit code 2-ই ডকুমেন্টেড blocking মেকানিজম; এই event-এ কোনো decision ফিল্ড নেই। `SubagentStop` ফেরত যাওয়া output রূপান্তর করে না — কোনো event-এ tool result জায়গায় বদলে দেওয়ার ফিল্ড ডকুমেন্টেড নেই, তাই output reshape করা coordinator-এর পরে করার কাজ।
 
-**Subagent-scoped hook:** Subagent নিজের frontmatter-এ hook লিখতে পারে। সব hook event সেখানে সমর্থিত, `PreToolUse` ও `PostToolUse` সহ, আর সেগুলো সেই কম্পোনেন্টের lifetime পর্যন্ত সীমিত — কেবল সেই subagent-এর টুল কল ধরে, coordinator বা অন্য subagent-এর নয়। এতে per-subagent policy এনফোর্স করা যায়; যেমন billing subagent-এর `PreToolUse` hook threshold-এর উপরে refund আটকায়, আর technical support subagent-এ সেই নিষেধ নেই।
+**Subagent-scoped hook:** Subagent নিজের frontmatter-এ hook লিখতে পারে। সব hook event সেখানে সমর্থিত, `PreToolUse` ও `PostToolUse` সহ, আর সেগুলো সেই কম্পোনেন্টের lifetime পর্যন্ত সীমিত — কেবল সেই subagent-এর tool call ধরে, coordinator বা অন্য subagent-এর নয়। এতে per-subagent policy এনফোর্স করা যায়; যেমন billing subagent-এর `PreToolUse` hook threshold-এর উপরে refund আটকায়, আর technical support subagent-এ সেই নিষেধ নেই।
 
 **Stop hook auto-conversion:** Subagent-এর frontmatter-এ `Stop` hook থাকলে তা স্বয়ংক্রিয়ভাবে `SubagentStop` event-এ বদলে যায়, কারণ subagent শেষ হওয়ার সময় সেই event-ই চলে। তাই cleanup বা validation logic subagent-এর নিজের কনফিগে লিখে রেখে completion-এ চালানোর ভরসা করা যায়।
 
@@ -125,7 +125,7 @@ Claude Agent SDK subagent ব্যবস্থাপনার জন্য আ�
 
 ## Structured Handoff প্রোটোকল
 
-এজেন্ট সমস্যা মেটাতে না পারলে মানুষের কাছে escalate করবে, আর সেই হ্যান্ডঅফ একটি কাঠামোবদ্ধ প্রোটোকল মানবে। কঠিন শর্ত: **মানুষের এজেন্টের হাতে conversation transcript থাকে না।** সে চ্যাট হিস্ট্রি স্ক্রল করে বুঝতে পারে না কী হয়েছে।
+এজেন্ট সমস্যা মেটাতে না পারলে মানুষের কাছে escalate করবে, আর সেই হ্যান্ডঅফ একটি কাঠামোবদ্ধ প্রোটোকল মানবে। কঠিন শর্ত: **মানুষের এজেন্টের হাতে conversation transcript থাকে না।** সে চ্যাট history স্ক্রল করে বুঝতে পারে না কী হয়েছে।
 
 সঠিক হ্যান্ডঅফ সামারি স্বয়ংসম্পূর্ণ হতে হবে ও থাকতে হবে:
 

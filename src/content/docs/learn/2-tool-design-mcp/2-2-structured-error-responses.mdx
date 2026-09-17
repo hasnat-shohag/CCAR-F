@@ -137,7 +137,7 @@ Access denied, অপর্যাপ্ত credential, authorisation ব্য�
 
 ```mermaid
 flowchart TD
-  E["টুল কল ব্যর্থ<br/>isError: true"] --> C{"errorCategory?"}
+  E["tool call ব্যর্থ<br/>isError: true"] --> C{"errorCategory?"}
   C -->|transient| T["isRetryable: true<br/> বিলম্বের পর আবার পাঠান"]
   C -->|validation| V["isRetryable: false<br/>ইনপুট ঠিক করে নতুন কল"]
   C -->|business| B["isRetryable: false<br/>বিকল্প পথ / escalate"]
@@ -177,7 +177,7 @@ Fix: টুল রেসপন্স এমনভাবে সাজান য�
 }
 ```
 
-## Multi-agent সিস্টেমে এরর প্রোপাগেশন
+## Multi-agent সিস্টেমে error propagation
 
 মাল্টি-এজেন্ট আর্কিটেকচারে এরর হ্যান্ডলিং একটি নীতি মানে: **local recovery with selective propagation**।
 

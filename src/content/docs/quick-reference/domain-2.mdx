@@ -25,7 +25,7 @@ import Attribution from '../../../components/content/Attribution.astro';
 
 ## Tool Description ডিজাইন
 
-কোন টুল কল করবে তা বাছাইয়ের প্রধান সূত্র tool description — টুলের নাম নয়।
+কোন tool call করবে তা বাছাইয়ের প্রধান সূত্র tool description — টুলের নাম নয়।
 
 Description-এ যা থাকা উচিত:
 
@@ -67,8 +67,8 @@ Description প্রথম সমাধান কেবল তখনই, যখ
 	monoColumns={[0]}
 	columns={['মোড', 'আচরণ', 'কখন']}
 	rows={[
-		['`auto`', 'টুল কল করবে কি না, মডেল নিজে ঠিক করে।', 'বেশিরভাগ agentic loop-এর ডিফল্ট।'],
-		['`any`', 'অন্তত একটি টুল কল করতেই হবে (কোনটি, তা মডেল ঠিক করে)।', 'input একাধিক schema-র যেকোনোটিতে মিলতে পারে, কিন্তু structured output নিশ্চিত দরকার।'],
+		['`auto`', 'tool call করবে কি না, মডেল নিজে ঠিক করে।', 'বেশিরভাগ agentic loop-এর ডিফল্ট।'],
+		['`any`', 'অন্তত একটি tool call করতেই হবে (কোনটি, তা মডেল ঠিক করে)।', 'input একাধিক schema-র যেকোনোটিতে মিলতে পারে, কিন্তু structured output নিশ্চিত দরকার।'],
 		['`tool` (forced)', 'নির্দিষ্ট নামের টুলটিই কল করতে হবে।', 'একটি জানা কাঠামোর জন্য schema compliance নিশ্চিত করা।'],
 	]}
 />
@@ -90,7 +90,7 @@ Agentic loop-এর সঠিক ডিফল্ট `auto`; টুল কখন 
 	columns={['স্তর', 'ভূমিকা', 'উদাহরণ']}
 	rows={[
 		['Host', 'client-এর জীবনচক্র সামলানো অ্যাপ্লিকেশন।', 'Claude Desktop, একটি IDE extension।'],
-		['Client', 'host-এর ভেতরের connector, যা একটি server-এ যুক্ত হয়ে তার টুল কল রাউট করে।', 'ডেস্কটপ অ্যাপ প্রতি server-এর জন্য যে client ইনস্ট্যান্স বানায়।'],
+		['Client', 'host-এর ভেতরের connector, যা একটি server-এ যুক্ত হয়ে তার tool call রাউট করে।', 'ডেস্কটপ অ্যাপ প্রতি server-এর জন্য যে client ইনস্ট্যান্স বানায়।'],
 		['Server', 'tool, resource ও prompt প্রকাশ করে।', 'একটি database connector, file system server।'],
 	]}
 />
@@ -186,7 +186,7 @@ Edit যদি non-unique match-এ ব্যর্থ হয়: গাইড�
 	rows={[
 		['"২২টি tool description-ই ভালো করে লিখে misselection সারান"', 'ভুল — ৪–৫টির পর সমস্যাটা decision complexity, শব্দ নয়।'],
 		['"misselection সারাতে few-shot example যোগ করুন"', 'ভুল — গাইডে অনুমোদিত পথ নয়; description বা distribution ঠিক করুন।'],
-		['"`tool_choice: "any"` নির্দিষ্ট একটি টুল নিশ্চিত করে"', 'ভুল — `any` টুল কল নিশ্চিত করে, নির্দিষ্ট টুল নয়।'],
+		['"`tool_choice: "any"` নির্দিষ্ট একটি টুল নিশ্চিত করে"', 'ভুল — `any` tool call নিশ্চিত করে, নির্দিষ্ট টুল নয়।'],
 		['"MCP server-গুলো সরাসরি একে অন্যের সাথে যুক্ত হয়"', 'ভুল — সব যোগাযোগ client/host হয়ে যায়।'],
 		['"শূন্য search ফল মানে টুল ব্যর্থ"', 'ভুল — তথ্যের অনুপস্থিতি একটি বৈধ ফল।'],
 		['"টুল থেকে সাধারণ error string ফেরত দিন"', 'ভুল — ক্যাটাগরি, retryable আর পরামর্শসহ structured metadata দিন।'],

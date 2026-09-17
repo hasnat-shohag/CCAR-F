@@ -43,20 +43,20 @@ import Attribution from '../../../components/content/Attribution.astro';
 
 একাধিক ধাপের অনুসন্ধানে কনটেক্সটের সীমানা পেরিয়ে finding টিকিয়ে রাখতে scratchpad ফাইল ব্যবহার করুন।
 
-কখন: কনটেক্সট উইন্ডো ছাড়াতে পারে এমন দীর্ঘ কাজ, বা যেখানে মধ্যবর্তী finding কনটেক্সট রিসেটও টিকিয়ে রাখতে হয়।
+কখন: context window ছাড়াতে পারে এমন দীর্ঘ কাজ, বা যেখানে মধ্যবর্তী finding কনটেক্সট রিসেটও টিকিয়ে রাখতে হয়।
 
 - যে finding পাবেন, সাথে সাথেই scratchpad ফাইলে লিখুন
 - কনটেক্সটের সীমানায় scratchpad পড়ে অবস্থা ফিরিয়ে আনুন
 - scratchpad ডিস্কের ফাইল — যেকোনো কনটেক্সট রিসেট টিকিয়ে রাখে
 
-**মূল পার্থক্য:** scratchpad বাহ্যিক persistence (ফাইল), কথোপকথনের history অভ্যন্তরীণ persistence (কনটেক্সট উইন্ডো)। উইন্ডো ভরে গেলে conversation history হারায় — scratchpad ফাইল হারায় না।
+**মূল পার্থক্য:** scratchpad বাহ্যিক persistence (ফাইল), কথোপকথনের history অভ্যন্তরীণ persistence (context window)। উইন্ডো ভরে গেলে conversation history হারায় — scratchpad ফাইল হারায় না।
 
 ## TS 5.1-এর দুটি তথ্য
 
 - **Lost in the middle:** মডেল লম্বা input-এর শুরু ও শেষের তথ্য নির্ভরযোগ্যভাবে প্রসেস করে, মাঝের অংশের finding বাদ দিতে পারে। ক্রম গুরুত্বপূর্ণ — যা মিস হওয়া চলবে না, তা প্রান্তে রাখুন, মাঝখানে পুঁতে দেবেন না।
 - **API stateless:** কলের মাঝে কিছুই মনে রাখে না। প্রতি রিকোয়েস্টে যা দরকার, তার সম্পূর্ণ history সাথে পাঠাতে হয় — ঠিক এ কারণেই tool result জমতে থাকে আর উইন্ডো ভরে যায়।
 
-## এরর প্রোপাগেশন
+## error propagation
 
 Structured error context-এ যা থাকা দরকার:
 
@@ -125,7 +125,7 @@ Structured claim-source mapping synthesis টিকিয়ে রাখে, in
 
 <ExamTrap label="উদাহরণ">
 
-দাবি: "Sonnet-এর কনটেক্সট উইন্ডো ১M token"।
+দাবি: "Sonnet-এর context window ১M token"।
 
 সূত্র A: Anthropic docs (2026-08-14) — 1M tokens। সূত্র B: ব্লগ পোস্ট (2024-03-15) — 200K tokens।
 

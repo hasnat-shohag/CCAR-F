@@ -142,13 +142,13 @@ flowchart TD
 পরীক্ষা দুই শ্রেণির error আলাদা করে:
 
 - **Schema syntax error** — malformed JSON, required field অনুপস্থিত, ভুল data type। JSON schema-সহ `tool_use` এগুলো সম্পূর্ণ দূর করে (Task Statement 4.3)।
-- **Semantic validation error** — JSON গঠন ঠিক, কিন্তু মান ভুল। Line item-এর যোগফল মেলে না, তারিখের ক্রম উল্টো, মান ভুল field-এ। এগুলো schema-র বাইরে ভ্যালিডেশন লজিক দাবি করে, আর রিট্রাই লুপের মূল কাজ এখানেই।
+- **Semantic validation error** — JSON গঠন ঠিক, কিন্তু মান ভুল। Line item-এর যোগফল মেলে না, তারিখের ক্রম উল্টো, মান ভুল field-এ। এগুলো schema-র বাইরে ভ্যালিডেশন লজিক দাবি করে, আর retry loop-ের মূল কাজ এখানেই।
 
 দুই টাস্ক স্টেটমেন্টের এই মিল ইচ্ছাকৃত: পরীক্ষা দেখে আপনি বোঝেন কি না যে `tool_use` প্রথম শ্রেণি মেটায়, দ্বিতীয়টি নয়।
 
 ## ভ্যালিডেশন স্তর হিসেবে Pydantic
 
-পরীক্ষার গাইড এই টাস্ক স্টেটমেন্টের hands-on exercise-এ JSON Schema-র পাশে Pydantic-এর নাম ধরে: "when Pydantic or JSON schema validation fails, send a follow-up request including the document, the failed extraction, and the specific validation error." Python pipeline-এ Pydantic-ই "validation failed"-কে সেই নির্দিষ্ট, field-ভিত্তিক error message-এ বদলায়, যা রিট্রাই লুপের দরকার।
+পরীক্ষার গাইড এই টাস্ক স্টেটমেন্টের hands-on exercise-এ JSON Schema-র পাশে Pydantic-এর নাম ধরে: "when Pydantic or JSON schema validation fails, send a follow-up request including the document, the failed extraction, and the specific validation error." Python pipeline-এ Pydantic-ই "validation failed"-কে সেই নির্দিষ্ট, field-ভিত্তিক error message-এ বদলায়, যা retry loop-ের দরকার।
 
 Pydantic model একসঙ্গে দুটি কাজ করে। Parsing গঠন বাধে — type, required field, enum। Validator semantics বাধে — যে নিয়ম JSON schema-তে লেখা যায় না, যেমন cross-field arithmetic বা তারিখের ক্রম। দুই ধরনের ব্যর্থতাই একটি `ValidationError`-এ দেখা যায়, আর machine-readable error field ও ভাঙা নিয়মের নাম দেয়:
 
@@ -205,13 +205,13 @@ except ValidationError as e:
 
 <ExamTrap>
 	<p>
-		<strong>Semantic check ছাড়া কেবল schema validation-এ ভরসা</strong> — Schema validation (tool_use-এর মাধ্যমে) syntax error ধরে; ভুল যোগফল, ভুল field-এ মান, বানানো ডেটার জন্য ভ্যালিডেশন লজিক ও রিট্রাই লুপ লাগে।
+		<strong>Semantic check ছাড়া কেবল schema validation-এ ভরসা</strong> — Schema validation (tool_use-এর মাধ্যমে) syntax error ধরে; ভুল যোগফল, ভুল field-এ মান, বানানো ডেটার জন্য ভ্যালিডেশন লজিক ও retry loop লাগে।
 	</p>
 </ExamTrap>
 
 <ExamTrap>
 	<p>
-		<strong>tool_use JSON schema বাধলে Pydantic বাহুল্য ভাবা</strong> — Schema cross-field semantic নিয়ম লিখতে পারে না — যোগফল মেলানো, তারিখের ক্রম বজায় রাখা। Pydantic validator সেই নিয়ম লিখে field-ভিত্তিক নির্দিষ্ট error দেয়, যা রিট্রাই লুপ মডেলকে ফেরত দেয়।
+		<strong>tool_use JSON schema বাধলে Pydantic বাহুল্য ভাবা</strong> — Schema cross-field semantic নিয়ম লিখতে পারে না — যোগফল মেলানো, তারিখের ক্রম বজায় রাখা। Pydantic validator সেই নিয়ম লিখে field-ভিত্তিক নির্দিষ্ট error দেয়, যা retry loop মডেলকে ফেরত দেয়।
 	</p>
 </ExamTrap>
 
@@ -257,7 +257,7 @@ except ValidationError as e:
 			expect: 'একটি ভ্যালিডেশন ফাংশন, যা নির্দিষ্ট, কার্যকর error message-এর array ফেরায়; প্রতিটি error বলে কী আশা করা হয়েছিল আর কী পাওয়া গেছে — কেবল "validation failed" নয়।',
 		},
 		{
-			title: 'রিট্রাই লুপ বানান: ভ্যালিডেশন ফেল করলে মূল ডকুমেন্ট, ব্যর্থ extraction আর নির্দিষ্ট ভ্যালিডেশন error নিয়ে পরের message গড়ুন।',
+			title: 'retry loop বানান: ভ্যালিডেশন ফেল করলে মূল ডকুমেন্ট, ব্যর্থ extraction আর নির্দিষ্ট ভ্যালিডেশন error নিয়ে পরের message গড়ুন।',
 			why: 'Error feedback-সহ রিট্রাই naive রিট্রাইয়ের চেয়ে অনেক ভালো; error না থাকলে মডেলের দিশা থাকে না, আর সাধারণত একই ভুল ফেরে।',
 			expect: 'রিট্রাই message-এ তিনটি উপাদানই: মূল ডকুমেন্ট টেক্সট, ব্যর্থ extraction-এর JSON, আর নির্দিষ্ট ভ্যালিডেশন error string। রিট্রাইতে মডেল সংশোধিত extraction দেয়।',
 		},

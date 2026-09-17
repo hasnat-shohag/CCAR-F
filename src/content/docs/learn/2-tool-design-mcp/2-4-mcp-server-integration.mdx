@@ -112,7 +112,7 @@ flowchart TD
 
 ## MCP Resources
 
-MCP resource টুল কল ছাড়াই এজেন্টের সামনে কনটেন্ট ক্যাটালগ আনে। কোন ডেটা আছে তা জানতে exploratory টুল না ডেকে, এজেন্ট তথ্যটি আগেই পায়।
+MCP resource tool call ছাড়াই এজেন্টের সামনে কনটেন্ট ক্যাটালগ আনে। কোন ডেটা আছে তা জানতে exploratory টুল না ডেকে, এজেন্ট তথ্যটি আগেই পায়।
 
 এটিই পরীক্ষার গাইডের কাঠামো এবং keyed উত্তর। MCP specification (সেপ্টেম্বর ২০২৬) থেকে একটি সূক্ষ্মতা: resource **application-controlled**। Server সেগুলো তালিকাভুক্ত করে, কিন্তু ক্লায়েন্ট ঠিক করে কখন একটি resource মডেলের কনটেক্সটে জুড়বে — অর্থাৎ host সামনে আনলেই এজেন্ট resource দেখে। Claude Code এটি করে `@server:resource` mention আর একটি resource-listing টুলের মাধ্যমে।
 
@@ -122,7 +122,7 @@ Resource হিসেবে যা প্রকাশ করা যায়:
 - **Documentation hierarchy** — internal doc-এর table of contents
 - **Database schema** — table-এর নাম, column টাইপ ও সম্পর্ক
 
-লাভ হলো কম নষ্ট কল। Resource ছাড়া এজেন্ট হয়তো `list_tables` ডাকে, তারপর প্রতিটি table-এ `describe_table` — শুধু দিক ঠিক করার জন্য টুল কল পুড়িয়ে ফেলে। Database schema resource থাকলে সে সাথে সাথেই জানে।
+লাভ হলো কম নষ্ট কল। Resource ছাড়া এজেন্ট হয়তো `list_tables` ডাকে, তারপর প্রতিটি table-এ `describe_table` — শুধু দিক ঠিক করার জন্য tool call পুড়িয়ে ফেলে। Database schema resource থাকলে সে সাথে সাথেই জানে।
 
 **Resource দেখায় কোন ডেটা আছে। Tool দিয়ে তা নিয়ে কাজ করা যায়।**
 
@@ -219,7 +219,7 @@ for code by what it does rather than what it contains."
 		'Team-wide MCP server .mcp.json-এ কনফিগার করা',
 		'Credential version control-এর বাইরে রাখতে environment variable expansion ব্যবহার',
 		'Project-level ও user-level scoping-এর পার্থক্য ধরা',
-		'MCP resource দিয়ে exploratory টুল কল কমানো',
+		'MCP resource দিয়ে exploratory tool call কমানো',
 		'Built-in টুলের সাথে প্রতিযোগিতার জন্য MCP টুল বর্ণনা সমৃদ্ধ করা',
 	]}
 	steps={[
@@ -242,7 +242,7 @@ for code by what it does rather than what it contains."
 		},
 		{
 			title: 'একটি content catalogue (documentation hierarchy বা database schema) MCP resource হিসেবে প্রকাশ করুন।',
-			why: 'Resource ছাড়া এজেন্ট list_tables তারপর প্রতিটি টেবিলে describe_table ডেকে টুল কল নষ্ট করে।',
+			why: 'Resource ছাড়া এজেন্ট list_tables তারপর প্রতিটি টেবিলে describe_table ডেকে tool call নষ্ট করে।',
 			expect:
 				'Structured data প্রকাশ করা resource (যেমন db://schema/main) — name, description ও mimeType সহ।',
 		},
